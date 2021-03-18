@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# visual studio
+.vs 
+build
+
+# images
+*.jpeg
+*.jpg
+*.bmp
+*.png
