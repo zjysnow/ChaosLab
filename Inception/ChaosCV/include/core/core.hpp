@@ -3,6 +3,7 @@
 #include "core/def.hpp"
 #include "core/log.hpp"
 #include "core/file.hpp"
+#include "core/allocator.hpp"
 
 namespace chaos
 {
@@ -14,6 +15,6 @@ namespace chaos
 	/// <para>The function acts like sprintf but forms and returns an STL wstring. It can be used to form an error</para>
 	/// <para>message in the Exception constructor.</para>
 	/// </summary>
-	/// <param name="fmt">@param fmt printf-compatible formatting specifiers.</param>
+	/// <param name="fmt">printf-compatible formatting specifiers.</param>
 	CHAOS_API std::wstring Format(const wchar_t* fmt, ...);
 }

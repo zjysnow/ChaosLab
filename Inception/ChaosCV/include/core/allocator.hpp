@@ -2,11 +2,23 @@
 
 #include "core/def.hpp"
 
-#define MALLOC_ALIGN 16
+#define ALIGNMENT 16
 
 // exchange-add operation for atomic operations on reference counters
 // Just for windows, reference to NCNN
+#ifdef _WIN32
 #define CHAOS_XADD(addr, delta) (int)_InterlockedExchangeAdd((long volatile*)addr, delta)
+#else
+#define CHAOS_XADD(addr, delta)
+#endif
+
+#ifdef _WIN32
+#define ALIGNED_MALLOC(size, alignment) _aligned_malloc(size, alignment)
+#define ALIGNED_FREE(ptr) _aligned_free(ptr)
+#else
+#define ALIGNED_MALLOC(size, alignment) memalign(alignment, size)
+#define ALIGNED_FREE(ptr) free(ptr)
+#endif
 
 namespace chaos
 {
@@ -141,5 +153,30 @@ namespace chaos
 		size_t sz;
 		//! pre-allocated buffer. At least 1 element to confirm C++ standard requirements
 		Type buf[(fixed_size > 0) ? fixed_size : 1] = { 0 };
+	};
+
+	/// <summary>
+	/// <para>Aligns a pointer to the specified number of bytes</para>
+	/// <para>The function returns the aligned pointer of the same type as the input pointer:</para>
+	/// <para>(_Tp*)(((size_t)ptr + n - 1) and -n)</para>
+	/// </summary>
+	/// <param name="ptr">Aligned pointer</param>
+	/// <param name="n">Alignment size that must be a power of two</param>
+	/// <return>The aligned pointer of the same type as the input pointer</return>
+	template<class Type> static inline Type* AlignPtr(Type* ptr, int n = (int)sizeof(Type))
+	{
+		CHECK((n & (n - 1)) == 0) << "n should be a power of 2.";
+		return (Type*)(((size_t)ptr + n - 1) & -n);
+	}
+
+	static inline void* FastMalloc(size_t size) { return ALIGNED_MALLOC(size, ALIGNMENT); }
+	static inline void FastFree(void* ptr) { ALIGNED_FREE(ptr); }
+
+	class CHAOS_API Allocator
+	{
+	public:
+		virtual ~Allocator() = default;
+		virtual void* FastaMalloc(size_t size) = 0;
+		virtual void FastFree(void* ptr) = 0;
 	};
 }

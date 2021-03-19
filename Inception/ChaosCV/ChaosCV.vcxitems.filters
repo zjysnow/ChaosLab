@@ -44,5 +44,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

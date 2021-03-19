@@ -20,4 +20,13 @@ namespace chaos
 		D4 = 4,
 		D8 = 8,
 	};
+
+	enum class Packing
+	{
+		CHW = 1,
+		C2HW2 = 2,
+		C3HW3 = 3,
+		C4HW4 = 4,
+		C8HW8 = 8,
+	};
 }
