@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{6324e2f7-c392-449c-83c7-5b14dc329d1c}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
+  </ItemGroup>
+</Project>

@@ -4,28 +4,66 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF} = {6EAE13BB-B0AA-4853-92FB-F7E752D352FF}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inception", "Inception", "{9E4213FC-A5FC-428F-B35D-7B30E0F72BAD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChaosCV", "Inception\ChaosCV\ChaosCV.vcxitems", "{6324E2F7-C392-449C-83C7-5B14DC329D1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{EB9A90B3-C436-433F-8048-5C1E916B02B1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChaosCV.windows", "Inception\Platforms\ChaosCV.windows\ChaosCV.windows.vcxproj", "{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Inception\ChaosCV\ChaosCV.vcxitems*{6324e2f7-c392-449c-83c7-5b14dc329d1c}*SharedItemsImports = 9
+		Inception\ChaosCV\ChaosCV.vcxitems*{6eae13bb-b0aa-4853-92fb-f7e752d352ff}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|ARM.ActiveCfg = Debug|Win32
+		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|ARM64.ActiveCfg = Debug|Win32
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|x64.ActiveCfg = Debug|x64
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|x64.Build.0 = Debug|x64
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|x86.ActiveCfg = Debug|Win32
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Debug|x86.Build.0 = Debug|Win32
+		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|ARM.ActiveCfg = Release|Win32
+		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|ARM64.ActiveCfg = Release|Win32
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|x64.ActiveCfg = Release|x64
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|x64.Build.0 = Release|x64
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|x86.ActiveCfg = Release|Win32
 		{414FCD6F-C8C5-4825-9E1B-37AF74A47C6C}.Release|x86.Build.0 = Release|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|ARM.ActiveCfg = Debug|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|x64.ActiveCfg = Debug|x64
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|x64.Build.0 = Debug|x64
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|x86.ActiveCfg = Debug|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Debug|x86.Build.0 = Debug|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|ARM.ActiveCfg = Release|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|ARM64.ActiveCfg = Release|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|x64.ActiveCfg = Release|x64
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|x64.Build.0 = Release|x64
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|x86.ActiveCfg = Release|Win32
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6324E2F7-C392-449C-83C7-5B14DC329D1C} = {9E4213FC-A5FC-428F-B35D-7B30E0F72BAD}
+		{EB9A90B3-C436-433F-8048-5C1E916B02B1} = {9E4213FC-A5FC-428F-B35D-7B30E0F72BAD}
+		{6EAE13BB-B0AA-4853-92FB-F7E752D352FF} = {EB9A90B3-C436-433F-8048-5C1E916B02B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FCFA44E-5026-4137-8A57-E6798644FDB0}
