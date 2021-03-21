@@ -169,14 +169,35 @@ namespace chaos
 		return (Type*)(((size_t)ptr + n - 1) & -n);
 	}
 
-	static inline void* FastMalloc(size_t size) { return ALIGNED_MALLOC(size, ALIGNMENT); }
-	static inline void FastFree(void* ptr) { ALIGNED_FREE(ptr); }
+	/// <summary>
+	/// <para>Aligns a buffer size to the specified number of bytes</para>
+	/// <para>The function returns the minimum number that is greater than or equal to sz and is divisible by n :</para>
+	/// <para>(sz + n - 1) and -n</para>
+	/// </summary>
+	/// <param name="sz">Buffer size to align</param>
+	/// <param name="n">Alignment size that must be a power of two</param>
+	/// <return>The minimum number that is greater than or equal to sz and is divisible by n</return>
+	static inline size_t AlignSize(size_t sz, int n)
+	{
+		CHECK((n & (n - 1)) == 0); // n is a power of 2
+		return (sz + n - 1) & -n;
+	}
+
+	static inline void* FastMalloc(size_t size) 
+	{ 
+		return ALIGNED_MALLOC(size, ALIGNMENT); 
+	}
+	static inline void FastFree(void* data) 
+	{ 
+		ALIGNED_FREE(data); 
+	}
 
 	class CHAOS_API Allocator
 	{
 	public:
 		virtual ~Allocator() = default;
 		virtual void* FastaMalloc(size_t size) = 0;
-		virtual void FastFree(void* ptr) = 0;
+		virtual void FastFree(void* buffer) = 0;
 	};
+
 }

@@ -33,6 +33,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -45,6 +48,12 @@
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
   </ItemGroup>
