@@ -8,7 +8,7 @@ namespace chaos
 		support_vulkan = false;
 	}
 
-	void Layer::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const
+	void Layer::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
 		CHECK(support_inplace) << "layer '" << type << "' do not be implemented";
 
@@ -20,7 +20,7 @@ namespace chaos
 		}
 		Forward(top_blobs, opt);
 	}
-	void Layer::Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const
+	void Layer::Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt) const
 	{
 		LOG(FATAL) << "layer " << type << " do not support inpalce";
 	}

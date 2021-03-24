@@ -30,7 +30,7 @@ namespace chaos
 		FATAL,
 	};
 
-	enum class DataType
+	enum class DataType : size_t
 	{
 		D1 = 1, // int8 or uint8
 		D2 = 2, // float16, int16 or uint16

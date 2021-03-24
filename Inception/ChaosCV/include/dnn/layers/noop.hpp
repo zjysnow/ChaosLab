@@ -8,7 +8,6 @@ namespace chaos
 	{
 	public:
 		Noop();
-
 		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt) const override;
 	};
 }

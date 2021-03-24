@@ -36,6 +36,33 @@ namespace chaos
 		float& operator[](size_t idx) noexcept { return ((float*)data)[idx]; }
 		const float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
 
+
+		template<class Type = float, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
+		static Tensor eye(uint32 w, uint32 h, Allocator* allocator = nullptr)
+		{
+			Tensor eye_;
+			eye_.Create(Shape(h, w), /*steps=*/{ w, (uint32)1 }, static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
+			memset(eye_.data, 0, eye_.shape.total() * sizeof(Type));
+			Type* data = (Type*)eye_.data;
+			uint32 rows = eye_.shape[0];
+			uint32 rstep = eye_.steps[0];
+			for (size_t r = 0; r < rows; r++)
+			{
+				data[r * rstep + r] = 1;
+			}
+			return eye_;
+		}
+
+		template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
+		void Fill(const Type& val)
+		{
+			size_t total = (size_t)shape[0] * steps[0];
+			for (size_t i = 0; i < total; i++)
+			{
+				((Type*)data)[i] = val;
+			}
+		}
+
 		void* data = nullptr;
 		Allocator* allocator = nullptr;
 		int* ref_cnt = nullptr;
@@ -71,46 +98,46 @@ namespace chaos
 	};
 
 
-	class CHAOS_API InputTensor
-	{
-	public:
-		enum KindFlag
-		{
-			NONE = 0,
-			TENSOR = 1,
-			VECTOR_TENSOR = 2,
-		};
+	//class CHAOS_API InputTensor
+	//{
+	//public:
+	//	enum KindFlag
+	//	{
+	//		NONE = 0,
+	//		TENSOR = 1,
+	//		VECTOR_TENSOR = 2,
+	//	};
 
-		InputTensor();
-		virtual ~InputTensor();
+	//	InputTensor();
+	//	virtual ~InputTensor();
 
-		InputTensor(const Tensor& t);
-		InputTensor(const std::vector<Tensor>& vt);
+	//	InputTensor(const Tensor& t);
+	//	InputTensor(const std::vector<Tensor>& vt);
 
-		
+	//	
 
-		Tensor GetTensor() const;
-		void GetVectorTensor(std::vector<Tensor>& vt) const;
+	//	Tensor GetTensor() const;
+	//	void GetVectorTensor(std::vector<Tensor>& vt) const;
 
-		void* GetObject() const;
+	//	void* GetObject() const;
 
-		
-	protected:
-		void Init(int flags, const void* obj);
+	//	
+	//protected:
+	//	void Init(int flags, const void* obj);
 
-		int flags;
-		void* obj;
-	};
+	//	int flags;
+	//	void* obj;
+	//};
 
-	class CHAOS_API OutputTensor : public InputTensor
-	{
-	public:
+	//class CHAOS_API OutputTensor : public InputTensor
+	//{
+	//public:
 
-	};
+	//};
 
-	class CHAOS_API InputOutputTensor : public OutputTensor
-	{
-	public:
+	//class CHAOS_API InputOutputTensor : public OutputTensor
+	//{
+	//public:
 
-	};
+	//};
 }
