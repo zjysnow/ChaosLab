@@ -4,6 +4,7 @@
 #include "core/log.hpp"
 #include "core/file.hpp"
 #include "core/types.hpp"
+#include "core/buffer.hpp"
 #include "core/allocator.hpp"
 
 namespace chaos

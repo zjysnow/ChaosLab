@@ -13,6 +13,24 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{801c14cf-4bdd-4a37-b7c5-b11db72034dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\highgui">
+      <UniqueIdentifier>{9db66474-ed60-4637-8a92-758de9153dd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\highgui">
+      <UniqueIdentifier>{2a39e871-9bb0-41cb-9aed-5799878fe8a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\dnn">
+      <UniqueIdentifier>{d536dca7-2283-4715-bded-3e75524cfed5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn">
+      <UniqueIdentifier>{6fa4fc23-99b4-4dbe-baff-d875c4f49150}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\dnn\layers">
+      <UniqueIdentifier>{850bea5f-43ab-4204-a610-bb42ed445d9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn\layers">
+      <UniqueIdentifier>{ad33f14f-7142-48d1-a9b4-e6b54480fd83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp">
@@ -36,6 +54,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp">
+      <Filter>include\highgui</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -50,11 +86,20 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp">
+      <Filter>src\dnn</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp">
+      <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

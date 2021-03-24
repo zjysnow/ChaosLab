@@ -15,12 +15,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
@@ -28,6 +34,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
   </ItemGroup>
 </Project>

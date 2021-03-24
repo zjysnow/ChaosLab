@@ -55,7 +55,6 @@ namespace chaos
 		uint32_t graphics_queue_count;
 		uint32_t transfer_queue_count;
 		uint32_t compute_queue_count;
-		
 	};
 
 	CHAOS_API int GetGPUCount();
@@ -70,6 +69,7 @@ namespace chaos
 
 		const GPUInfo& info;
 
+		VkDevice GetDevice() const { return device; }
 	protected:
 
 	private:

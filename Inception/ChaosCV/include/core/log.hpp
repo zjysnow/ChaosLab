@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/def.hpp"
 #include "core/types.hpp"
 
 #include <sstream>
