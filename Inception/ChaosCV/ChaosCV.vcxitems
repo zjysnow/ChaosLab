@@ -25,6 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\decomp.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
   </ItemGroup>
