@@ -17,6 +17,8 @@ namespace chaos
 		VkDebugUtilsMessengerEXT debug_messenger;
 
 		int support_VK_EXT_debug_utils = 0;
+		int support_VK_KHR_surface = 0;
+		int support_VK_KHR_win32_surface = 0;
 	protected:
 		VulkanInstance();
 		~VulkanInstance();
@@ -49,18 +51,33 @@ namespace chaos
 		// see GPUInfo::Type
 		int type;
 
+		// hardware limit
+		size_t memory_map_alignment;
+		size_t buffer_offset_alignment;
+		size_t buffer_image_granularity;
+		size_t non_coherent_atom_size;
+		uint32_t max_image_dimension_1d;
+		uint32_t max_image_dimension_2d;
+		uint32_t max_image_dimension_3d;
+
+		// here just 4 queue families: compute, graphics, transfer, sparsebinding
+
 		uint32_t graphics_queue_family_index;
 		uint32_t transfer_queue_family_index;
 		uint32_t compute_queue_family_index;
 		uint32_t graphics_queue_count;
 		uint32_t transfer_queue_count;
 		uint32_t compute_queue_count;
+
+		int support_VK_KHR_swapchain;
+		int support_VK_KHR_get_memory_requirements2;
 	};
 
 	CHAOS_API int GetGPUCount();
 	CHAOS_API int GetDefaultGPUIndex();
 	CHAOS_API const GPUInfo& GetGPUInfo(int device_index = GetDefaultGPUIndex());
 
+	class PipelineCache;
 	class CHAOS_API VulkanDevice
 	{
 	public:
@@ -74,6 +91,11 @@ namespace chaos
 
 	private:
 		VkDevice device;
+
+		PipelineCache* pipeline_cache;
+		//mutable std::vector<VkQueue> graphics_queue;
+		//mutable std::vector<VkQueue> transfer_queue;
+		//mutable std::vector<VkQueue> compute_queue;
 	};
 	
 	CHAOS_API VulkanDevice* GetGPUDevice(int device_index = GetDefaultGPUIndex());

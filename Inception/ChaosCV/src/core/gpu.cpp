@@ -231,11 +231,11 @@ namespace chaos
 		{
 			if (0 == std::strcmp(exp.extensionName, "VK_KHR_surface"))
 			{
-				//g_instance.support_VK_KHR_surface = exp.specVersion;
+				g_instance.support_VK_KHR_surface = exp.specVersion;
 			}
-			if (0 == std::strcmp(exp.extensionName, ""))
+			if (0 == std::strcmp(exp.extensionName, "VK_KHR_win32_surface"))
 			{
-
+				g_instance.support_VK_KHR_win32_surface = exp.specVersion;
 			}
 			if (0 == std::strcmp(exp.extensionName, "VK_EXT_debug_utils"))
 			{
@@ -318,6 +318,15 @@ namespace chaos
 				break;
 			}
 
+			// device limits
+			gpu_info.memory_map_alignment = physical_device_properties.limits.minMemoryMapAlignment;
+			gpu_info.buffer_offset_alignment = physical_device_properties.limits.minStorageBufferOffsetAlignment;
+			gpu_info.buffer_image_granularity = physical_device_properties.limits.bufferImageGranularity;
+			gpu_info.non_coherent_atom_size = physical_device_properties.limits.nonCoherentAtomSize;
+			gpu_info.max_image_dimension_1d = physical_device_properties.limits.maxImageDimension1D;
+			gpu_info.max_image_dimension_2d = physical_device_properties.limits.maxImageDimension2D;
+			gpu_info.max_image_dimension_3d = physical_device_properties.limits.maxImageDimension3D;
+
 			// cache memory properties
 			vkGetPhysicalDeviceMemoryProperties(physical_device, &gpu_info.physical_device_memory_properties);
 
@@ -332,6 +341,24 @@ namespace chaos
 			gpu_info.graphics_queue_count = queue_family_properties[gpu_info.graphics_queue_family_index].queueCount;
 			gpu_info.transfer_queue_count = queue_family_properties[gpu_info.transfer_queue_family_index].queueCount;
 			gpu_info.compute_queue_count = queue_family_properties[gpu_info.compute_queue_family_index].queueCount;
+
+
+			// get device extension
+			uint32_t device_extension_property_count = 0;
+			ret = vkEnumerateDeviceExtensionProperties(physical_device, NULL, &device_extension_property_count, NULL);
+			CHECK_EQ(VK_SUCCESS, ret) << "vkEnumerateDeviceExtensionProperties failed " << ret;
+			std::vector<VkExtensionProperties> device_extension_properties(device_extension_property_count);
+			ret = vkEnumerateDeviceExtensionProperties(physical_device, NULL, &device_extension_property_count, device_extension_properties.data());
+			CHECK_EQ(VK_SUCCESS, ret) << "vkEnumerateDeviceExtensionProperties failed " << ret;
+
+			for (uint32_t j = 0; j < device_extension_property_count; j++)
+			{
+				const VkExtensionProperties& exp = device_extension_properties[j];
+				if (strcmp(exp.extensionName, "VK_KHR_swapchain") == 0)
+					gpu_info.support_VK_KHR_swapchain = exp.specVersion;
+				if (strcmp(exp.extensionName, "VK_KHR_get_memory_requirements2") == 0)
+					gpu_info.support_VK_KHR_get_memory_requirements2 = exp.specVersion;
+			}
 		}
 
 		g_default_gpu_index = FindDefaultVulkanDeviceIndex();

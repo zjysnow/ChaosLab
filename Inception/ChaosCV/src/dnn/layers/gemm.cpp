@@ -20,12 +20,12 @@ namespace chaos
 
 		Tensor& C = top_blobs[0];
 		C.Create(Shape(m, k), { k, 1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
-		memset(C.data, 0, m * k * sizeof(float));
+		memset(C.data, 0, sizeof(float) * m * k);
 
 		uint32 astep = A.steps[0];
 		uint32 bstep = B.steps[0];
 
-		for (size_t r = 0; r < n; r++)
+		for (size_t r = 0; r < m; r++)
 		{
 			for (size_t c = 0; c < k; c++)
 			{

@@ -31,6 +31,12 @@
     <Filter Include="src\dnn\layers">
       <UniqueIdentifier>{ad33f14f-7142-48d1-a9b4-e6b54480fd83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\dnn\layers\vulkan">
+      <UniqueIdentifier>{3abd9c6e-e7d2-44eb-b8e4-1f26fd6ad569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn\layers\vulkan">
+      <UniqueIdentifier>{3cde3ce6-8bc8-45b8-a9c9-d98f3ee11d10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp">
@@ -81,6 +87,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\command.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline_cache.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -115,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp">
       <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp">
+      <Filter>src\highgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

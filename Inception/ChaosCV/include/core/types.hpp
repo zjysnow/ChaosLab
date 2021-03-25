@@ -16,6 +16,9 @@ namespace chaos
 	using int64 = __int64;
 	using uint64 = unsigned __int64;
 
+	template<class Type>
+	using Ptr = std::shared_ptr<Type>;
+
 	enum class DeviceType
 	{
 		CPU,
@@ -58,6 +61,21 @@ namespace chaos
 	{
 		return lhs * static_cast<Type>(rhs);
 	}
+
+	class CHAOS_API Point
+	{
+	public:
+		float x;
+		float y;
+	};
+
+	class CHAOS_API Color
+	{
+	public:
+		float r;
+		float g;
+		float b;
+	};
 
 	class CHAOS_API Steps
 	{

@@ -5,19 +5,14 @@
 
 namespace chaos
 {
-	//class VulkanDevice;
-	//class CHAOS_API VulkanWindow
-	//{
-	//public:
-	//	VulkanWindow(const VulkanDevice* vkdev);
+	class CHAOS_API VulkanWindow
+	{
+	public:
+		virtual ~VulkanWindow() {}
 
-	//	void CreateWindow(uint32 width, uint32 height);
-	//private:
-	//	const VulkanDevice* vkdev;
-	//	VulkanAllocator* allocator;
+		virtual void Show() = 0;
+		void Draw(const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& indices);
 
-	//	VulkanTensor vertex;
-	//	VulkanTensor indices;
-	//	std::vector<VulkanTensor> uniform;
-	//};
+		static Ptr<VulkanWindow> Create(const std::wstring& name, int device_id = GetDefaultGPUIndex(), uint32 width = 800, uint32 height = 600);
+	};
 }
