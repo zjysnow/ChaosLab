@@ -39,15 +39,34 @@ namespace chaos
 		return 0 == ppos ? std::wstring_view() : std::wstring_view(buf.data() + spos + ppos);
 	}
 
+
 	std::wostream& operator<<(std::wostream& wstream, const File& file)
 	{
 		return wstream << file.buf;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const File& file)
+	{
+		return stream << (std::string)file;
 	}
 }
 
 #ifdef _WIN32
 #include <io.h>
 #include <Windows.h>
+
+chaos::File::operator std::string() const
+{
+	std::string file;
+	int len = WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, NULL, 0, NULL, NULL);
+	file.resize(len);
+
+	WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, file.data(), len, NULL, NULL);
+
+	return file;
+}
+
+
 void chaos::GetFileList(const std::wstring& folder, chaos::FileList& list, const std::wstring& types)
 {
 	CHECK_EQ(0, _waccess(folder.data(), 6)) << "can not access to \"" << folder << "\"";

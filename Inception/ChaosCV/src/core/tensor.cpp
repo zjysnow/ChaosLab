@@ -149,4 +149,70 @@ namespace chaos
 		CopyTo(tensor);
 		return tensor;
 	}
+
+
+
+	VulkanTensor::VulkanTensor(const Shape& shape, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator)
+	{
+		Create(shape, shape.steps(), dtype, packing, allocator);
+	}
+	void VulkanTensor::Create(const Shape& shape_, const Steps& steps_, const DataType& dtype_, const Packing& packing_, VulkanAllocator* allocator_)
+	{
+		if (shape_ == shape && steps_ == steps && dtype_ == dtype && packing_ == packing && allocator_ == allocator) return;
+
+		Release();
+
+		shape = shape_;
+		steps = steps_;
+		dtype = dtype_;
+		packing = packing_;
+		allocator = allocator_;
+
+		size_t total = (size_t)shape[0] * steps[0];
+		if (total > 0)
+		{
+			size_t capacity = AlignSize(total * dtype * packing, 4);
+
+			data = allocator->FastMalloc(capacity);
+
+			ref_cnt = (int*)((uchar*)data + offsetof(VulkanBuffer, ref_cnt));
+			*ref_cnt = 1;
+		}
+	}
+	void VulkanTensor::CreateLike(const Tensor& tensor, VulkanAllocator* allocator)
+	{
+		Create(tensor.shape, tensor.steps, tensor.dtype, tensor.packing, allocator);
+	}
+	void VulkanTensor::CreateLike(const VulkanTensor& tensor, VulkanAllocator* allocator)
+	{
+		Create(tensor.shape, tensor.steps, tensor.dtype, tensor.packing, allocator);
+	}
+
+	void VulkanTensor::Release()
+	{
+		if (ref_cnt && CHAOS_XADD(ref_cnt, -1) == 1)
+		{
+			if (allocator && data)
+			{
+				allocator->FastFree(data);
+			}
+		}
+
+		data = nullptr;
+		ref_cnt = nullptr;
+
+		shape = Shape();
+		steps = Steps();
+	}
+
+	Tensor VulkanTensor::Mapped() const
+	{
+		return Tensor(shape, dtype, packing, mapped_data(), steps);
+	}
+
+	void* VulkanTensor::mapped_data() const
+	{
+		if (not allocator->mappable) return nullptr;
+		return (uchar*)data->mapped_data + data->offset;
+	}
 }

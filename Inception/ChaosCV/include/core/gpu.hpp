@@ -4,6 +4,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include <mutex>
+
 namespace chaos
 {
 	class CHAOS_API VulkanInstance
@@ -77,7 +79,7 @@ namespace chaos
 	CHAOS_API int GetDefaultGPUIndex();
 	CHAOS_API const GPUInfo& GetGPUInfo(int device_index = GetDefaultGPUIndex());
 
-	class PipelineCache;
+	class GraphicsPipeline;
 	class CHAOS_API VulkanDevice
 	{
 	public:
@@ -86,17 +88,31 @@ namespace chaos
 
 		const GPUInfo& info;
 
-		VkDevice GetDevice() const { return device; }
+		VkDevice GetDevice() const noexcept { return device; }
+
+		//PipelineCache* GetPipelineCache() const noexcept;
+
+		// device extensions
+		PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR; // create swap chain
+		PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR; // destroy swap chain
+
+		uint32 FindMemoryTypeIndex(uint32 memory_type_bits, const VkFlags& required, const VkFlags& preferred, const VkFlags& preferred_not) const;
+
+		VkQueue AcquireQueue(uint32 queue_family_index) const;
+		void ReclaimQueue(uint32 queue_family_index, VkQueue queue) const;
 	protected:
+		void InitDeviceExtension();
 
 	private:
 		VkDevice device;
 
-		PipelineCache* pipeline_cache;
-		//mutable std::vector<VkQueue> graphics_queue;
-		//mutable std::vector<VkQueue> transfer_queue;
-		//mutable std::vector<VkQueue> compute_queue;
+		// hardware queue
+		mutable std::vector<VkQueue> compute_queues;
+		mutable std::vector<VkQueue> graphics_queues;
+		mutable std::vector<VkQueue> transfer_queues;
+		mutable std::mutex queue_lock;
 	};
 	
 	CHAOS_API VulkanDevice* GetGPUDevice(int device_index = GetDefaultGPUIndex());
+
 }

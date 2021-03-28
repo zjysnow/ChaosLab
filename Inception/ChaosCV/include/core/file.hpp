@@ -18,7 +18,10 @@ namespace chaos
 		const std::wstring_view name() const noexcept;
 		const std::wstring_view type() const noexcept;
 
+		operator std::wstring() const noexcept { return buf; }
+		operator std::string() const;
 		CHAOS_API friend std::wostream& operator<<(std::wostream& wstream, const File& file);
+		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const File& file);
 	private:
 		std::wstring buf;
 		size_t ppos = -1; // last point pose

@@ -23,7 +23,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline_cache.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
@@ -33,13 +32,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\pipeline.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
@@ -47,5 +50,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp" />
   </ItemGroup>
 </Project>

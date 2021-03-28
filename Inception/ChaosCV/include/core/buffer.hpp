@@ -4,6 +4,7 @@
 #include "core/log.hpp"
 #include "core/gpu.hpp"
 
+
 namespace chaos
 {
 	/// <summary>
@@ -139,19 +140,17 @@ namespace chaos
 		Type buf[(fixed_size > 0) ? fixed_size : 1] = { 0 };
 	};
 
-	//class VulkanBuffer
-	//{
-	//public:
-	//	VkBuffer buffer;
+	class CHAOS_API VulkanBuffer
+	{
+	public:
+		VkBuffer buffer;
 
-	//	size_t capacity;
-	//	void* mapped_data;
-	//	int ref_cnt;
-	//};
+		size_t capacity;
+		size_t offset;
 
-	//class VulkanImage
-	//{
-	//public:
-	//	VkImage image;
-	//};
+		VkDeviceMemory memory;
+
+		void* mapped_data;
+		int ref_cnt;
+	};
 }

@@ -33,6 +33,8 @@ namespace chaos
 
 		bool empty() const noexcept { return data == nullptr || 0 == shape.dims; }
 
+		size_t total() const noexcept { return (size_t)shape[0] * steps[0]; }
+
 		float& operator[](size_t idx) noexcept { return ((float*)data)[idx]; }
 		const float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
 
@@ -77,16 +79,26 @@ namespace chaos
 	class CHAOS_API VulkanTensor
 	{
 	public:
+		VulkanTensor() = default;
+		~VulkanTensor() { Release(); }
 
-		~VulkanTensor();
+		VulkanTensor(const Shape& shape, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator);
+
+		void Create(const Shape& shape, const Steps& steps, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator);
+		void CreateLike(const Tensor&, VulkanAllocator* allocator);
+		void CreateLike(const VulkanTensor&, VulkanAllocator* allocator);
+
 		void Release();
+
+		Tensor Mapped() const;
+		void* mapped_data() const;
 
 		/// <summary> ref_cnt++ </summary>
 		void AddRef() noexcept { if (ref_cnt) CHAOS_XADD(ref_cnt, 1); }
 
-		bool empty() const noexcept { return buffer == nullptr || 0 == shape.dims; }
+		bool empty() const noexcept { return data == nullptr || 0 == shape.dims; }
 
-		VulkanBuffer* buffer = nullptr;
+		VulkanBuffer* data = nullptr;
 		VulkanAllocator* allocator = nullptr;
 		int* ref_cnt = nullptr;
 
@@ -96,48 +108,4 @@ namespace chaos
 		DataType dtype = DataType::D1;
 		Packing packing = Packing::CHW;
 	};
-
-
-	//class CHAOS_API InputTensor
-	//{
-	//public:
-	//	enum KindFlag
-	//	{
-	//		NONE = 0,
-	//		TENSOR = 1,
-	//		VECTOR_TENSOR = 2,
-	//	};
-
-	//	InputTensor();
-	//	virtual ~InputTensor();
-
-	//	InputTensor(const Tensor& t);
-	//	InputTensor(const std::vector<Tensor>& vt);
-
-	//	
-
-	//	Tensor GetTensor() const;
-	//	void GetVectorTensor(std::vector<Tensor>& vt) const;
-
-	//	void* GetObject() const;
-
-	//	
-	//protected:
-	//	void Init(int flags, const void* obj);
-
-	//	int flags;
-	//	void* obj;
-	//};
-
-	//class CHAOS_API OutputTensor : public InputTensor
-	//{
-	//public:
-
-	//};
-
-	//class CHAOS_API InputOutputTensor : public OutputTensor
-	//{
-	//public:
-
-	//};
 }

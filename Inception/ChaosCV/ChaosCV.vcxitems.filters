@@ -93,8 +93,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline_cache.hpp">
-      <Filter>include\core</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp">
+      <Filter>include\highgui</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp">
+      <Filter>include\highgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +135,18 @@
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp">
+      <Filter>src\highgui</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\pipeline.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp">
+      <Filter>src\highgui</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp">
       <Filter>src\highgui</Filter>
     </ClCompile>
   </ItemGroup>

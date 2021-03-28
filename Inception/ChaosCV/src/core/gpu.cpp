@@ -1,3 +1,4 @@
+#include "core/pipeline.hpp"
 #include "core/gpu.hpp"
 
 #include <mutex>
@@ -240,9 +241,11 @@ namespace chaos
 			if (0 == std::strcmp(exp.extensionName, "VK_EXT_debug_utils"))
 			{
 				g_instance.support_VK_EXT_debug_utils = exp.specVersion;
-				enabled_extensions.push_back("VK_EXT_debug_utils");
 			}
 		}
+		if (g_instance.support_VK_KHR_surface) enabled_extensions.push_back("VK_KHR_surface");
+		if (g_instance.support_VK_KHR_win32_surface) enabled_extensions.push_back("VK_KHR_win32_surface");
+		if (g_instance.support_VK_EXT_debug_utils) enabled_extensions.push_back("VK_EXT_debug_utils");
 
 		uint32_t instance_api_version = VK_MAKE_VERSION(MAJOR, MINOR, PATCH);
 
@@ -422,6 +425,8 @@ namespace chaos
 	VulkanDevice::VulkanDevice(int device_index) : info(g_gpu_infos[device_index])
 	{
 		std::vector<const char*> enabled_extensions;
+		if (info.support_VK_KHR_swapchain)
+			enabled_extensions.push_back("VK_KHR_swapchain");
 
 		std::vector<float> compute_queue_priorities(info.compute_queue_count, 1.f);
 		std::vector<float> graphics_queue_priorities(info.graphics_queue_count, 1.f);
@@ -482,11 +487,140 @@ namespace chaos
 
 		VkResult ret = vkCreateDevice(info.physical_device, &device_create_info, 0, &device);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDevice failed " << ret;
+
+		// init device extension
+		InitDeviceExtension();
+
+		// why cache pipeline
+		//pipeline_cache = new PipelineCache(this);
 	}
 
 	VulkanDevice::~VulkanDevice()
 	{
 		vkDestroyDevice(device, nullptr);
+	}
+
+	void VulkanDevice::InitDeviceExtension()
+	{
+		if (info.support_VK_KHR_swapchain)
+		{
+			vkCreateSwapchainKHR = (PFN_vkCreateSwapchainKHR)vkGetDeviceProcAddr(device, "vkCreateSwapchainKHR");
+			vkDestroySwapchainKHR = (PFN_vkDestroySwapchainKHR)vkGetDeviceProcAddr(device, "vkDestroySwapchainKHR");
+		}
+	}
+
+	uint32 VulkanDevice::FindMemoryTypeIndex(uint32 memory_type_bits, const VkFlags& required, const VkFlags& preferred, const VkFlags& preferred_not) const
+	{
+		// first try, find required and with preferred and without preferred_not
+		for (uint32_t i = 0; i < info.physical_device_memory_properties.memoryTypeCount; i++)
+		{
+			bool is_required = (1 << i) & memory_type_bits;
+			if (is_required)
+			{
+				const VkMemoryType& memoryType = info.physical_device_memory_properties.memoryTypes[i];
+				if ((memoryType.propertyFlags & required) == required
+					&& (preferred && (memoryType.propertyFlags & preferred))
+					&& (preferred_not && !(memoryType.propertyFlags & preferred_not)))
+				{
+					return i;
+				}
+			}
+		}
+		// second try, find required and with preferred
+		for (uint32_t i = 0; i < info.physical_device_memory_properties.memoryTypeCount; i++)
+		{
+			bool is_required = (1 << i) & memory_type_bits;
+			if (is_required)
+			{
+				const VkMemoryType& memoryType = info.physical_device_memory_properties.memoryTypes[i];
+				if ((memoryType.propertyFlags & required) == required
+					&& (preferred && (memoryType.propertyFlags & preferred)))
+				{
+					return i;
+				}
+			}
+		}
+		// third try, find required and without preferred_not
+		for (uint32_t i = 0; i < info.physical_device_memory_properties.memoryTypeCount; i++)
+		{
+			bool is_required = (1 << i) & memory_type_bits;
+			if (is_required)
+			{
+				const VkMemoryType& memoryType = info.physical_device_memory_properties.memoryTypes[i];
+				if ((memoryType.propertyFlags & required) == required
+					&& (preferred_not && !(memoryType.propertyFlags & preferred_not)))
+				{
+					return i;
+				}
+			}
+		}
+		// fourth try, find any required
+		for (uint32_t i = 0; i < info.physical_device_memory_properties.memoryTypeCount; i++)
+		{
+			bool is_required = (1 << i) & memory_type_bits;
+			if (is_required)
+			{
+				const VkMemoryType& memoryType = info.physical_device_memory_properties.memoryTypes[i];
+				if ((memoryType.propertyFlags & required) == required)
+				{
+					return i;
+				}
+			}
+		}
+		LOG(FATAL) << Format(L"no such memory type %u %u %u %u", memory_type_bits, required, preferred, preferred_not);
+		return -1;
+	}
+
+	VkQueue VulkanDevice::AcquireQueue(uint32 queue_family_index) const
+	{
+		if (queue_family_index != info.compute_queue_family_index
+			&& queue_family_index != info.graphics_queue_family_index
+			&& queue_family_index != info.transfer_queue_family_index)
+		{
+			LOG(FATAL) << Format(L"invalid queue_family_index %u", queue_family_index);
+			return nullptr;
+		}
+
+		std::lock_guard lock(queue_lock);
+
+		std::vector<VkQueue>& queues = queue_family_index == info.compute_queue_family_index ? compute_queues
+			: queue_family_index == info.graphics_queue_family_index ? graphics_queues : transfer_queues;
+		for (int i = 0; i < (int)queues.size(); i++)
+		{
+			VkQueue queue = queues[i];
+			if (queue)
+			{
+				queues[i] = 0;
+				return queue;
+			}
+		}
+		LOG(FATAL) << Format(L"out of hardware queue %u", queue_family_index);
+		return nullptr;
+	}
+	void VulkanDevice::ReclaimQueue(uint32 queue_family_index, VkQueue queue) const
+	{
+		if (queue_family_index != info.compute_queue_family_index
+			&& queue_family_index != info.graphics_queue_family_index
+			&& queue_family_index != info.transfer_queue_family_index)
+		{
+			LOG(FATAL) << Format(L"invalid queue_family_index %u", queue_family_index);
+			return;
+		}
+
+		std::lock_guard lock(queue_lock);
+
+		std::vector<VkQueue>& queues = queue_family_index == info.compute_queue_family_index ? compute_queues
+			: queue_family_index == info.graphics_queue_family_index ? graphics_queues : transfer_queues;
+		for (int i = 0; i < (int)queues.size(); i++)
+		{
+			if (not queues[i])
+			{
+				queues[i] = queue;
+				return;
+			}
+		}
+
+		LOG(FATAL) << Format(L"reclaim_queue get wild queue %u %p", queue_family_index, queue);
 	}
 
 	VulkanDevice* GetGPUDevice(int device_index)
@@ -504,4 +638,11 @@ namespace chaos
 
 		return g_devices[device_index];
 	}
+
+	
+	
+	//PipelineCache* VulkanDevice::GetPipelineCache() const noexcept
+	//{
+	//	return pipeline_cache;
+	//}
 }

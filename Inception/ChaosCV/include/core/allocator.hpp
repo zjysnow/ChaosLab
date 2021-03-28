@@ -23,6 +23,8 @@
 
 namespace chaos
 {
+	class VulkanDevice;
+	class VulkanBuffer;
 
 	/// <summary>
 	/// <para>Aligns a pointer to the specified number of bytes</para>
@@ -67,6 +69,27 @@ namespace chaos
 		virtual ~Allocator() = default;
 		virtual void* FastaMalloc(size_t capacity) = 0;
 		virtual void FastFree(void* buffer) = 0;
+	};
+
+	// now is staging buffer
+	class CHAOS_API VulkanAllocator
+	{
+	public:
+		VulkanAllocator(const VulkanDevice* vkdev);
+
+		virtual VulkanBuffer* FastMalloc(size_t capacity);
+		virtual void FastFree(VulkanBuffer* buffer);
+
+		const VulkanDevice* vkdev;
+
+		//uint32 memory_type_index = -1;
+
+		bool mappable = false;
+		bool coherent = false;
+
+	protected:
+		void* CreateBuffer(size_t size, uint32 usage);
+		void* AllocateMemory(size_t size, uint32 memory_type_index);
 	};
 
 	//class VulkanDevice;

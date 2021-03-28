@@ -15,6 +15,20 @@ namespace chaos
 		};
 	}
 
+	std::string UnicodeToUTF8(const std::wstring& unicode)
+	{
+		int len = WideCharToMultiByte(CP_UTF8, 0, unicode.data(), -1, NULL, 0, NULL, NULL);
+		std::string utf8;
+		utf8.resize(len+1);
+		WideCharToMultiByte(CP_UTF8, 0, unicode.data(), -1, utf8.data(), len, NULL, NULL);
+		return utf8;
+
+	}
+	std::wstring UTF8ToUnicode(const std::string& utf8)
+	{
+		return std::wstring();
+	}
+
 	int chaos_vsnwprintf(wchar_t* buf, int len, const wchar_t* fmt, va_list args)
 	{
 		if (len <= 0) return len == 0 ? 1024 : -1;
