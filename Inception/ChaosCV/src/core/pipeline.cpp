@@ -5,10 +5,13 @@ namespace chaos
 	Pipeline::Pipeline(const VulkanDevice* vkdev) : vkdev(vkdev) {}
 	Pipeline::~Pipeline()
 	{
-
+		//vkDestroyDescriptorPool(vkdev->GetDevice(), descriptor_pool, nullptr);
+		//vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptorset_layout, nullptr);
+		vkDestroyPipeline(vkdev->GetDevice(), pipeline, nullptr);
+		vkDestroyPipelineLayout(vkdev->GetDevice(), pipeline_layout, nullptr);
 	}
 
-	void Pipeline::CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types)
+	/*void Pipeline::CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types)
 	{
 		if (binding_count == 0)
 		{
@@ -17,7 +20,7 @@ namespace chaos
 		}
 
 		std::vector<VkDescriptorSetLayoutBinding> descriptorset_layout_bindings(binding_count);
-		for (int i = 0; i < binding_count; i++)
+		for (uint32 i = 0; i < binding_count; i++)
 		{
 			descriptorset_layout_bindings[i].binding = i;
 			descriptorset_layout_bindings[i].descriptorCount = 1;
@@ -33,16 +36,16 @@ namespace chaos
 
 		VkResult ret = vkCreateDescriptorSetLayout(vkdev->GetDevice(), &layout_info, nullptr, &descriptorset_layout);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorSetLayout failed " << ret;
-	}
+	}*/
 	void Pipeline::CreatePipelineLayout()
 	{
 		VkPipelineLayoutCreateInfo pipeline_layout_info{};
 		pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		if (descriptorset_layout)
-		{
-			pipeline_layout_info.setLayoutCount = 1;
-			pipeline_layout_info.pSetLayouts = &descriptorset_layout;
-		}
+		//if (descriptorset_layout)
+		//{
+		//	pipeline_layout_info.setLayoutCount = 1;
+		//	pipeline_layout_info.pSetLayouts = &descriptorset_layout;
+		//}
 		//pipeline_layout_info.pushConstantRangeCount = 0;
 
 		VkResult ret = vkCreatePipelineLayout(vkdev->GetDevice(), &pipeline_layout_info, nullptr, &pipeline_layout);
@@ -69,12 +72,18 @@ namespace chaos
 	}
 	GraphicsPipeline::~GraphicsPipeline()
 	{
+		vkDestroyShaderModule(vkdev->GetDevice(), vert, nullptr);
+		vkDestroyShaderModule(vkdev->GetDevice(), frag, nullptr);
+
+		vkDestroyRenderPass(vkdev->GetDevice(), render_pass, nullptr);
+
+		
 	}
 
-	void GraphicsPipeline::CreateRenderPass(const VkFormat& format)
+	void GraphicsPipeline::CreateRenderPass(VkFormat format)
 	{
 		VkAttachmentDescription color_attachment{};
-		color_attachment.format = format;
+		color_attachment.format = (VkFormat)format;
 		color_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -104,17 +113,17 @@ namespace chaos
 	}
 
 	void GraphicsPipeline::Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-		const VkFormat& format, const VkExtent2D& extent, const VkPolygonMode& polygon_mode)
+		VkFormat format, uint32 width, uint32 height, VkPolygonMode polygon_mode)
 	{
 		// create shader module 
 		vert = CompileShaderModule(vert_data, vert_size);
 		frag = CompileShaderModule(frag_data, frag_size);
 
+		// create descriptorset layout
+		//CreateDescriptorSetLayout(1, &shader_stage_flag, &descriptor_type);
+
 		// create render pass
 		CreateRenderPass(format);
-		
-		// create descriptorset layout
-		CreateDescriptorSetLayout(1, &shader_stage_flag, &descriptor_type);
 
 		// create pipeline layout
 		CreatePipelineLayout();
@@ -160,20 +169,21 @@ namespace chaos
 
 		VkPipelineInputAssemblyStateCreateInfo input_assembly{};
 		input_assembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		input_assembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; //VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		input_assembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST; // VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; //VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		input_assembly.primitiveRestartEnable = VK_FALSE;
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = (float)extent.width;
-		viewport.height = (float)extent.height;
+		viewport.width = (float)width;
+		viewport.height = (float)height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
-		scissor.extent = extent;
+		scissor.extent.width = width; // extent;
+		scissor.extent.height = height;
 
 		VkPipelineViewportStateCreateInfo viewport_state{};
 		viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -189,7 +199,7 @@ namespace chaos
 		rasterizer.polygonMode = polygon_mode; // VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
 		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; //VK_FRONT_FACE_CLOCKWISE;
+		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE; // VK_FRONT_FACE_COUNTER_CLOCKWISE; //VK_FRONT_FACE_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 
 		VkPipelineMultisampleStateCreateInfo multisampling{};

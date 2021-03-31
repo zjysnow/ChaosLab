@@ -13,7 +13,7 @@ namespace chaos
 		Tensor() = default;
 		~Tensor() { Release(); }
 
-		Tensor(const Shape& shape, const DataType& dtype, const Packing& packing, Allocator* allocator = nullptr);
+		Tensor(const Shape& shape, const DataType& dtype = DataType::D4, const Packing& packing = Packing::CHW, Allocator* allocator = nullptr);
 		Tensor(const Shape& shape, const DataType& dtype, const Packing& packing, void* data, const Steps& steps = Steps());
 
 		Tensor(const Tensor& tensor);

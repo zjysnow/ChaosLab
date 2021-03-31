@@ -2,6 +2,7 @@
 
 #include "core/core.hpp"
 #include "core/gpu.hpp"
+#include "core/buffer.hpp"
 #include "core/tensor.hpp"
 
 namespace chaos
@@ -25,18 +26,18 @@ namespace chaos
 	{
 	public:
 		GraphicsCommand(const VulkanDevice* vkdev);
-		
+		~GraphicsCommand();
+
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, VulkanAllocator* allocator);
 
 		//void CreateSyncObjects(size_t count);
 		void Init(size_t buffers_count);
+		void FreeCommandBuffers();
 
-		void RecordPipeline(const GraphicsPipeline* pipeline, const std::vector<VkFramebuffer>& frame_buffers, 
-			const VkExtent2D& extent, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
-		void Present();
+		void RecordPipeline(const GraphicsPipeline* pipeline, uint32 buffers_count, VkFramebuffer* frame_buffers, 
+			uint32 width, uint32 height, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
+		void Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index);
 	protected:
-		using Command::vkdev;
-
 		std::vector<VkCommandBuffer> command_buffers;
 
 		std::vector<VkSemaphore> image_available_semaphores;
@@ -44,22 +45,10 @@ namespace chaos
 		std::vector<VkFence> in_flight_fences;
 		std::vector<VkFence> images_in_flight;
 
-		VkDescriptorPool descriptor_pool;
-		std::vector<VkDescriptorSet> descriptorsets;
+		//VkDescriptorPool descriptor_pool;
+		//std::vector<VkDescriptorSet> descriptorsets;
 
 		size_t current_frame = 0;
 	};
 
-	class CHAOS_API TransferCommand : public Command
-	{
-	public:
-		TransferCommand(const VulkanDevice* vkdev);
-
-		void RecordUpload();
-
-	protected:
-		VkCommandBuffer transfer_command_buffer;
-
-		VkFence upload_command_fence;
-	};
 }

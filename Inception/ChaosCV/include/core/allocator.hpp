@@ -71,44 +71,35 @@ namespace chaos
 		virtual void FastFree(void* buffer) = 0;
 	};
 
-	// now is staging buffer
+
 	class CHAOS_API VulkanAllocator
 	{
 	public:
 		VulkanAllocator(const VulkanDevice* vkdev);
+		virtual ~VulkanAllocator() { Clear(); }
 
 		virtual VulkanBuffer* FastMalloc(size_t capacity);
 		virtual void FastFree(VulkanBuffer* buffer);
 
+		virtual void Clear() {}
+
 		const VulkanDevice* vkdev;
 
-		//uint32 memory_type_index = -1;
-
+		uint32 memory_type_index = -1;
 		bool mappable = false;
 		bool coherent = false;
-
 	protected:
 		void* CreateBuffer(size_t size, uint32 usage);
 		void* AllocateMemory(size_t size, uint32 memory_type_index);
 	};
 
-	//class VulkanDevice;
-	//class CHAOS_API VulkanAllocator
-	//{
-	//public:
-	//	VulkanAllocator(const VulkanDevice* vkdev);
-	//	virtual ~VulkanAllocator();
-	//	virtual VulkanBuffer FastMalloc(size_t capacity) = 0;
-	//	virtual void FastFree(VulkanBuffer* buffer) = 0;
+	class CHAOS_API VulkanStagingAllocator : public VulkanAllocator
+	{
+	public:
+		VulkanStagingAllocator(const VulkanDevice* vkdev);
 
-	//	const VulkanDevice* vkdev;
+		virtual VulkanBuffer* FastMalloc(size_t capacity) override;
+	};
 
-	//	bool mappable;
-	//	bool coherent;
-
-	//protected:
-	//	//void* CreateBuffer(size_t size, uint32 usage);
-	//	//void* AllocateMemory(size_t size, uint32 memory_type_index);
-	//};
-
+	
 }

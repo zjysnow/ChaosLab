@@ -150,7 +150,7 @@ namespace chaos
 
 		VkDeviceMemory memory;
 
-		void* mapped_data;
+		void* mapped_data = nullptr;
 		int ref_cnt;
 	};
 }

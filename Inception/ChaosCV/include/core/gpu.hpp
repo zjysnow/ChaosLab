@@ -54,6 +54,7 @@ namespace chaos
 		int type;
 
 		// hardware limit
+
 		size_t memory_map_alignment;
 		size_t buffer_offset_alignment;
 		size_t buffer_image_granularity;
@@ -90,13 +91,14 @@ namespace chaos
 
 		VkDevice GetDevice() const noexcept { return device; }
 
-		//PipelineCache* GetPipelineCache() const noexcept;
 
 		// device extensions
 		PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR; // create swap chain
 		PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR; // destroy swap chain
 
 		uint32 FindMemoryTypeIndex(uint32 memory_type_bits, const VkFlags& required, const VkFlags& preferred, const VkFlags& preferred_not) const;
+		bool IsMemoryMappable(uint32 memory_type_index) const;
+		bool IsMemoryCoherent(uint32 memory_type_index) const;
 
 		VkQueue AcquireQueue(uint32 queue_family_index) const;
 		void ReclaimQueue(uint32 queue_family_index, VkQueue queue) const;

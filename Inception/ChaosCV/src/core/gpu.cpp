@@ -428,6 +428,9 @@ namespace chaos
 		if (info.support_VK_KHR_swapchain)
 			enabled_extensions.push_back("VK_KHR_swapchain");
 
+		VkPhysicalDeviceFeatures device_features{};
+		device_features.fillModeNonSolid = true;
+
 		std::vector<float> compute_queue_priorities(info.compute_queue_count, 1.f);
 		std::vector<float> graphics_queue_priorities(info.graphics_queue_count, 1.f);
 		std::vector<float> transfer_queue_priorities(info.transfer_queue_count, 1.f);
@@ -483,7 +486,7 @@ namespace chaos
 		//device_create_info.ppEnabledLayerNames = NULL;
 		device_create_info.enabledExtensionCount = (uint32_t)enabled_extensions.size();
 		device_create_info.ppEnabledExtensionNames = enabled_extensions.data();
-		//device_create_info.pEnabledFeatures = NULL;
+		device_create_info.pEnabledFeatures = &device_features;
 
 		VkResult ret = vkCreateDevice(info.physical_device, &device_create_info, 0, &device);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDevice failed " << ret;
@@ -491,8 +494,27 @@ namespace chaos
 		// init device extension
 		InitDeviceExtension();
 
-		// why cache pipeline
-		//pipeline_cache = new PipelineCache(this);
+		compute_queues.resize(info.compute_queue_count);
+		for (uint32_t i = 0; i < info.compute_queue_count; i++)
+		{
+			vkGetDeviceQueue(device, info.compute_queue_family_index, i, &compute_queues[i]);
+		}
+		if (info.compute_queue_family_index != info.graphics_queue_family_index)
+		{
+			graphics_queues.resize(info.graphics_queue_count);
+			for (uint32_t i = 0; i < info.graphics_queue_count; i++)
+			{
+				vkGetDeviceQueue(device, info.graphics_queue_family_index, i, &graphics_queues[i]);
+			}
+		}
+		if (info.compute_queue_family_index != info.transfer_queue_family_index && info.graphics_queue_family_index != info.transfer_queue_family_index)
+		{
+			transfer_queues.resize(info.transfer_queue_count);
+			for (uint32_t i = 0; i < info.transfer_queue_count; i++)
+			{
+				vkGetDeviceQueue(device, info.transfer_queue_family_index, i, &transfer_queues[i]);
+			}
+		}
 	}
 
 	VulkanDevice::~VulkanDevice()
@@ -571,6 +593,17 @@ namespace chaos
 		return -1;
 	}
 
+	bool VulkanDevice::IsMemoryMappable(uint32 memory_type_index) const
+	{
+		const VkMemoryType& memory_type = info.physical_device_memory_properties.memoryTypes[memory_type_index];
+		return memory_type.propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+	}
+	bool VulkanDevice::IsMemoryCoherent(uint32 memory_type_index) const
+	{
+		const VkMemoryType& memory_type = info.physical_device_memory_properties.memoryTypes[memory_type_index];
+		return memory_type.propertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
+
 	VkQueue VulkanDevice::AcquireQueue(uint32 queue_family_index) const
 	{
 		if (queue_family_index != info.compute_queue_family_index
@@ -638,11 +671,4 @@ namespace chaos
 
 		return g_devices[device_index];
 	}
-
-	
-	
-	//PipelineCache* VulkanDevice::GetPipelineCache() const noexcept
-	//{
-	//	return pipeline_cache;
-	//}
 }

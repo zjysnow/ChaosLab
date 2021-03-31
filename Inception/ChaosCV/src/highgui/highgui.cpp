@@ -1,11 +1,8 @@
 #include "highgui/highgui.hpp"
 
-#include <Windows.h>
-#include <vulkan/vulkan_win32.h>
-
 namespace chaos
 {
-	static VulkanInstance& g_instance = VulkanInstance::GetInstance();
+
 
 	//class VulkanWindowImpl : public VulkanWindow
 	//{
