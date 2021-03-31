@@ -6,10 +6,12 @@ namespace chaos
 
 	void LUP::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
+		CHECK_EQ(1, bottom_blobs.size()) << "layer '" << type << "' expect 1 input but got " << bottom_blobs.size();
 		const Tensor& A = bottom_blobs[0];
-		//const Tensor& y = bottom_blobs[1];
 
-		CHECK_EQ(A.shape[0], A.shape[1]) << "A should be a square matrix";
+		CHECK_EQ(2, A.shape.dims) << "input A should be a matrix";
+		CHECK_EQ(A.shape[0], A.shape[1]) << "input A should be a square matrix";
+		CHECK_EQ(3, top_blobs.size()) << "layer '" << type << "' expect 3 outputs but got " << top_blobs.size();
 
 		Tensor& L = top_blobs[0];
 		Tensor& U = top_blobs[1];

@@ -87,7 +87,7 @@ namespace chaos
 			Tensor indices_data = Tensor(Shape((uint32)ind.size()), DataType::D2, Packing::CHW, (void*)ind.data());
 
 			uniform.resize(buffers_count);
-			for (int i = 0; i < buffers_count; i++)
+			for (uint32 i = 0; i < buffers_count; i++)
 			{
 				uniform[i] = VulkanTensor(Shape(4u * 4u * 3), DataType::D4, Packing::CHW, staging_allocator);
 			}

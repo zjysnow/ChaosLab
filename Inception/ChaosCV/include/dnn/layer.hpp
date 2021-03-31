@@ -12,8 +12,8 @@ namespace chaos
 	public:
 		Layer(const std::wstring& type);
 
-		//virtual void Forward(const Tensor& bottom, Tensor& top, const Option& opt = Option()) const;
-		//virtual void Forward(Tensor& bottom_top, const Option& opt = Option()) const;
+		virtual void Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt = Option()) const;
+		virtual void Forward(Tensor& bottom_top_blob, const Option& opt = Option()) const;
 
 		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const;
 		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const;
