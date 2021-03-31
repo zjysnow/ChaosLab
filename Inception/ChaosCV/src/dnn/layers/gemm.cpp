@@ -8,7 +8,7 @@ namespace chaos
 	{
 		const Tensor& A = bottom_blobs[0];
 		const Tensor& B = bottom_blobs[1];
-		//const Tensor& C = bottom_blobs[2];
+		//const Tensor& C = bottom_blobs.size() > 2 ? bottom_blobs[2] : Tensor();
 
 		CHECK_EQ(2, A.shape.dims);
 		CHECK_EQ(2, B.shape.dims);

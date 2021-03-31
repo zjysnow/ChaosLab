@@ -26,14 +26,23 @@ namespace chaos
 		VulkanPainterImpl(const File& vert, const File& frag, const VulkanDevice* vkdev)
 		{
 			auto Read = [](const File& file) {
-				std::fstream fs((std::string)file, std::ios::in | std::ios::binary | std::ios::ate);
+
+				std::wfstream fs(file, std::ios::in | std::ios::binary | std::ios::ate);
 				CHECK(fs.is_open()) << "can't not open file " << file.name();
 				size_t file_size = fs.tellg();
-				std::vector<uint32> buffer(file_size / sizeof(uint32));
+				AutoBuffer<uint16> buffer(file_size);
 				fs.seekg(0);
-				fs.read((char*)buffer.data(), file_size);
+				fs.read((wchar_t*)buffer.data(), file_size);
 				fs.close();
-				return buffer;
+
+				std::vector<uint32> spv(file_size / sizeof(uint32));
+				// convert int16 to int8
+				uint8* data = (uint8*)spv.data();
+				for (size_t i = 0; i < file_size; i++)
+				{
+					data[i] = (uint8)buffer[i];
+				}
+				return spv;
 			};
 
 			vert_spv = Read(vert);

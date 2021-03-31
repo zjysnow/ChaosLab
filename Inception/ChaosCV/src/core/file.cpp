@@ -45,26 +45,26 @@ namespace chaos
 		return wstream << file.buf;
 	}
 
-	std::ostream& operator<<(std::ostream& stream, const File& file)
-	{
-		return stream << (std::string)file;
-	}
+	//std::ostream& operator<<(std::ostream& stream, const File& file)
+	//{
+	//	return stream << (std::string)file;
+	//}
 }
 
 #ifdef _WIN32
 #include <io.h>
 #include <Windows.h>
 
-chaos::File::operator std::string() const
-{
-	std::string file;
-	int len = WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, NULL, 0, NULL, NULL);
-	file.resize(len);
-
-	WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, file.data(), len, NULL, NULL);
-
-	return file;
-}
+//chaos::File::operator std::string() const
+//{
+//	std::string file;
+//	int len = WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, NULL, 0, NULL, NULL);
+//	file.resize(len);
+//
+//	WideCharToMultiByte(CP_ACP, 0, buf.data(), -1, file.data(), len, NULL, NULL);
+//
+//	return file;
+//}
 
 
 void chaos::GetFileList(const std::wstring& folder, chaos::FileList& list, const std::wstring& types)
