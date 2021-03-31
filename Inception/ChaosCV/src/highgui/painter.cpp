@@ -63,7 +63,7 @@ namespace chaos
 		void CreatePipeline(int format) final
 		{
 			pipeline->Create(vert_spv.data(), vert_spv.size() * sizeof(uint32), frag_spv.data(), frag_spv.size() * sizeof(uint32), 
-				(VkFormat)format, width, height, (VkPolygonMode)polygon_mode);
+				(VkFormat)format, width, height, (VkPolygonMode)polygon_mode, (VkFrontFace)front_face, (VkPrimitiveTopology)topoloty);
 		}
 
 		void Draw(const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& ind) final

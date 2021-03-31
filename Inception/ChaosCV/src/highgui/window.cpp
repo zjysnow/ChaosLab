@@ -273,16 +273,16 @@ namespace chaos
 			{
 				VkImageView attachments[] = { image_views[i] };
 
-				VkFramebufferCreateInfo framebufferInfo{};
-				framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-				framebufferInfo.renderPass = painter->pipeline->render_pass;
-				framebufferInfo.attachmentCount = 1;
-				framebufferInfo.pAttachments = attachments;
-				framebufferInfo.width = extent.width;
-				framebufferInfo.height = extent.height;
-				framebufferInfo.layers = 1;
+				VkFramebufferCreateInfo framebuffer_info{};
+				framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+				framebuffer_info.renderPass = painter->pipeline->render_pass;
+				framebuffer_info.attachmentCount = 1;
+				framebuffer_info.pAttachments = attachments;
+				framebuffer_info.width = extent.width;
+				framebuffer_info.height = extent.height;
+				framebuffer_info.layers = 1;
 
-				VkResult ret = vkCreateFramebuffer(vkdev->GetDevice(), &framebufferInfo, nullptr, &frame_buffers[i]);
+				VkResult ret = vkCreateFramebuffer(vkdev->GetDevice(), &framebuffer_info, nullptr, &frame_buffers[i]);
 				CHECK_EQ(VK_SUCCESS, ret) << "vkCreateFramebuffer failed " << ret;
 			}
 			

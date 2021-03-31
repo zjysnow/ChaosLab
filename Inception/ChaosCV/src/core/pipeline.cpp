@@ -113,7 +113,7 @@ namespace chaos
 	}
 
 	void GraphicsPipeline::Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-		VkFormat format, uint32 width, uint32 height, VkPolygonMode polygon_mode)
+		VkFormat format, uint32 width, uint32 height, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty)
 	{
 		// create shader module 
 		vert = CompileShaderModule(vert_data, vert_size);
@@ -169,7 +169,7 @@ namespace chaos
 
 		VkPipelineInputAssemblyStateCreateInfo input_assembly{};
 		input_assembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		input_assembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST; // VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; //VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		input_assembly.topology = topoloty; // VK_PRIMITIVE_TOPOLOGY_LINE_LIST; // VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; //VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		input_assembly.primitiveRestartEnable = VK_FALSE;
 
 		VkViewport viewport{};
@@ -199,7 +199,7 @@ namespace chaos
 		rasterizer.polygonMode = polygon_mode; // VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
 		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE; // VK_FRONT_FACE_COUNTER_CLOCKWISE; //VK_FRONT_FACE_CLOCKWISE;
+		rasterizer.frontFace = front_face; //VK_FRONT_FACE_CLOCKWISE; // VK_FRONT_FACE_COUNTER_CLOCKWISE; //VK_FRONT_FACE_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 
 		VkPipelineMultisampleStateCreateInfo multisampling{};

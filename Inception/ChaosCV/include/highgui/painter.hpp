@@ -9,7 +9,9 @@ namespace chaos
 	// cmd.RecordPipeline
 	enum FrontFace
 	{
-
+		FRONT_FACE_COUNTER_CLOCKWISE = 0,
+		FRONT_FACE_CLOCKWISE = 1,
+		FRONT_FACE_MAX_ENUM = 0x7FFFFFFF
 	};
 
 	enum PolygonMode
@@ -19,6 +21,21 @@ namespace chaos
 		POLYGON_MODE_POINT = 2,
 		POLYGON_MODE_FILL_RECTANGLE_NV = 1000153000,
 		POLYGON_MODE_MAX_ENUM = 0x7FFFFFFF
+	};
+
+	enum PrimitiveTopology {
+		PRIMITIVE_TOPOLOGY_POINT_LIST = 0,
+		PRIMITIVE_TOPOLOGY_LINE_LIST = 1,
+		PRIMITIVE_TOPOLOGY_LINE_STRIP = 2,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_LIST = 3,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP = 4,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_FAN = 5,
+		PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY = 6,
+		PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY = 7,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY = 8,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY = 9,
+		PRIMITIVE_TOPOLOGY_PATCH_LIST = 10,
+		PRIMITIVE_TOPOLOGY_MAX_ENUM = 0x7FFFFFFF
 	};
 
 	class GraphicsCommand;
@@ -34,8 +51,9 @@ namespace chaos
 
 		static Ptr<VulkanPainter> Create(const File& vert, const File& frag, uint32 device_index = GetDefaultGPUIndex());
 
-		int front_face;
-		int polygon_mode;
+		int front_face = FRONT_FACE_CLOCKWISE; // see enum FrontFace
+		int polygon_mode = POLYGON_MODE_LINE; // see enum PolygonMode
+		int topoloty = PRIMITIVE_TOPOLOGY_LINE_LIST; // see enum PrimitiveTopology
 
 	protected:
 		virtual void CreatePipeline(int format) = 0;
@@ -51,8 +69,6 @@ namespace chaos
 
 		uint32 buffers_count;
 		void* frame_buffers;
-
-		
 
 		VulkanAllocator* allocator;
 		VulkanAllocator* staging_allocator;
