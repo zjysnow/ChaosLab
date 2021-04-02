@@ -97,6 +97,8 @@ namespace chaos
 		Steps(const Steps& steps);
 		Steps& operator=(const Steps& steps);
 
+		void Insert(size_t pos, size_t cnt, uint32 val);
+
 		uint32& operator[](size_t idx) noexcept { return data[idx]; }
 		const uint32& operator[](size_t idx) const noexcept { return data[idx]; }
 
@@ -129,6 +131,8 @@ namespace chaos
 
 		Shape(const Shape& shape);
 		Shape& operator=(const Shape& shape);
+
+		void Insert(size_t pos, size_t cnt, uint32 val);
 
 		Steps steps() const;
 

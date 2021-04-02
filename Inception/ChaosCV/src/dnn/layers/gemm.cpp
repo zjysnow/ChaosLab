@@ -22,10 +22,10 @@ namespace chaos
 
 		CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expect 1 output but got " << top_blobs.size();
 		Tensor& C = top_blobs[0];
-		C.Create(Shape(m, k), /*steps=*/{ k, 1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
+		if (C.empty()) C.Create(Shape(m, k), Steps{ k, 1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
 		if (bottom_blobs.size() == 2)
 		{
-			memset(C.data, 0, sizeof(float) * m * k);
+			memset(C.data, 0, sizeof(float) * C.total());
 		}
 		else
 		{
@@ -36,7 +36,7 @@ namespace chaos
 
 		uint32 astep = A.steps[0];
 		uint32 bstep = B.steps[0];
-
+		uint32 cstep = C.steps[0];
 		for (size_t r = 0; r < m; r++)
 		{
 			for (size_t c = 0; c < k; c++)
@@ -47,7 +47,7 @@ namespace chaos
 				C[r * k + c] *= beta;
 				for (size_t i = 0; i < n; i++)
 				{
-					C[r * k + c] += (alpha * row[i] * col[i * bstep]);
+					C[r * cstep + c] += (alpha * row[i] * col[i * bstep]);
 				}
 			}
 		}

@@ -99,6 +99,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp">
       <Filter>include\highgui</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\dot.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\cross.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -148,6 +157,15 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp">
       <Filter>src\highgui</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\dot.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\cross.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp">
+      <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

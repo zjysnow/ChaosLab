@@ -7,6 +7,8 @@
 
 namespace chaos
 {
+	// Layer always create top_blob
+	// so if top_blob is already allocated, maybe re-create for new
 	class CHAOS_API Layer
 	{
 	public:

@@ -40,6 +40,28 @@ namespace chaos
 		return *this;
 	}
 
+	void Steps::Insert(size_t pos, size_t cnt, uint32 val)
+	{
+		CHECK_LT(pos, size) << "out of range.";
+
+		size += cnt;
+		size_t capacity = AlignSize(size * sizeof(uint32), 4);
+		uint32* ndata = (uint32*)FastMalloc(capacity);
+		// copy data
+		for (size_t i = 0; i < (size - cnt); i++)
+		{
+			if (i < pos) ndata[i] = data[i];
+			if (i >= pos) ndata[i + cnt] = data[i];
+		}
+		// insert new data
+		for (size_t i = 0; i < cnt; i++)
+		{
+			ndata[pos + i] = val;
+		}
+		if (data) FastFree(data);
+		data = ndata;
+	}
+
 	bool operator==(const Steps& lhs, const Steps& rhs)
 	{
 		if (lhs.size != rhs.size) return false;
@@ -103,6 +125,28 @@ namespace chaos
 		}
 
 		return *this;
+	}
+
+	void Shape::Insert(size_t pos, size_t cnt, uint32 val)
+	{
+		CHECK_LT(pos, dims) << "out of range.";
+
+		dims += cnt;
+		size_t capacity = AlignSize(dims * sizeof(uint32), 4);
+		uint32* ndata = (uint32*)FastMalloc(capacity);
+		// copy data
+		for (size_t i = 0; i < (dims - cnt); i++)
+		{
+			if (i < pos) ndata[i] = data[i];
+			if (i >= pos) ndata[i + cnt] = data[i];
+		}
+		// insert new data
+		for (size_t i = 0; i < cnt; i++)
+		{
+			ndata[pos + i] = val;
+		}
+		if (data) FastFree(data);
+		data = ndata;
 	}
 
 	Steps Shape::steps() const
