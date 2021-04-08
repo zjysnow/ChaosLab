@@ -22,36 +22,37 @@ namespace chaos
         inline float operator()(const float& x, const float& y) const { return x / y; }
     };
 
+    struct BinaryMax
+    {
+        inline float operator()(const float& x, const float& y) const { return std::max(x, y); }
+    };
+
+    struct BinaryMin
+    {
+        inline float operator()(const float& x, const float& y) const { return std::min(x, y); }
+    };
+
     template<typename Op>
     static inline void Operator(const Tensor& a, const Tensor& b, Tensor& c)
     {
         //Op op;
         Op op;
-
-        if (a.shape == b.shape and a.total() == a.shape.total() and b.total() == b.shape.total() and c.total() == c.shape.total())
+        size_t dims = c.shape.dims;
+        for (size_t i = 0; i < c.shape.total(); i++)
         {
-            for (size_t i = 0; i < c.total(); i++)
+            size_t a_idx = 0;
+            size_t b_idx = 0;
+            size_t c_idx = 0;
+            size_t idx = i;
+            for (size_t d = 0; d < dims; d++)
             {
-                c[i] = op(a[i], b[i]);
+                size_t k = idx % c.shape[dims - d - 1];
+                a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
+                b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
+                c_idx += k * c.steps[dims - d - 1];
+                idx /= c.shape[dims - d - 1];
             }
-        }
-        else
-        {
-            size_t dims = c.shape.dims;
-            for (size_t i = 0; i < c.total(); i++)
-            {
-                size_t a_idx = 0;
-                size_t b_idx = 0;
-                size_t idx = i;
-                for (size_t d = 0; d < dims; d++)
-                {
-                    size_t k = idx % c.shape[dims - d - 1];
-                    a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
-                    b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
-                    idx /= c.shape[dims - d - 1];
-                }
-                c[i] = op(a[a_idx], b[b_idx]);
-            }
+            c[c_idx] = op(a[a_idx], b[b_idx]);
         }
     }
 

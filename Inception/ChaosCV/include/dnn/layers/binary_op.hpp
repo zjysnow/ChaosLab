@@ -14,6 +14,8 @@ namespace chaos
 			SUB,
 			MUL,
 			DIV,
+			MAX,
+			MIN
 		};
 
 		BinaryOp();

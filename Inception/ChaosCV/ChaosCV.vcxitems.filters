@@ -108,6 +108,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
