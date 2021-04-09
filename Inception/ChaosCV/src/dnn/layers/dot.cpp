@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	Dot::Dot() : Layer(L"Dot") {}
+	Dot::Dot() : Layer("Dot") {}
 
 	void Dot::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{

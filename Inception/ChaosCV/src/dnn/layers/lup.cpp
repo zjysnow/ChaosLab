@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	LUP::LUP() : Decomp(L"LUP") {}
+	LUP::LUP() : Decomp("LUP") {}
 
 	void LUP::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{

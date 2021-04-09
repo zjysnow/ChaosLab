@@ -5,7 +5,7 @@
 
 namespace chaos
 {
-	std::wostream& operator<<(std::wostream& wstream, const LogSeverity& severity)
+	std::ostream& operator<<(std::ostream& wstream, const LogSeverity& severity)
 	{
 		switch (severity)
 		{
@@ -22,7 +22,7 @@ namespace chaos
 		}
 	}
 
-	LogMessage::LogMessage(const wchar_t* file, int line, const LogSeverity& severity) : severity(severity)
+	LogMessage::LogMessage(const char* file, int line, const LogSeverity& severity) : severity(severity)
 	{
 		File file_ = file;
 
@@ -32,7 +32,7 @@ namespace chaos
 		localtime_s(&time, &time_stamp);
 
 		message_data << "[" << severity 
-			<< Format(L" %04d-%02d-%02d %02d:%02d:%02d ", time.tm_year + 1990, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec) 
+			<< Format(" %04d-%02d-%02d %02d:%02d:%02d ", time.tm_year + 1990, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec) 
 			<< file_.name() << "." << file_.type() << ":" << line << "] ";;
 	}
 
@@ -45,7 +45,7 @@ namespace chaos
 		}
 	}
 
-	std::wostream& chaos::LogMessage::wstream()
+	std::ostream& chaos::LogMessage::stream()
 	{
 		return message_data;
 	}
@@ -55,7 +55,7 @@ namespace chaos
 		static std::mutex mtx;
 		std::lock_guard lock(mtx);
 
-		std::wstring message = message_data.str();
-		std::wcout << message << std::endl;
+		std::string message = message_data.str();
+		std::cout << message << std::endl;
 	}
 }

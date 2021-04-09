@@ -12,7 +12,7 @@ namespace chaos
 	class CHAOS_API Layer
 	{
 	public:
-		Layer(const std::wstring& type);
+		Layer(const std::string& type);
 
 		virtual void Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt = Option()) const;
 		virtual void Forward(Tensor& bottom_top_blob, const Option& opt = Option()) const;
@@ -20,7 +20,7 @@ namespace chaos
 		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const;
 		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const;
 
-		const std::wstring type;
+		const std::string type;
 
 		bool support_inplace;
 		bool support_vulkan;

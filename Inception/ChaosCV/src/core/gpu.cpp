@@ -589,7 +589,7 @@ namespace chaos
 				}
 			}
 		}
-		LOG(FATAL) << Format(L"no such memory type %u %u %u %u", memory_type_bits, required, preferred, preferred_not);
+		LOG(FATAL) << Format("no such memory type %u %u %u %u", memory_type_bits, required, preferred, preferred_not);
 		return -1;
 	}
 
@@ -610,7 +610,7 @@ namespace chaos
 			&& queue_family_index != info.graphics_queue_family_index
 			&& queue_family_index != info.transfer_queue_family_index)
 		{
-			LOG(FATAL) << Format(L"invalid queue_family_index %u", queue_family_index);
+			LOG(FATAL) << Format("invalid queue_family_index %u", queue_family_index);
 			return nullptr;
 		}
 
@@ -627,7 +627,7 @@ namespace chaos
 				return queue;
 			}
 		}
-		LOG(FATAL) << Format(L"out of hardware queue %u", queue_family_index);
+		LOG(FATAL) << Format("out of hardware queue %u", queue_family_index);
 		return nullptr;
 	}
 	void VulkanDevice::ReclaimQueue(uint32 queue_family_index, VkQueue queue) const
@@ -636,7 +636,7 @@ namespace chaos
 			&& queue_family_index != info.graphics_queue_family_index
 			&& queue_family_index != info.transfer_queue_family_index)
 		{
-			LOG(FATAL) << Format(L"invalid queue_family_index %u", queue_family_index);
+			LOG(FATAL) << Format("invalid queue_family_index %u", queue_family_index);
 			return;
 		}
 
@@ -653,7 +653,7 @@ namespace chaos
 			}
 		}
 
-		LOG(FATAL) << Format(L"reclaim_queue get wild queue %u %p", queue_family_index, queue);
+		LOG(FATAL) << Format("reclaim_queue get wild queue %u %p", queue_family_index, queue);
 	}
 
 	VulkanDevice* GetGPUDevice(int device_index)

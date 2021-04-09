@@ -56,7 +56,7 @@ namespace chaos
         }
     }
 
-	BinaryOp::BinaryOp() : Layer(L"BinaryOp") {}
+	BinaryOp::BinaryOp() : Layer("BinaryOp") {}
 
 	void BinaryOp::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{

@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	Cross::Cross() : Layer(L"Cross") {}
+	Cross::Cross() : Layer("Cross") {}
 
 	void Cross::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{

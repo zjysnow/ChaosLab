@@ -9,7 +9,7 @@
 namespace chaos
 {
 	/// <summary>Split the wstring data by delimiter</summary>
-	CHAOS_API std::vector<std::wstring> Split(const std::wstring& data, const std::wstring& delimiter);
+	CHAOS_API std::vector<std::string> Split(const std::string& data, const std::string& delimiter);
 
 	/// <summary>
 	/// <para>Returns a text wstring formatted using the printf-like expression</para>
@@ -17,5 +17,5 @@ namespace chaos
 	/// <para>message in the Exception constructor.</para>
 	/// </summary>
 	/// <param name="fmt">printf-compatible formatting specifiers.</param>
-	CHAOS_API std::wstring Format(const wchar_t* fmt, ...);
+	CHAOS_API std::string Format(const char* fmt, ...);
 }

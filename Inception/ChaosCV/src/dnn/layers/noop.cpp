@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	Noop::Noop() : Layer(L"Noop")
+	Noop::Noop() : Layer("Noop")
 	{
 		support_inplace = true;
 	}

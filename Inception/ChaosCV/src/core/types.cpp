@@ -175,12 +175,12 @@ namespace chaos
 		return true;
 	}
 
-	std::wostream& operator<<(std::wostream& stream, const Shape& shape)
+	std::ostream& operator<<(std::ostream& stream, const Shape& shape)
 	{
 		stream << "[";
 		for (size_t i = 0; i < shape.dims; i++)
 		{
-			stream << Format(L",%d" + !i, shape[i]);
+			stream << Format(",%d" + !i, shape[i]);
 		}
 		return stream << "]";
 	}

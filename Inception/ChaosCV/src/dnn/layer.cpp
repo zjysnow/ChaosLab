@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	Layer::Layer(const std::wstring& type) : type(type) 
+	Layer::Layer(const std::string& type) : type(type) 
 	{
 		support_inplace = false;
 		support_vulkan = false;

@@ -9,14 +9,14 @@ namespace chaos
 	class CHAOS_API LogMessage
 	{
 	public:
-		LogMessage(const wchar_t* file, int line, const LogSeverity& severity);
+		LogMessage(const char* file, int line, const LogSeverity& severity);
 		~LogMessage();
 
-		std::wostream& wstream();
+		std::ostream& stream();
 	private:
 		void Flush();
 
-		std::wstringstream message_data;
+		std::stringstream message_data;
 		LogSeverity severity;
 	};
 
@@ -27,6 +27,6 @@ namespace chaos
 		
 		// This has to be an operator with a precedence lower than << but
 		// higher than ?:
-		void operator&(std::wostream&) {}
+		void operator&(std::ostream&) {}
 	};
 }

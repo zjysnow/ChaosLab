@@ -142,7 +142,7 @@ namespace chaos
 		size_t total() const;
 
 		CHAOS_API friend bool operator==(const Shape& lhs, const Shape& rhs);
-		CHAOS_API friend std::wostream& operator<<(std::wostream& stream, const Shape& shape);
+		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const Shape& shape);
 
 		size_t dims = 0;
 		uint32* data = nullptr;

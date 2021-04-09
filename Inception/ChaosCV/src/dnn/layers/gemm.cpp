@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	GEMM::GEMM() : Layer(L"GEMM") {}
+	GEMM::GEMM() : Layer("GEMM") {}
 
 	void GEMM::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{

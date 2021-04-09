@@ -23,7 +23,7 @@
 
 #define CHAOS_PREDICT_BRANCH_NOT_TAKEN(x) x
 
-#define LOG(severity) chaos::LogMessage(__FILEW__, __LINE__, chaos::LogSeverity::##severity).wstream()
+#define LOG(severity) chaos::LogMessage(__FILE__, __LINE__, chaos::LogSeverity::##severity).stream()
 
 #define LOG_IF(severity, condition) \
   !(condition) ? (void) 0 : chaos::LogMessageVoidify() & LOG(severity)

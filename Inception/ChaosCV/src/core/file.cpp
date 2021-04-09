@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	File::File(const wchar_t* file) : buf(file)
+	File::File(const char* file) : buf(file)
 	{
 		if (buf.empty()) return;
 
@@ -14,33 +14,33 @@ namespace chaos
 		}
 
 		spos = buf.find_last_of('\\') + 1; // last slash pos
-		auto remain = std::wstring_view(buf.data() + spos); // without path
+		auto remain = std::string_view(buf.data() + spos); // without path
 		ppos = remain.find_last_of('.');
 
-		std::wstring_view name_ = 0 == ppos ? remain : remain.substr(0, ppos);
-		auto valid = std::regex_match(std::wstring(name_), std::wregex(L"[^\\|\\\\/:\\*\\?\"<>]+"));
+		std::string_view name_ = 0 == ppos ? remain : remain.substr(0, ppos);
+		auto valid = std::regex_match(std::string(name_), std::regex("[^\\|\\\\/:\\*\\?\"<>]+"));
 		CHECK(valid) << "file name can not contain |\\/:*?\"<>";
 	}
 
-	File::File(const std::wstring& file) : File(file.data()) {}
+	File::File(const std::string& file) : File(file.data()) {}
 
-	inline const std::wstring_view File::path() const noexcept
+	inline const std::string_view File::path() const noexcept
 	{
-		return std::wstring_view(buf.data(), spos);
+		return std::string_view(buf.data(), spos);
 	}
 
-	inline const std::wstring_view File::name() const noexcept
+	inline const std::string_view File::name() const noexcept
 	{
-		return 0 == ppos ? std::wstring_view(buf.data() + spos) : std::wstring_view(buf.data() + spos, ppos);
+		return 0 == ppos ? std::string_view(buf.data() + spos) : std::string_view(buf.data() + spos, ppos);
 	}
 
-	inline const std::wstring_view File::type() const noexcept
+	inline const std::string_view File::type() const noexcept
 	{
-		return 0 == ppos ? std::wstring_view() : std::wstring_view(buf.data() + spos + ppos);
+		return 0 == ppos ? std::string_view() : std::string_view(buf.data() + spos + ppos);
 	}
 
 
-	std::wostream& operator<<(std::wostream& wstream, const File& file)
+	std::ostream& operator<<(std::ostream& wstream, const File& file)
 	{
 		return wstream << file.buf;
 	}
@@ -67,19 +67,19 @@ namespace chaos
 //}
 
 
-void chaos::GetFileList(const std::wstring& folder, chaos::FileList& list, const std::wstring& types)
+void chaos::GetFileList(const std::string& folder, chaos::FileList& list, const std::string& types)
 {
-	CHECK_EQ(0, _waccess(folder.data(), 6)) << "can not access to \"" << folder << "\"";
+	CHECK_EQ(0, _access(folder.data(), 6)) << "can not access to \"" << folder << "\"";
 
 	HANDLE handle;
-	WIN32_FIND_DATA find_data;
+	WIN32_FIND_DATAA find_data;
 
-	std::wstring root = folder;
-	if (root.back() != '\\' || root.back() != '/') root.append(L"\\");
+	std::string root = folder;
+	if (root.back() != '\\' || root.back() != '/') root.append("\\");
 
-	static std::vector<std::wstring> type_list = chaos::Split(types, L"\\|");
+	static std::vector<std::string> type_list = chaos::Split(types, "\\|");
 
-	handle = FindFirstFile((root + L"*.*").data(), &find_data);
+	handle = FindFirstFileA((root + "*.*").data(), &find_data);
 	if (handle != INVALID_HANDLE_VALUE)
 	{
 		do
@@ -94,16 +94,16 @@ void chaos::GetFileList(const std::wstring& folder, chaos::FileList& list, const
 			}
 			else
 			{
-				std::wstring file_name = find_data.cFileName;
+				std::string file_name = find_data.cFileName;
 
 				size_t pos = file_name.find_last_of('.') + 1;
-				std::wstring type = file_name.substr(pos);
-				if (L"*" == types || std::find(type_list.begin(), type_list.end(), type) != type_list.end())
+				std::string type = file_name.substr(pos);
+				if ("*" == types || std::find(type_list.begin(), type_list.end(), type) != type_list.end())
 				{
 					list.push_back(File(root + file_name));
 				}
 			}
-		} while (FindNextFile(handle, &find_data));
+		} while (FindNextFileA(handle, &find_data));
 	}
 
 	FindClose(handle);
