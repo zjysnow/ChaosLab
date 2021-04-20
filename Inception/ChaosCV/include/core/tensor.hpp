@@ -43,11 +43,11 @@ namespace chaos
 		static Tensor eye(uint32 w, uint32 h, Allocator* allocator = nullptr)
 		{
 			Tensor eye_;
-			eye_.Create(Shape(h, w), /*steps=*/{ w, (uint32)1 }, static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
+			eye_.Create(Shape(h, w), /*steps=*/{ w, 1u }, static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
 			memset(eye_.data, 0, eye_.shape.total() * sizeof(Type));
 			Type* data = (Type*)eye_.data;
-			uint32 rows = eye_.shape[0];
-			uint32 rstep = eye_.steps[0];
+			uint32 rows = w < h ? w : h; //eye_.shape[0];
+			uint32 rstep = w; //eye_.steps[0];
 			for (size_t r = 0; r < rows; r++)
 			{
 				data[r * rstep + r] = 1;
