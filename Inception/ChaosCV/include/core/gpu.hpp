@@ -92,9 +92,9 @@ namespace chaos
 		VkDevice GetDevice() const noexcept { return device; }
 
 
-		// device extensions
-		PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR; // create swap chain
-		PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR; // destroy swap chain
+		//// device extensions
+		//PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR; // create swap chain
+		//PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR; // destroy swap chain
 
 		uint32 FindMemoryTypeIndex(uint32 memory_type_bits, const VkFlags& required, const VkFlags& preferred, const VkFlags& preferred_not) const;
 		bool IsMemoryMappable(uint32 memory_type_index) const;

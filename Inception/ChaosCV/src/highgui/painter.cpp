@@ -5,6 +5,7 @@
 #include "core/pipeline.hpp"
 #include "core/allocator.hpp"
 
+#include "highgui/window.hpp"
 #include "highgui/painter.hpp"
 
 #include <fstream>
@@ -23,7 +24,7 @@ namespace chaos
 	class VulkanPainterImpl : public VulkanPainter
 	{
 	public:
-		VulkanPainterImpl(const File& vert, const File& frag, const VulkanDevice* vkdev)
+		VulkanPainterImpl(const File& vert, const File& frag, const VulkanDevice* vkdev) : vkdev(vkdev)
 		{
 			auto Read = [](const File& file) {
 
@@ -55,18 +56,30 @@ namespace chaos
 			staging_allocator = new VulkanStagingAllocator(vkdev);
 		}
 
+		Ptr<VulkanWindow> CreateWindow(const std::wstring& name, uint32 width_, uint32 height_)
+		{
+			window = VulkanWindow::Create(name, width_, height_, vkdev);
+
+			width = window->extent.width;
+			height = window->extent.height;
+			buffers_count = window->image_count;
+
+			pipeline->Create(vert_spv.data(), vert_spv.size() * sizeof(uint32), frag_spv.data(), frag_spv.size() * sizeof(uint32),
+				window->surface_format.format, width, height,
+				(VkPolygonMode)polygon_mode, (VkFrontFace)front_face, (VkPrimitiveTopology)topoloty);
+
+			window->CreateFrameBuffer(pipeline->render_pass);
+
+			window->painter = this;
+			return window;
+		}
+
 		~VulkanPainterImpl() 
 		{
 			
 		}
 
-		void CreatePipeline(int format) final
-		{
-			pipeline->Create(vert_spv.data(), vert_spv.size() * sizeof(uint32), frag_spv.data(), frag_spv.size() * sizeof(uint32), 
-				(VkFormat)format, width, height, (VkPolygonMode)polygon_mode, (VkFrontFace)front_face, (VkPrimitiveTopology)topoloty);
-		}
-
-		void Draw(const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& ind) final
+		void Draw(const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& ind)
 		{
 			command->Init(buffers_count);
 
@@ -99,13 +112,20 @@ namespace chaos
 			command->RecordClone(vertex_staging, vertex, allocator);
 			command->RecordClone(indices_staging, indices, allocator);
 
-			command->RecordPipeline(pipeline, buffers_count, (VkFramebuffer*)frame_buffers, width, height, vertex, indices, uniform);
+			command->RecordPipeline(pipeline, buffers_count, window->frame_buffers.data(), width, height, vertex, indices, uniform);
 		}
 
+		uint32 width, height;
+		uint32 buffers_count;
 		VulkanTensor vertex;
 		VulkanTensor indices;
 		std::vector<VulkanTensor> uniform;
+		std::vector<VkFramebuffer> frame_buffers;
+
+		const VulkanDevice* vkdev;
 	};
+
+	
 
 	Ptr<VulkanPainter> VulkanPainter::Create(const File& vert, const File& frag, uint32 device_index)
 	{

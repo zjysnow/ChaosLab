@@ -62,6 +62,12 @@ namespace chaos
 		return lhs * static_cast<Type>(rhs);
 	}
 
+	union VkConstantType
+	{
+		int i;
+		float f;
+	};
+
 	class CHAOS_API Point
 	{
 	public:

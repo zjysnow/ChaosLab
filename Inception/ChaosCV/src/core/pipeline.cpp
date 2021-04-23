@@ -6,47 +6,54 @@ namespace chaos
 	Pipeline::~Pipeline()
 	{
 		//vkDestroyDescriptorPool(vkdev->GetDevice(), descriptor_pool, nullptr);
-		//vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptorset_layout, nullptr);
+		vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptor_set_layout, nullptr);
 		vkDestroyPipeline(vkdev->GetDevice(), pipeline, nullptr);
 		vkDestroyPipelineLayout(vkdev->GetDevice(), pipeline_layout, nullptr);
 	}
 
-	/*void Pipeline::CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types)
-	{
-		if (binding_count == 0)
-		{
-			descriptorset_layout = nullptr;
-			return;
-		}
 
-		std::vector<VkDescriptorSetLayoutBinding> descriptorset_layout_bindings(binding_count);
+	void Pipeline::CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types)
+	{
+		std::vector<VkDescriptorSetLayoutBinding> bingdings(binding_count);
 		for (uint32 i = 0; i < binding_count; i++)
 		{
-			descriptorset_layout_bindings[i].binding = i;
-			descriptorset_layout_bindings[i].descriptorCount = 1;
-			descriptorset_layout_bindings[i].stageFlags = flags[i]; // VK_SHADER_STAGE_VERTEX_BIT
-			descriptorset_layout_bindings[i].descriptorType = types[i];
-			descriptorset_layout_bindings[i].pImmutableSamplers = nullptr;
+			bingdings[i].binding = i;
+			bingdings[i].descriptorCount = 1;
+			bingdings[i].descriptorType = types[i]; //VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			bingdings[i].pImmutableSamplers = nullptr; // immutable texelfetch sampler
+			bingdings[i].stageFlags = flags[i]; //VK_SHADER_STAGE_VERTEX_BIT;
 		}
+		
+		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.bindingCount = binding_count;
+		layoutInfo.pBindings = bingdings.data();
 
-		VkDescriptorSetLayoutCreateInfo layout_info{};
-		layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layout_info.bindingCount = binding_count;
-		layout_info.pBindings = descriptorset_layout_bindings.data();
-
-		VkResult ret = vkCreateDescriptorSetLayout(vkdev->GetDevice(), &layout_info, nullptr, &descriptorset_layout);
+		auto ret = vkCreateDescriptorSetLayout(vkdev->GetDevice(), &layoutInfo, nullptr, &descriptor_set_layout);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorSetLayout failed " << ret;
-	}*/
-	void Pipeline::CreatePipelineLayout()
+	}
+
+
+	void Pipeline::CreatePipelineLayout(int push_constant_count)
 	{
 		VkPipelineLayoutCreateInfo pipeline_layout_info{};
 		pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		//if (descriptorset_layout)
-		//{
-		//	pipeline_layout_info.setLayoutCount = 1;
-		//	pipeline_layout_info.pSetLayouts = &descriptorset_layout;
-		//}
-		//pipeline_layout_info.pushConstantRangeCount = 0;
+		if (descriptor_set_layout)
+		{
+			pipeline_layout_info.setLayoutCount = 1;
+			pipeline_layout_info.pSetLayouts = &descriptor_set_layout;
+		}
+
+		if (push_constant_count > 0)
+		{
+			VkPushConstantRange push_constant_range{};
+			push_constant_range.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+			push_constant_range.size = sizeof(VkConstantType) * push_constant_count;
+
+			pipeline_layout_info.pushConstantRangeCount = 1;
+			pipeline_layout_info.pPushConstantRanges = &push_constant_range;
+		}
+		
 
 		VkResult ret = vkCreatePipelineLayout(vkdev->GetDevice(), &pipeline_layout_info, nullptr, &pipeline_layout);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreatePipelineLayout failed " << ret;
@@ -120,7 +127,7 @@ namespace chaos
 		frag = CompileShaderModule(frag_data, frag_size);
 
 		// create descriptorset layout
-		//CreateDescriptorSetLayout(1, &shader_stage_flag, &descriptor_type);
+		CreateDescriptorSetLayout(1, &shader_stage_flag, &descriptor_type);
 
 		// create render pass
 		CreateRenderPass(format);

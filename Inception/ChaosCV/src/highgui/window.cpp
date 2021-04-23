@@ -197,6 +197,7 @@ namespace chaos
 
 			swap_chain_create_info.oldSwapchain = VK_NULL_HANDLE;
 
+			//vkdev->CreateSwapChain(&swap_chain_create_info, &swap_chain);
 			ret = vkCreateSwapchainKHR(vkdev->GetDevice(), &swap_chain_create_info, nullptr, &swap_chain);
 			CHECK_EQ(VK_SUCCESS, ret) << "vkCreateSwapchainKHR failed " << ret;
 
@@ -247,18 +248,7 @@ namespace chaos
 			vkDestroySwapchainKHR(vkdev->GetDevice(), swap_chain, nullptr);
 		}
 
-		void CreatePipeline() final
-		{
-			painter->width = extent.width;
-			painter->height = extent.height;
-
-			painter->CreatePipeline(surface_format.format);
-
-			CreateFrameBuffer();
-		}
-
-
-		void CreateFrameBuffer()
+		void CreateFrameBuffer(const VkRenderPass& render_pass)
 		{
 			frame_buffers.resize(image_count);
 
@@ -268,7 +258,7 @@ namespace chaos
 
 				VkFramebufferCreateInfo framebuffer_info{};
 				framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-				framebuffer_info.renderPass = painter->pipeline->render_pass;
+				framebuffer_info.renderPass = render_pass; //painter->pipeline->render_pass;
 				framebuffer_info.attachmentCount = 1;
 				framebuffer_info.pAttachments = attachments;
 				framebuffer_info.width = extent.width;
@@ -278,9 +268,6 @@ namespace chaos
 				VkResult ret = vkCreateFramebuffer(vkdev->GetDevice(), &framebuffer_info, nullptr, &frame_buffers[i]);
 				CHECK_EQ(VK_SUCCESS, ret) << "vkCreateFramebuffer failed " << ret;
 			}
-			
-			painter->buffers_count = image_count;
-			painter->frame_buffers = frame_buffers.data();
 		}
 
 
@@ -291,22 +278,22 @@ namespace chaos
 
 		VkSurfaceKHR surface;
 		uint32 present_queue_family_index;
-		uint32 image_count;
-		VkSurfaceFormatKHR surface_format;
+		
+		
 		VkPresentModeKHR present_mode;
 		VkSurfaceTransformFlagBitsKHR current_transform;
-		VkExtent2D extent;
+		
 
 		VkSwapchainKHR swap_chain;
 		std::vector<VkImage> images;
-		std::vector<VkImageView> image_views;
-		std::vector<VkFramebuffer> frame_buffers;
+		
+		
 	};
 
 
-	Ptr<VulkanWindow> VulkanWindow::Create(const std::wstring& name, uint32 width, uint32 height, int device_id)
+	Ptr<VulkanWindow> VulkanWindow::Create(const std::wstring& name, uint32 width, uint32 height, const VulkanDevice* vkdev)
 	{
-		return Ptr<VulkanWindow>(new VulkanWindowImpl(name, width, height, GetGPUDevice(device_id)));
+		return Ptr<VulkanWindow>(new VulkanWindowImpl(name, width, height, vkdev));
 	}
 
 

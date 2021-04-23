@@ -40,12 +40,15 @@ namespace chaos
 
 	class GraphicsCommand;
 	class GraphicsPipeline;
+	class VulkanWindow;
 	class CHAOS_API VulkanPainter
 	{
 	public:
 		friend class VulkanWindowImpl;
 
+		virtual Ptr<VulkanWindow> CreateWindow(const std::wstring& name, uint32 width, uint32 height) = 0;
 		virtual void Draw(const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& ind) = 0;
+		//virtual void Draw(const Ptr<VulkanWindow>& window, const std::vector<Point>& pts, const std::vector<Color>& colors, const std::vector<uint16>& ind) = 0;
 
 		virtual ~VulkanPainter();
 
@@ -56,7 +59,8 @@ namespace chaos
 		int topoloty = PRIMITIVE_TOPOLOGY_LINE_LIST; // see enum PrimitiveTopology
 
 	protected:
-		virtual void CreatePipeline(int format) = 0;
+		Ptr<VulkanWindow> window;
+		//virtual void CreatePipeline(int format) = 0;
 
 		GraphicsPipeline* pipeline;
 		GraphicsCommand* command;
@@ -64,11 +68,11 @@ namespace chaos
 		std::vector<uint32> vert_spv;
 		std::vector<uint32> frag_spv;
 
-		uint32 width; // from vulkan window
-		uint32 height; // from vulkan window
+		//uint32 width; // from vulkan window
+		//uint32 height; // from vulkan window
 
-		uint32 buffers_count;
-		void* frame_buffers;
+		//uint32 buffers_count;
+		//void* frame_buffers;
 
 		VulkanAllocator* allocator;
 		VulkanAllocator* staging_allocator;

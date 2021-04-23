@@ -8,7 +8,7 @@ namespace chaos
 	class CHAOS_API Pipeline
 	{
 	public:
-		Pipeline(const VulkanDevice* vkdev);
+		
 		virtual ~Pipeline();
 
 		const VulkanDevice* vkdev;
@@ -17,13 +17,16 @@ namespace chaos
 		VkPipelineLayout pipeline_layout;
 
 		//VkDescriptorPool descriptor_pool;
-		//VkDescriptorSetLayout descriptorset_layout;
+		VkDescriptorSetLayout descriptor_set_layout;
 
 	protected:
-		//void CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types);
-		void CreatePipelineLayout();
+		Pipeline(const VulkanDevice* vkdev);
+
+		void CreateDescriptorSetLayout(const uint32& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types);
+		void CreatePipelineLayout(int push_constant_count = 0);
 		VkShaderModule CompileShaderModule(const uint32* spv_data, size_t spv_data_size);
 	};
+
 
 	class CHAOS_API GraphicsPipeline : public Pipeline
 	{
@@ -38,10 +41,8 @@ namespace chaos
 
 		VkRenderPass render_pass;
 
-		//std::vector<VkDescriptorSet> descriptor_sets;
-
-		VkDescriptorType descriptor_type;
-		VkShaderStageFlagBits shader_stage_flag;
+		VkDescriptorType descriptor_type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		VkShaderStageFlagBits shader_stage_flag = VK_SHADER_STAGE_VERTEX_BIT;
 
 		VkShaderModule vert;
 		VkShaderModule frag;
