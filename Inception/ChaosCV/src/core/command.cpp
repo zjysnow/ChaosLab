@@ -134,37 +134,37 @@ namespace chaos
 		poolInfo.pPoolSizes = &pool_size;
 		poolInfo.maxSets = buffers_count; // static_cast<uint32_t>(swapChainImages.size());
 
-		//ret = vkCreateDescriptorPool(vkdev->GetDevice(), &poolInfo, nullptr, &descriptor_pool);
+		ret = vkCreateDescriptorPool(vkdev->GetDevice(), &poolInfo, nullptr, &descriptor_pool);
 
-		//std::vector<VkDescriptorSetLayout> layouts(buffers_count, pipeline->descriptorset_layout);
-		//VkDescriptorSetAllocateInfo allocInfo{};
-		//allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		//allocInfo.descriptorPool = descriptor_pool;
-		//allocInfo.descriptorSetCount = buffers_count; //static_cast<uint32_t>(swapChainImages.size());
-		//allocInfo.pSetLayouts = layouts.data();
+		std::vector<VkDescriptorSetLayout> layouts(buffers_count, pipeline->descriptor_set_layout);
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = descriptor_pool;
+		allocInfo.descriptorSetCount = buffers_count; //static_cast<uint32_t>(swapChainImages.size());
+		allocInfo.pSetLayouts = layouts.data();
 
-		//descriptorsets.resize(buffers_count);
-		//ret = vkAllocateDescriptorSets(vkdev->GetDevice(), &allocInfo, descriptorsets.data());
-		//CHECK_EQ(VK_SUCCESS, ret) << "vkAllocateDescriptorSets failed " << ret;
+		descriptorsets.resize(buffers_count);
+		ret = vkAllocateDescriptorSets(vkdev->GetDevice(), &allocInfo, descriptorsets.data());
+		CHECK_EQ(VK_SUCCESS, ret) << "vkAllocateDescriptorSets failed " << ret;
 
 
 		for (uint32_t i = 0; i < buffers_count; i++)
 		{
-			//VkDescriptorBufferInfo buffer_info{};
-			//buffer_info.buffer = uniform[i].data->buffer;
-			//buffer_info.offset = uniform[i].data->offset;
-			//buffer_info.range = uniform[i].data->capacity;
+			VkDescriptorBufferInfo buffer_info{};
+			buffer_info.buffer = uniform[i].data->buffer;
+			buffer_info.offset = uniform[i].data->offset;
+			buffer_info.range = uniform[i].data->capacity;
 
-			//VkWriteDescriptorSet descriptorWrite{};
-			//descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			//descriptorWrite.dstSet = descriptorsets[i];
-			//descriptorWrite.dstBinding = 0;
-			//descriptorWrite.dstArrayElement = 0;
-			//descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			//descriptorWrite.descriptorCount = 1;
-			//descriptorWrite.pBufferInfo = &buffer_info;
+			VkWriteDescriptorSet descriptorWrite{};
+			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite.dstSet = descriptorsets[i];
+			descriptorWrite.dstBinding = 0;
+			descriptorWrite.dstArrayElement = 0;
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrite.descriptorCount = 1;
+			descriptorWrite.pBufferInfo = &buffer_info;
 
-			//vkUpdateDescriptorSets(vkdev->GetDevice(), 1, &descriptorWrite, 0, nullptr);
+			vkUpdateDescriptorSets(vkdev->GetDevice(), 1, &descriptorWrite, 0, nullptr);
 
 			VkCommandBufferBeginInfo begin_info{};
 			begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -192,7 +192,7 @@ namespace chaos
 				vkCmdBindVertexBuffers(command_buffers[i], 0, 1, vertex_buffers, offsets);
 				vkCmdBindIndexBuffer(command_buffers[i], indices.data->buffer, indices.data->offset, VK_INDEX_TYPE_UINT16); // dtype -> VK_INDEX_TYPE_UINT16 ?
 
-				//vkCmdBindDescriptorSets(command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline_layout, 0, 1, &descriptorsets[i], 0, nullptr);
+				vkCmdBindDescriptorSets(command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline_layout, 0, 1, &descriptorsets[i], 0, nullptr);
 
 				//vkCmdDraw(command_buffers[i], 3, 1, 0, 0);
 				vkCmdDrawIndexed(command_buffers[i], static_cast<uint32>(indices.shape.total()), 1, 0, 0, 0);

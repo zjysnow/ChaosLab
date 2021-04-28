@@ -45,8 +45,8 @@ namespace chaos
 		std::vector<VkFence> in_flight_fences;
 		std::vector<VkFence> images_in_flight;
 
-		//VkDescriptorPool descriptor_pool;
-		//std::vector<VkDescriptorSet> descriptorsets;
+		VkDescriptorPool descriptor_pool;
+		std::vector<VkDescriptorSet> descriptorsets;
 
 		size_t current_frame = 0;
 	};

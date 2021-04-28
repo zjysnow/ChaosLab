@@ -99,10 +99,20 @@ namespace chaos
 			Tensor vertex_data = Tensor(Shape((uint32)buffer.size()), DataType::D4, Packing::CHW, buffer.data());
 			Tensor indices_data = Tensor(Shape((uint32)ind.size()), DataType::D2, Packing::CHW, (void*)ind.data());
 
+			Tensor model = Tensor::eye(4, 4);
+			Tensor view = Tensor::eye(4, 4);
+			Tensor proj = Tensor::eye(4, 4);
+			Tensor ubo = Tensor(Shape(3, 4, 4), DataType::D4, Packing::CHW);
+
+			memcpy(ubo.data, model.data, 4 * 4 * sizeof(float));
+			memcpy((float*)ubo.data + 16, view.data, 4 * 4 * sizeof(float));
+			memcpy((float*)ubo.data + 32, proj.data, 4 * 4 * sizeof(float));
+
 			uniform.resize(buffers_count);
 			for (uint32 i = 0; i < buffers_count; i++)
 			{
-				uniform[i] = VulkanTensor(Shape(4u * 4u * 3), DataType::D4, Packing::CHW, staging_allocator);
+				//uniform[i] = VulkanTensor(Shape(4u * 4u * 3), DataType::D4, Packing::CHW, staging_allocator);
+				command->RecordUpload(ubo, uniform[i], staging_allocator);
 			}
 
 			VulkanTensor vertex_staging, indices_staging;
