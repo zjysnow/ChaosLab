@@ -102,7 +102,7 @@ namespace chaos
 			while (not should_close)
 			{
 				PollEvents();
-				painter->command->Present(swap_chain, present_queue_family_index);
+				painter->command->Present(swap_chain, present_queue_family_index, std::bind(&VulkanPainter::UpdateUniformBuffer, painter, std::placeholders::_1));
 			}
 			vkDeviceWaitIdle(vkdev->GetDevice());
 		}

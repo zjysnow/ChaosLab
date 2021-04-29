@@ -25,9 +25,22 @@ namespace chaos
 		int polygon_mode = POLYGON_MODE_LINE; // see enum PolygonMode
 		int topoloty = PRIMITIVE_TOPOLOGY_LINE_LIST; // see enum PrimitiveTopology
 
+		std::function<Tensor()> CreateUniformObject = []()->Tensor {
+			Tensor ubo = Tensor(Shape(3, 4, 4), DataType::D4, Packing::CHW);
+			memset(ubo.data, 0, ubo.total() * sizeof(float));
+			for (int i = 0; i < 3; i++)
+			{
+				ubo[i * 16] = 1;
+				ubo[i * 16 + 5] = 1;
+				ubo[i * 16 + 10] = 1;
+				ubo[i * 16 + 15] = 1;
+			}
+			return ubo;
+		};
 	protected:
 		VulkanPainter(const VulkanDevice* vkdev);
 
+		virtual void UpdateUniformBuffer(uint32 image_index) = 0;
 		Ptr<VulkanWindow> window;
 
 		GraphicsPipeline* pipeline;

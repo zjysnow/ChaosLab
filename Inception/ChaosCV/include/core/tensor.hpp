@@ -19,6 +19,20 @@ namespace chaos
 		Tensor(const Tensor& tensor);
 		Tensor& operator=(const Tensor& tensor);
 
+		template<class Type>
+		Tensor(const std::initializer_list<Type>& vec)
+		{
+			uint32 sz = (uint32)vec.size();
+			Create({ sz }, { 1 }, static_cast<DataType>(sizeof(Type)), Packing::CHW, nullptr);
+			
+			Type* d = (Type*)data;
+			uint32 idx = 0;
+			for (const auto& v : vec)
+			{
+				d[idx++] = v;
+			}
+		}
+
 		void Create(const Shape& shape, const Steps& steps, const DataType& dtype, const Packing& packing, Allocator* allocator);
 		void CreateLike(const Tensor& tensor, Allocator* allocator = nullptr);
 
@@ -53,6 +67,15 @@ namespace chaos
 				data[r * rstep + r] = 1;
 			}
 			return eye_;
+		}
+
+		template<class Type = float, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
+		static Tensor zeros(const Shape& shape, Allocator* allocator = nullptr)
+		{
+			Tensor zeros_;
+			zeros_.Create(shape, shape.steps(), static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
+			memset(zeros_.data, 0, shape.total() * sizeof(Type));
+			return zeros_;
 		}
 
 		template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>

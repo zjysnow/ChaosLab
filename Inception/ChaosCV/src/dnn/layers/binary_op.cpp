@@ -88,4 +88,12 @@ namespace chaos
         if (MUL == op_type) return Operator<BinaryMul>(a, b, c);
         if (DIV == op_type) return Operator<BinaryDiv>(a, b, c);
 	}
+
+    void BinaryOp::Set(const std::string& pname, const std::any& val)
+    {
+        if ("op_type" == pname && val.type() == typeid(OpType))
+        {
+            op_type = std::any_cast<OpType>(val);
+        }
+    }
 }

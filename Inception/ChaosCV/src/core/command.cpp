@@ -202,7 +202,7 @@ namespace chaos
 		 }
 	}
 
-	void GraphicsCommand::Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index)
+	void GraphicsCommand::Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index, const std::function<void(uint32)>& UpdateUniformBuffer)
 	{
 		VkResult ret;
 		vkWaitForFences(vkdev->GetDevice(), 1, &in_flight_fences[current_frame], VK_TRUE, UINT64_MAX);
@@ -214,9 +214,9 @@ namespace chaos
 		//	RecreateSwapChain();
 		//	return;
 		//}
-		//CHECK(ret == VK_SUCCESS || ret == VK_SUBOPTIMAL_KHR) << "failed to acquire swap chain image";
+		CHECK(ret == VK_SUCCESS || ret == VK_SUBOPTIMAL_KHR) << "failed to acquire swap chain image";
 
-		//UpdateUniformBuffer(image_index);
+		UpdateUniformBuffer(image_index);
 
 		if (images_in_flight[image_index] != VK_NULL_HANDLE)
 		{

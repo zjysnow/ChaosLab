@@ -35,7 +35,7 @@ namespace chaos
 		void RecordPipeline(const GraphicsPipeline* pipeline, uint32 buffers_count, VkFramebuffer* frame_buffers, 
 			VkExtent2D extent, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
 
-		void Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index);
+		void Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index, const std::function<void(uint32)>& UpdateUniformBuffer);
 
 	protected:
 		std::vector<VkCommandBuffer> command_buffers;

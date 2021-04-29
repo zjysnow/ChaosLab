@@ -25,4 +25,6 @@ namespace chaos
 	{
 		LOG(FATAL);
 	}
+
+	void Layer::Set(const std::string&, const std::any&) {}
 }

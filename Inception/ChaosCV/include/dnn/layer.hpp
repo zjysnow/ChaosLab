@@ -5,6 +5,8 @@
 
 #include "dnn/option.hpp"
 
+#include <any>
+
 namespace chaos
 {
 	// Layer always create top_blob
@@ -19,6 +21,8 @@ namespace chaos
 
 		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const;
 		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const;
+
+		virtual void Set(const std::string& pname, const std::any& val);
 
 		const std::string type;
 

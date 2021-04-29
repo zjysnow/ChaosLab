@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.hpp"
+#include "core/tensor.hpp"
 
 namespace chaos
 {
@@ -36,7 +37,7 @@ namespace chaos
 	};
 
 
-	//CHAOS_API Tensor Rotate(const Tensor& m, const float angle, const Tensor& v);
-	//CHAOS_API Tensor LookAt(const Tensor& eye, const Tensor& center, const Tensor& up); // look at right hand
-	//CHAOS_API Tensor Perspective(float fovy, float aspect, float z_near, float z_far); // rh no
+	CHAOS_API Tensor Rotate(const Tensor& m, const float angle, const Tensor& v);
+	CHAOS_API Tensor LookAt(const Tensor& eye, const Tensor& center, const Tensor& up); // look at right hand
+	CHAOS_API Tensor Perspective(float fovy, float aspect, float z_near, float z_far); // rh no
 }

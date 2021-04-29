@@ -33,11 +33,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\normalize.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\utils\op.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
@@ -56,8 +58,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\normalize.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\utils\op.cpp" />
   </ItemGroup>
 </Project>
