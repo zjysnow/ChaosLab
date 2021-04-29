@@ -120,7 +120,7 @@ namespace chaos
 	}
 
 	void GraphicsPipeline::Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-		VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty)
+		VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty, VkCullModeFlagBits cull_mode)
 	{
 		// create shader module 
 		vert = CompileShaderModule(vert_data, vert_size);
@@ -204,7 +204,7 @@ namespace chaos
 		rasterizer.rasterizerDiscardEnable = VK_FALSE;
 		rasterizer.polygonMode = polygon_mode; // VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
-		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizer.cullMode = cull_mode; // VK_CULL_MODE_BACK_BIT;
 		rasterizer.frontFace = front_face; //VK_FRONT_FACE_CLOCKWISE; // VK_FRONT_FACE_COUNTER_CLOCKWISE; //VK_FRONT_FACE_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 

@@ -34,7 +34,7 @@ namespace chaos
 		~GraphicsPipeline();
 
 		void Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-			VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty);
+			VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty, VkCullModeFlagBits cull_mode);
 		
 		void CreateRenderPass(VkFormat format);
 

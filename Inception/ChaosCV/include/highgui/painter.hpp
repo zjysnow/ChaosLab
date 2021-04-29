@@ -24,6 +24,7 @@ namespace chaos
 		int front_face = FRONT_FACE_CLOCKWISE; // see enum FrontFace
 		int polygon_mode = POLYGON_MODE_LINE; // see enum PolygonMode
 		int topoloty = PRIMITIVE_TOPOLOGY_LINE_LIST; // see enum PrimitiveTopology
+		int cull_mode = CULL_MODE_FRONT_BIT;
 
 		std::function<Tensor()> CreateUniformObject = []()->Tensor {
 			Tensor ubo = Tensor(Shape(3, 4, 4), DataType::D4, Packing::CHW);

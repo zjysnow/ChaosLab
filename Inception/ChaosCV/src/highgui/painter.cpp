@@ -63,7 +63,8 @@ namespace chaos
 
 			pipeline->Create(vert_spv.data(), vert_spv.size() * sizeof(uint32), frag_spv.data(), frag_spv.size() * sizeof(uint32),
 				extent, (VkFormat)window->image_format(),
-				(VkPolygonMode)polygon_mode, (VkFrontFace)front_face, (VkPrimitiveTopology)topoloty);
+				(VkPolygonMode)polygon_mode, (VkFrontFace)front_face, 
+				(VkPrimitiveTopology)topoloty, (VkCullModeFlagBits)cull_mode);
 
 			command->Create(buffers_count);
 

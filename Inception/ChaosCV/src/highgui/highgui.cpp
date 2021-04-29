@@ -52,8 +52,8 @@ namespace chaos
 	Tensor LookAt(const Tensor& eye, const Tensor& center, const Tensor& up) // look at left hand
 	{
 		const Tensor f = Operator::L2Norm(Operator::Sub(center, eye));
-		const Tensor s = Operator::L2Norm(Operator::Cross(up, f));
-		const Tensor u = Operator::Cross(f, s);
+		const Tensor s = Operator::L2Norm(Operator::Cross(f, up));
+		const Tensor u = Operator::Cross(s, f);
 
 		Tensor Result = Tensor::eye(4, 4);
 		Result[0] = s[0]; // .x;
@@ -62,12 +62,12 @@ namespace chaos
 		Result[1] = u[0]; // .x;
 		Result[5] = u[1]; // .y;
 		Result[9] = u[2]; // .z;
-		Result[2] = f[0]; // .x;
-		Result[6] = f[1]; // .y;
-		Result[10] = f[2]; // .z;
+		Result[2] = -f[0]; // .x;
+		Result[6] = -f[1]; // .y;
+		Result[10] = -f[2]; // .z;
 		Result[12] = -Operator::Dot(s, eye);
 		Result[13] = -Operator::Dot(u, eye);
-		Result[14] = -Operator::Dot(f, eye);
+		Result[14] = Operator::Dot(f, eye);
 		return Result;
 	}
 
