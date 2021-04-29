@@ -5,7 +5,6 @@ namespace chaos
 	Pipeline::Pipeline(const VulkanDevice* vkdev) : vkdev(vkdev) {}
 	Pipeline::~Pipeline()
 	{
-		//vkDestroyDescriptorPool(vkdev->GetDevice(), descriptor_pool, nullptr);
 		vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptorset_layout, nullptr);
 		vkDestroyPipeline(vkdev->GetDevice(), pipeline, nullptr);
 		vkDestroyPipelineLayout(vkdev->GetDevice(), pipeline_layout, nullptr);
@@ -72,6 +71,20 @@ namespace chaos
 		return shader_module;
 	}
 
+
+
+
+
+	ComputePipeline::ComputePipeline(const VulkanDevice* vkdev) : Pipeline(vkdev)
+	{
+		//descriptor_type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	}
+	ComputePipeline::~ComputePipeline()
+	{
+		vkDestroyShaderModule(vkdev->GetDevice(), comp, nullptr);
+	}
+
+
 	GraphicsPipeline::GraphicsPipeline(const VulkanDevice* vkdev) : Pipeline(vkdev)
 	{
 		descriptor_type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -90,7 +103,7 @@ namespace chaos
 	void GraphicsPipeline::CreateRenderPass(VkFormat format)
 	{
 		VkAttachmentDescription color_attachment{};
-		color_attachment.format = (VkFormat)format;
+		color_attachment.format = format;
 		color_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;

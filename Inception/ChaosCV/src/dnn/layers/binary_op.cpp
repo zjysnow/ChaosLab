@@ -37,22 +37,32 @@ namespace chaos
     {
         //Op op;
         Op op;
-        size_t dims = c.shape.dims;
-        for (size_t i = 0; i < c.shape.total(); i++)
+        if (a.is_continuous() && b.is_continuous())
         {
-            size_t a_idx = 0;
-            size_t b_idx = 0;
-            size_t c_idx = 0;
-            size_t idx = i;
-            for (size_t d = 0; d < dims; d++)
+            for (size_t i = 0; i < c.shape.total(); i++)
             {
-                size_t k = idx % c.shape[dims - d - 1];
-                a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
-                b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
-                c_idx += k * c.steps[dims - d - 1];
-                idx /= c.shape[dims - d - 1];
+                c[i] = op(a[i], b[i]);
             }
-            c[c_idx] = op(a[a_idx], b[b_idx]);
+        }
+        else
+        {
+            size_t dims = c.shape.dims;
+            for (size_t i = 0; i < c.shape.total(); i++)
+            {
+                size_t a_idx = 0;
+                size_t b_idx = 0;
+                size_t c_idx = 0;
+                size_t idx = i;
+                for (size_t d = 0; d < dims; d++)
+                {
+                    size_t k = idx % c.shape[dims - d - 1];
+                    a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
+                    b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
+                    c_idx += k * c.steps[dims - d - 1];
+                    idx /= c.shape[dims - d - 1];
+                }
+                c[c_idx] = op(a[a_idx], b[b_idx]);
+            }
         }
     }
 
@@ -81,12 +91,12 @@ namespace chaos
         CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expcec 1 output but got " << top_blobs.size();
         Tensor& c = top_blobs[0];
         Shape c_shape = a.total() > b.total() ? a.shape : b.shape;
-        if (c.empty()) c.Create(c_shape, c_shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
+        c.Create(c_shape, c_shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
 
-        if (ADD == op_type) return Operator<BinaryAdd>(a, b, c);
-        if (SUB == op_type) return Operator<BinarySub>(a, b, c);
-        if (MUL == op_type) return Operator<BinaryMul>(a, b, c);
-        if (DIV == op_type) return Operator<BinaryDiv>(a, b, c);
+        if (ADD == op_type) Operator<BinaryAdd>(a, b, c);
+        if (SUB == op_type) Operator<BinarySub>(a, b, c);
+        if (MUL == op_type) Operator<BinaryMul>(a, b, c);
+        if (DIV == op_type) Operator<BinaryDiv>(a, b, c);
 	}
 
     void BinaryOp::Set(const std::string& pname, const std::any& val)

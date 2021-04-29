@@ -19,18 +19,12 @@ namespace chaos
 		Tensor(const Tensor& tensor);
 		Tensor& operator=(const Tensor& tensor);
 
-		template<class Type>
+		template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
 		Tensor(const std::initializer_list<Type>& vec)
 		{
 			uint32 sz = (uint32)vec.size();
 			Create({ sz }, { 1 }, static_cast<DataType>(sizeof(Type)), Packing::CHW, nullptr);
-			
-			Type* d = (Type*)data;
-			uint32 idx = 0;
-			for (const auto& v : vec)
-			{
-				d[idx++] = v;
-			}
+			memcpy(data, vec.begin(), sz * sizeof(Type));
 		}
 
 		void Create(const Shape& shape, const Steps& steps, const DataType& dtype, const Packing& packing, Allocator* allocator);
@@ -58,7 +52,7 @@ namespace chaos
 		{
 			Tensor eye_;
 			eye_.Create(Shape(h, w), /*steps=*/{ w, 1u }, static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
-			memset(eye_.data, 0, eye_.shape.total() * sizeof(Type));
+			memset(eye_.data, 0, h * w * sizeof(Type));
 			Type* data = (Type*)eye_.data;
 			uint32 rows = w < h ? w : h; //eye_.shape[0];
 			uint32 rstep = w; //eye_.steps[0];
@@ -78,15 +72,7 @@ namespace chaos
 			return zeros_;
 		}
 
-		template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
-		void Fill(const Type& val)
-		{
-			size_t total = (size_t)shape[0] * steps[0];
-			for (size_t i = 0; i < total; i++)
-			{
-				((Type*)data)[i] = val;
-			}
-		}
+		bool is_continuous() const noexcept;
 
 		void* data = nullptr;
 		Allocator* allocator = nullptr;

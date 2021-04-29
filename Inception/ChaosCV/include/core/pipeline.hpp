@@ -26,6 +26,14 @@ namespace chaos
 		VkShaderModule CompileShaderModule(const uint32* spv_data, size_t spv_data_size);
 	};
 
+	class CHAOS_API ComputePipeline : public Pipeline
+	{
+	public:
+		ComputePipeline(const VulkanDevice* vkdev);
+		~ComputePipeline();
+
+		VkShaderModule comp;
+	};
 
 	class CHAOS_API GraphicsPipeline : public Pipeline
 	{

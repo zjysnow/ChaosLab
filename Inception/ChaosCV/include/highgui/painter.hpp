@@ -24,12 +24,12 @@ namespace chaos
 		int front_face = FRONT_FACE_CLOCKWISE; // see enum FrontFace
 		int polygon_mode = POLYGON_MODE_LINE; // see enum PolygonMode
 		int topoloty = PRIMITIVE_TOPOLOGY_LINE_LIST; // see enum PrimitiveTopology
-		int cull_mode = CULL_MODE_FRONT_BIT;
+		int cull_mode = CULL_MODE_NONE; // see enum CullModeFlag
 
 		std::function<Tensor()> CreateUniformObject = []()->Tensor {
 			Tensor ubo = Tensor(Shape(3, 4, 4), DataType::D4, Packing::CHW);
 			memset(ubo.data, 0, ubo.total() * sizeof(float));
-			for (int i = 0; i < 3; i++)
+			for (size_t i = 0; i < 3; i++)
 			{
 				ubo[i * 16] = 1;
 				ubo[i * 16 + 5] = 1;
