@@ -6,7 +6,7 @@ namespace chaos
 	Pipeline::~Pipeline()
 	{
 		//vkDestroyDescriptorPool(vkdev->GetDevice(), descriptor_pool, nullptr);
-		vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptor_set_layout, nullptr);
+		vkDestroyDescriptorSetLayout(vkdev->GetDevice(), descriptorset_layout, nullptr);
 		vkDestroyPipeline(vkdev->GetDevice(), pipeline, nullptr);
 		vkDestroyPipelineLayout(vkdev->GetDevice(), pipeline_layout, nullptr);
 	}
@@ -29,7 +29,7 @@ namespace chaos
 		layoutInfo.bindingCount = binding_count;
 		layoutInfo.pBindings = bingdings.data();
 
-		auto ret = vkCreateDescriptorSetLayout(vkdev->GetDevice(), &layoutInfo, nullptr, &descriptor_set_layout);
+		auto ret = vkCreateDescriptorSetLayout(vkdev->GetDevice(), &layoutInfo, nullptr, &descriptorset_layout);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorSetLayout failed " << ret;
 	}
 
@@ -38,10 +38,10 @@ namespace chaos
 	{
 		VkPipelineLayoutCreateInfo pipeline_layout_info{};
 		pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		if (descriptor_set_layout)
+		if (descriptorset_layout)
 		{
 			pipeline_layout_info.setLayoutCount = 1;
-			pipeline_layout_info.pSetLayouts = &descriptor_set_layout;
+			pipeline_layout_info.pSetLayouts = &descriptorset_layout;
 		}
 
 		if (push_constant_count > 0)
@@ -120,7 +120,7 @@ namespace chaos
 	}
 
 	void GraphicsPipeline::Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-		VkFormat format, uint32 width, uint32 height, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty)
+		VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty)
 	{
 		// create shader module 
 		vert = CompileShaderModule(vert_data, vert_size);
@@ -182,15 +182,14 @@ namespace chaos
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = (float)width;
-		viewport.height = (float)height;
+		viewport.width = (float)extent.width;
+		viewport.height = (float)extent.height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
-		scissor.extent.width = width; // extent;
-		scissor.extent.height = height;
+		scissor.extent = extent;
 
 		VkPipelineViewportStateCreateInfo viewport_state{};
 		viewport_state.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;

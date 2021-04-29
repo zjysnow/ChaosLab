@@ -91,10 +91,10 @@ namespace chaos
 
 		VkDevice GetDevice() const noexcept { return device; }
 
-
-		//// device extensions
-		//PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR; // create swap chain
-		//PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR; // destroy swap chain
+		uint32 FindPresentQueueFamilyIndex(const VkSurfaceKHR& surface) const;
+		void GetSurfaceCapabilities(const VkSurfaceKHR& surface, VkSurfaceCapabilitiesKHR& capabilities) const;
+		void GetSurfaceFormat(const VkSurfaceKHR& surface, VkSurfaceFormatKHR& format) const;
+		VkPresentModeKHR GetSurfacePresentMode(const VkSurfaceKHR& surface) const;
 
 		uint32 FindMemoryTypeIndex(uint32 memory_type_bits, const VkFlags& required, const VkFlags& preferred, const VkFlags& preferred_not) const;
 		bool IsMemoryMappable(uint32 memory_type_index) const;

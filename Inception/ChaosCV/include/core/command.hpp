@@ -30,13 +30,13 @@ namespace chaos
 
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, VulkanAllocator* allocator);
 
-		//void CreateSyncObjects(size_t count);
-		void Init(size_t buffers_count);
-		void FreeCommandBuffers();
+		void Create(size_t buffers_count);
 
 		void RecordPipeline(const GraphicsPipeline* pipeline, uint32 buffers_count, VkFramebuffer* frame_buffers, 
-			uint32 width, uint32 height, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
+			VkExtent2D extent, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
+
 		void Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index);
+
 	protected:
 		std::vector<VkCommandBuffer> command_buffers;
 

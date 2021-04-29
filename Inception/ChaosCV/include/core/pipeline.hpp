@@ -16,8 +16,7 @@ namespace chaos
 		VkPipeline pipeline;
 		VkPipelineLayout pipeline_layout;
 
-		//VkDescriptorPool descriptor_pool;
-		VkDescriptorSetLayout descriptor_set_layout;
+		VkDescriptorSetLayout descriptorset_layout;
 
 	protected:
 		Pipeline(const VulkanDevice* vkdev);
@@ -35,7 +34,7 @@ namespace chaos
 		~GraphicsPipeline();
 
 		void Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size, 
-			VkFormat format, uint32 width, uint32 height, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty);
+			VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty);
 		
 		void CreateRenderPass(VkFormat format);
 

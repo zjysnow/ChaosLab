@@ -48,79 +48,42 @@ namespace chaos
 			VkResult ret = vkCreateWin32SurfaceKHR(g_instance, &surface_create_info, 0, &surface);
 			CHECK_EQ(VK_SUCCESS, ret) << "vkCreateWin32SurfaceKHR failed " << ret;
 
-			// to check the gpu if support present
-			VkBool32 support_present = false;
-			// try graphics queue family first
-			vkGetPhysicalDeviceSurfaceSupportKHR(vkdev->info.physical_device, vkdev->info.graphics_queue_family_index, surface, &support_present);
-			present_queue_family_index = vkdev->info.graphics_queue_family_index;
-			if (not support_present)
+			present_queue_family_index = vkdev->FindPresentQueueFamilyIndex(surface);
+
+			vkdev->GetSurfaceCapabilities(surface, surface_capabilities);
+
+			image_count = surface_capabilities.minImageCount + 1;
+			if (surface_capabilities.maxImageCount > 0 && image_count > surface_capabilities.maxImageCount)
 			{
-				// transfer dose not support present, so just check compute queue family
-				vkGetPhysicalDeviceSurfaceSupportKHR(vkdev->info.physical_device, vkdev->info.compute_queue_family_index, surface, &support_present);
-				CHECK(support_present) << "physical device do not support present";
-				present_queue_family_index = vkdev->info.compute_queue_family_index;
+				image_count = surface_capabilities.maxImageCount;
 			}
 
-			
-			VkSurfaceCapabilitiesKHR present_capabilities;
-			ret = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vkdev->info.physical_device, surface, &present_capabilities); // should use vkdev->
-			CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed " << ret;
-
-			current_transform = present_capabilities.currentTransform;
-			image_count = present_capabilities.minImageCount + 1;
-			if (present_capabilities.maxImageCount > 0 && image_count > present_capabilities.maxImageCount)
-			{
-				image_count = present_capabilities.maxImageCount;
-			}
-
-			extent = present_capabilities.currentExtent;
+			extent = surface_capabilities.currentExtent;
 			if (extent.width == UINT32_MAX)
 			{
-				extent.width = (std::max)(present_capabilities.minImageExtent.width, (std::min)(present_capabilities.maxImageExtent.width, width));
-				extent.height = (std::max)(present_capabilities.minImageExtent.height, (std::min)(present_capabilities.maxImageExtent.height, height));
+				extent.width = (std::max)(surface_capabilities.minImageExtent.width, (std::min)(surface_capabilities.maxImageExtent.width, width));
+				extent.height = (std::max)(surface_capabilities.minImageExtent.height, (std::min)(surface_capabilities.maxImageExtent.height, height));
 			}
 
-			uint32_t format_count;
-			ret = vkGetPhysicalDeviceSurfaceFormatsKHR(vkdev->info.physical_device, surface, &format_count, nullptr);
-			CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceFormatsKHR failed " << ret;
-			std::vector<VkSurfaceFormatKHR> present_formats(format_count);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(vkdev->info.physical_device, surface, &format_count, present_formats.data());
-			CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceFormatsKHR failed " << ret;
+			vkdev->GetSurfaceFormat(surface, present_format);
 
-			surface_format = present_formats[0];
-			for (const auto& format : present_formats)
-			{
-				if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
-				{
-					surface_format = format;
-					break;
-				}
-			}
+			present_mode = vkdev->GetSurfacePresentMode(surface);
 
-			uint32_t present_mode_count;
-			ret = vkGetPhysicalDeviceSurfacePresentModesKHR(vkdev->info.physical_device, surface, &present_mode_count, nullptr);
-			CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfacePresentModesKHR failed " << ret;
-			std::vector<VkPresentModeKHR> present_modes(present_mode_count);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(vkdev->info.physical_device, surface, &present_mode_count, present_modes.data());
-			CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfacePresentModesKHR failed " << ret;
-
-			present_mode = VK_PRESENT_MODE_FIFO_KHR;
-			for (const auto& mode : present_modes)
-			{
-				if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
-				{
-					present_mode = mode;
-					break;
-				}
-			}
-
-			CreateSwapChain(); // and vkimage and image view
+			CreateSwapChainImages();
 		}
 
 		~VulkanWindowImpl()
 		{
-			CleanupSwapChain();
+			for (auto buffer : frame_buffers)
+			{
+				vkDestroyFramebuffer(vkdev->GetDevice(), buffer, nullptr);
+			}
 
+			for (auto& view : image_views)
+			{
+				vkDestroyImageView(vkdev->GetDevice(), view, nullptr);
+			}
+			vkDestroySwapchainKHR(vkdev->GetDevice(), swap_chain, nullptr);
 			vkDestroySurfaceKHR(g_instance, surface, nullptr);
 		}
 
@@ -160,7 +123,7 @@ namespace chaos
 				}
 			}
 		}
-		void CreateSwapChain()
+		void CreateSwapChainImages()
 		{
 			VkResult ret;
 
@@ -169,8 +132,8 @@ namespace chaos
 			swap_chain_create_info.surface = surface;
 
 			swap_chain_create_info.minImageCount = image_count;
-			swap_chain_create_info.imageFormat = surface_format.format;
-			swap_chain_create_info.imageColorSpace = surface_format.colorSpace;
+			swap_chain_create_info.imageFormat = present_format.format;
+			swap_chain_create_info.imageColorSpace = present_format.colorSpace;
 			swap_chain_create_info.imageExtent = extent;
 			swap_chain_create_info.imageArrayLayers = 1;
 			swap_chain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -190,7 +153,7 @@ namespace chaos
 			swap_chain_create_info.pQueueFamilyIndices = queue_families.data();
 
 
-			swap_chain_create_info.preTransform = current_transform; //present_capabilities.currentTransform;
+			swap_chain_create_info.preTransform = surface_capabilities.currentTransform;
 			swap_chain_create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 			swap_chain_create_info.presentMode = present_mode;
 			swap_chain_create_info.clipped = VK_TRUE;
@@ -204,9 +167,7 @@ namespace chaos
 			ret = vkGetSwapchainImagesKHR(vkdev->GetDevice(), swap_chain, &image_count, nullptr);
 			CHECK_EQ(VK_SUCCESS, ret) << "vkGetSwapchainImagesKHR failed " << ret;
 
-
 			// create images and image views
-
 			images.resize(image_count);
 			ret = vkGetSwapchainImagesKHR(vkdev->GetDevice(), swap_chain, &image_count, images.data());
 			CHECK_EQ(VK_SUCCESS, ret) << "vkGetSwapchainImagesKHR failed " << ret;
@@ -218,7 +179,7 @@ namespace chaos
 				create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				create_info.image = images[i];
 				create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				create_info.format = surface_format.format;
+				create_info.format = present_format.format;
 				create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 				create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
 				create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -234,21 +195,7 @@ namespace chaos
 			}
 		}
 
-		void CleanupSwapChain()
-		{
-			for (auto buffer : frame_buffers)
-			{
-				vkDestroyFramebuffer(vkdev->GetDevice(), buffer, nullptr);
-			}
-
-			for (auto& view : image_views)
-			{
-				vkDestroyImageView(vkdev->GetDevice(), view, nullptr);
-			}
-			vkDestroySwapchainKHR(vkdev->GetDevice(), swap_chain, nullptr);
-		}
-
-		void CreateFrameBuffer(const VkRenderPass& render_pass)
+		void* CreateFrameBuffer(const VkRenderPass& render_pass)
 		{
 			frame_buffers.resize(image_count);
 
@@ -268,8 +215,13 @@ namespace chaos
 				VkResult ret = vkCreateFramebuffer(vkdev->GetDevice(), &framebuffer_info, nullptr, &frame_buffers[i]);
 				CHECK_EQ(VK_SUCCESS, ret) << "vkCreateFramebuffer failed " << ret;
 			}
+
+			return frame_buffers.data();
 		}
 
+		uint32 height() const noexcept { return extent.height; }
+		uint32 width() const noexcept { return extent.width; }
+		int image_format() const noexcept { return present_format.format; }
 
 		HWND window_handle;
 		const VulkanDevice* vkdev;
@@ -279,15 +231,17 @@ namespace chaos
 		VkSurfaceKHR surface;
 		uint32 present_queue_family_index;
 		
-		
+		VkSurfaceCapabilitiesKHR surface_capabilities;
+		VkExtent2D extent;
+
 		VkPresentModeKHR present_mode;
-		VkSurfaceTransformFlagBitsKHR current_transform;
-		
+		VkSurfaceFormatKHR present_format;
+
+		std::vector<VkImageView> image_views;
+		std::vector<VkFramebuffer> frame_buffers;
 
 		VkSwapchainKHR swap_chain;
 		std::vector<VkImage> images;
-		
-		
 	};
 
 

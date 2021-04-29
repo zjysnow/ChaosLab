@@ -34,15 +34,23 @@ namespace chaos
 
 	GraphicsCommand::~GraphicsCommand()
 	{
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		vkDestroyDescriptorPool(vkdev->GetDevice(), descriptor_pool, nullptr);
+
+		for (auto& semaphore : render_finished_semaphores)
 		{
-			vkDestroySemaphore(vkdev->GetDevice(), render_finished_semaphores[i], nullptr);
-			vkDestroySemaphore(vkdev->GetDevice(), image_available_semaphores[i], nullptr);
-			vkDestroyFence(vkdev->GetDevice(), in_flight_fences[i], nullptr);
+			vkDestroySemaphore(vkdev->GetDevice(), semaphore, nullptr);
+		}
+		for (auto& semaphore : image_available_semaphores)
+		{
+			vkDestroySemaphore(vkdev->GetDevice(), semaphore, nullptr);
+		}
+		for (auto& fence : in_flight_fences)
+		{
+			vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
 		}
 	}
 
-	void GraphicsCommand::Init(size_t buffers_count)
+	void GraphicsCommand::Create(size_t buffers_count)
 	{
 		VkResult ret;
 
@@ -81,11 +89,6 @@ namespace chaos
 		}
 	}
 
-	void GraphicsCommand::FreeCommandBuffers()
-	{
-		vkFreeCommandBuffers(vkdev->GetDevice(), command_pool, static_cast<uint32_t>(command_buffers.size()), command_buffers.data());
-	}
-
 	void GraphicsCommand::RecordClone(const VulkanTensor& src, VulkanTensor& dst, VulkanAllocator* allocator)
 	{
 		VkCommandBufferBeginInfo begin_info{};
@@ -102,7 +105,6 @@ namespace chaos
 		vkCmdCopyBuffer(command_buffers[0], src.data->buffer, dst.data->buffer, 1, &copy_region);
 		vkEndCommandBuffer(command_buffers[0]);
 
-
 		VkSubmitInfo submit_info{};
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit_info.commandBufferCount = 1;
@@ -114,39 +116,36 @@ namespace chaos
 		vkQueueWaitIdle(graphics_queue);
 
 		vkdev->ReclaimQueue(vkdev->info.graphics_queue_family_index, graphics_queue);
-
-		//vkFreeCommandBuffers(vkdev->GetDevice(), command_pool, 1, &command_buffers[0]);
 	}
 
 	void GraphicsCommand::RecordPipeline(const GraphicsPipeline* pipeline, uint32 buffers_count, VkFramebuffer* frame_buffers, 
-		uint32 width, uint32 height, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform)
+		VkExtent2D extent, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform)
 	{
 		VkResult ret;
-		//uint32 buffers_count = static_cast<uint32>(frame_buffers.size());
 
 		VkDescriptorPoolSize pool_size{};
 		pool_size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		pool_size.descriptorCount = buffers_count; // static_cast<uint32_t>(swapChainImages.size());
+		pool_size.descriptorCount = buffers_count;
 
-		VkDescriptorPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;
-		poolInfo.pPoolSizes = &pool_size;
-		poolInfo.maxSets = buffers_count; // static_cast<uint32_t>(swapChainImages.size());
+		VkDescriptorPoolCreateInfo pool_info{};
+		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		pool_info.poolSizeCount = 1;
+		pool_info.pPoolSizes = &pool_size;
+		pool_info.maxSets = buffers_count; 
 
-		ret = vkCreateDescriptorPool(vkdev->GetDevice(), &poolInfo, nullptr, &descriptor_pool);
+		ret = vkCreateDescriptorPool(vkdev->GetDevice(), &pool_info, nullptr, &descriptor_pool);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorPool failed " << ret;
 
-		std::vector<VkDescriptorSetLayout> layouts(buffers_count, pipeline->descriptor_set_layout);
-		VkDescriptorSetAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptor_pool;
-		allocInfo.descriptorSetCount = buffers_count; //static_cast<uint32_t>(swapChainImages.size());
-		allocInfo.pSetLayouts = layouts.data();
+		std::vector<VkDescriptorSetLayout> layouts(buffers_count, pipeline->descriptorset_layout);
+		VkDescriptorSetAllocateInfo alloc_info{};
+		alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		alloc_info.descriptorPool = descriptor_pool;
+		alloc_info.descriptorSetCount = buffers_count;
+		alloc_info.pSetLayouts = layouts.data();
 
 		descriptorsets.resize(buffers_count);
-		ret = vkAllocateDescriptorSets(vkdev->GetDevice(), &allocInfo, descriptorsets.data());
+		ret = vkAllocateDescriptorSets(vkdev->GetDevice(), &alloc_info, descriptorsets.data());
 		CHECK_EQ(VK_SUCCESS, ret) << "vkAllocateDescriptorSets failed " << ret;
-
 
 		for (uint32_t i = 0; i < buffers_count; i++)
 		{
@@ -155,16 +154,16 @@ namespace chaos
 			buffer_info.offset = uniform[i].data->offset;
 			buffer_info.range = uniform[i].data->capacity;
 
-			VkWriteDescriptorSet descriptorWrite{};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = descriptorsets[i];
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &buffer_info;
+			VkWriteDescriptorSet descriptor_write{};
+			descriptor_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptor_write.dstSet = descriptorsets[i];
+			descriptor_write.dstBinding = 0;
+			descriptor_write.dstArrayElement = 0;
+			descriptor_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptor_write.descriptorCount = 1;
+			descriptor_write.pBufferInfo = &buffer_info;
 
-			vkUpdateDescriptorSets(vkdev->GetDevice(), 1, &descriptorWrite, 0, nullptr);
+			vkUpdateDescriptorSets(vkdev->GetDevice(), 1, &descriptor_write, 0, nullptr);
 
 			VkCommandBufferBeginInfo begin_info{};
 			begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -176,8 +175,7 @@ namespace chaos
 			render_pass_info.renderPass = pipeline->render_pass;
 			render_pass_info.framebuffer = frame_buffers[i];
 			render_pass_info.renderArea.offset = { 0, 0 };
-			render_pass_info.renderArea.extent.width = width;
-			render_pass_info.renderArea.extent.height = height;
+			render_pass_info.renderArea.extent = extent;
 
 			VkClearValue clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };
 			render_pass_info.clearValueCount = 1;
