@@ -1,4 +1,4 @@
-#include "dnn/layers/lup.hpp"
+#include "dnn/layers/decomp.hpp"
 
 namespace chaos
 {

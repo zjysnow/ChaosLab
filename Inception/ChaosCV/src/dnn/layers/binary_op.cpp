@@ -91,7 +91,8 @@ namespace chaos
         CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expcec 1 output but got " << top_blobs.size();
         Tensor& c = top_blobs[0];
         Shape c_shape = a.total() > b.total() ? a.shape : b.shape;
-        c.Create(c_shape, c_shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
+        if (c.empty()) c.Create(c_shape, c_shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
+        CHECK_EQ(c_shape, c.shape);
 
         if (ADD == op_type) Operator<BinaryAdd>(a, b, c);
         if (SUB == op_type) Operator<BinarySub>(a, b, c);

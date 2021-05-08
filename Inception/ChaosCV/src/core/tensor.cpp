@@ -150,10 +150,10 @@ namespace chaos
 		return tensor;
 	}
 
-	bool Tensor::is_continuous() const noexcept
-	{
-		return shape.total() == total();
-	}
+	//bool Tensor::is_continuous() const noexcept
+	//{
+	//	return shape.total() == total();
+	//}
 
 
 	VulkanTensor::VulkanTensor(const Shape& shape, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator)

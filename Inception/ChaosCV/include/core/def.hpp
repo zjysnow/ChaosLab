@@ -37,3 +37,9 @@
 #define CHECK_LT(val1, val2) CHECK(val1 <  val2)
 #define CHECK_GE(val1, val2) CHECK(val1 >= val2)
 #define CHECK_GT(val1, val2) CHECK(val1 >  val2)
+
+#define CHECK_NEAR(val1, val2, margin)  \
+  do {                                  \
+    CHECK_LE((val1), (val2)+(margin));  \
+    CHECK_GE((val1), (val2)-(margin));  \
+  } while (false);

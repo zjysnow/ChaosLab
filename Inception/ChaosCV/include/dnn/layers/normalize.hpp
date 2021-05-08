@@ -4,6 +4,7 @@
 
 namespace chaos
 {
+	// treat the tensor as a vector but do not reshape
 	class Normalize : public Layer
 	{
 	public:

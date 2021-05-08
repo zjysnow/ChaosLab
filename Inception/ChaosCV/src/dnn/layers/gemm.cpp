@@ -4,6 +4,18 @@ namespace chaos
 {
 	GEMM::GEMM() : Layer("GEMM") {}
 
+	void GEMM::Set(const std::string& name, const std::any& val)
+	{
+		if ("alpha" == name)
+		{
+			alpha = std::any_cast<float>(val);
+		}
+		if ("beta" == name)
+		{
+			beta = std::any_cast<float>(val);
+		}
+	}
+
 	void GEMM::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
 		CHECK_LE(2, bottom_blobs.size()) << "layer '" << type << "' expect 2 inputs at least but got " << bottom_blobs.size();
@@ -23,7 +35,7 @@ namespace chaos
 		CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expect 1 output but got " << top_blobs.size();
 		Tensor& C = top_blobs[0];
 		if (C.empty()) C.Create(Shape(m, k), Steps{ k, 1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
-		if (bottom_blobs.size() == 2)
+		if (bottom_blobs.size() == 2 || bottom_blobs[2].empty())
 		{
 			memset(C.data, 0, sizeof(float) * C.total());
 		}

@@ -1,81 +1,87 @@
 #include "dnn/layers/normalize.hpp"
 
+#include "core/buffer.hpp"
+
 namespace chaos
 {
 	Normalize::Normalize() : Layer("Normalize") {}
 
+	void L2Norm(const Tensor& src, size_t* src_index, Tensor& dst,  size_t* dst_index)
+	{
+		size_t total = src.shape.total();
+		float norm = 0.f;
+		for (size_t i = 0; i < total; i++)
+		{
+			norm += src[src_index[i]] * src[src_index[i]];
+		}
+		norm = std::sqrt(norm);
+
+		for (size_t i = 0; i < total; i++)
+		{
+			dst[dst_index[i]] = src[src_index[i]] / norm;
+		}
+	}
+
+	void L1Norm(const Tensor& src, size_t* src_index, Tensor& dst, size_t* dst_index)
+	{
+		size_t total = src.shape.total();
+		float norm = 0.f;
+		for (size_t i = 0; i < total; i++)
+		{
+			norm += src[src_index[i]];
+		}
+
+		for (size_t i = 0; i < total; i++)
+		{
+			dst[dst_index[i]] = src[src_index[i]] / norm;
+		}
+	}
+
+	void MinMaxNorm()
+	{
+
+	}
+
 	void Normalize::Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt) const
 	{
-		//size_t total = bottom_blob.total();
-		//CHECK_EQ(total, bottom_blob.shape.total());
-
 		const Shape shape = bottom_blob.shape;
-		const Steps steps = bottom_blob.steps;
-		top_blob.Create(shape, shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
+		size_t dims = shape.dims;
+		size_t cnt = shape.total();
 
-		auto valid_index = [=](size_t i) {
-			if (bottom_blob.is_continuous())
-			{
-				return i;
-			}
-			else
-			{
-				size_t idx = 0;
-				size_t dims = shape.dims;
-				for (size_t d = 0; d < dims; d++)
-				{
-					size_t k = i % shape[dims - d - 1];
-					idx += k * steps[dims - d - 1];
-					i /= shape[dims - d - 1];
-				}
-				return idx;
-			}
-		};
+		if (top_blob.empty()) top_blob.Create(shape, shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
+		CHECK_EQ(shape, top_blob.shape);
 
-		if (norm_type == L1)
+		AutoBuffer<size_t> indexes(2 * cnt);
+		for (size_t i = 0; i < shape.total(); i++)
 		{
-			float norm = 0.f;
-			for (size_t i = 0; i < shape.total(); i++)
+			size_t src_idx = 0;
+			size_t dst_idx = 0;
+			size_t idx = i;
+			for (size_t d = 0; d < dims; d++)
 			{
-				norm += bottom_blob[valid_index(i)];
+				size_t k = idx % shape[dims - d - 1];
+				src_idx += k * bottom_blob.steps[dims - d - 1];
+				dst_idx += k * top_blob.steps[dims - d - 1];
+				idx /= shape[dims - d - 1];
 			}
-			for (size_t i = 0; i < shape.total(); i++)
-			{
-				top_blob[i] = bottom_blob[valid_index(i)] / norm;
-			}
+			indexes[i] = src_idx;
+			indexes[i + cnt] = dst_idx;
 		}
+
+		float norm = 0.f;
+
 		if (norm_type == L2)
 		{
-			float norm = 0.f;
-			for (size_t i = 0; i < shape.total(); i++)
+			for (size_t i = 0; i < cnt; i++)
 			{
-				size_t idx = valid_index(i);
-				norm += bottom_blob[idx] * bottom_blob[idx];
+				norm += bottom_blob[indexes[i]] * bottom_blob[indexes[i]];
 			}
 			norm = std::sqrt(norm);
-
-			for (size_t i = 0; i < shape.total(); i++)
-			{
-				top_blob[i] = bottom_blob[valid_index(i)] / norm;
-			}
 		}
-		if (norm_type == MINMAX)
+
+		for (size_t i = 0; i < cnt; i++)
 		{
-			float min = FLT_MAX;
-			float max = -FLT_MAX;
-			for (size_t i = 0; i < shape.total(); i++)
-			{
-				size_t idx = valid_index(i);
-				if (min > bottom_blob[idx]) min = bottom_blob[idx];
-				if (max < bottom_blob[idx]) max = bottom_blob[idx];
-			}
-
-			float range = (max - min);
-
-			for (size_t i = 0; i < shape.total(); i++)
-			{
-				top_blob[i] = (bottom_blob[valid_index(i)] - min) / range;
-			}
+			top_blob[indexes[i + cnt]] = bottom_blob[indexes[i]] / norm;
 		}
 	}
 

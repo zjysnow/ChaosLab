@@ -19,6 +19,10 @@ namespace chaos
 		Tensor(const Tensor& tensor);
 		Tensor& operator=(const Tensor& tensor);
 
+		// use Tensor like 
+		// ```cpp
+		// Tensor data = {1,2,3,4,5};
+		// ```
 		template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
 		Tensor(const std::initializer_list<Type>& vec)
 		{
@@ -28,7 +32,8 @@ namespace chaos
 		}
 
 		void Create(const Shape& shape, const Steps& steps, const DataType& dtype, const Packing& packing, Allocator* allocator);
-		void CreateLike(const Tensor& tensor, Allocator* allocator = nullptr);
+		void CreateLike(const Tensor& tensor, Allocator* allocator = nullptr); // will keep the steps for new Tensor
+		//void CreateLike(const VulkanTensor& tensor, Allocator* allocator = nullptr);
 
 		/// <summary> ref_cnt-- </summary>
 		void Release();
@@ -45,7 +50,6 @@ namespace chaos
 
 		float& operator[](size_t idx) noexcept { return ((float*)data)[idx]; }
 		const float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
-
 
 		template<class Type = float, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
 		static Tensor eye(uint32 w, uint32 h, Allocator* allocator = nullptr)
@@ -72,7 +76,7 @@ namespace chaos
 			return zeros_;
 		}
 
-		bool is_continuous() const noexcept;
+		bool is_continuous() const noexcept { return shape.total() == total(); }
 
 		void* data = nullptr;
 		Allocator* allocator = nullptr;
