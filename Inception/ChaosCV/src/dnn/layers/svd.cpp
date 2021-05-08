@@ -6,7 +6,7 @@
 namespace chaos
 {
     template<typename Type>
-    void JacobiSVDImpl(Type* At, size_t astep, Type* _W, Type* Vt, size_t vstep,
+    void JacobiSVDImpl(Type* At, size_t astep, Type* W_, Type* Vt, size_t vstep,
         int m, int n, int n1, double minval, Type eps)
     {
         AutoBuffer<double> Wbuf(n);
@@ -124,7 +124,7 @@ namespace chaos
         }
 
         for (i = 0; i < n; i++)
-            _W[i] = (Type)W[i];
+            W_[i] = (Type)W[i];
 
         if (!Vt)
             return;
@@ -231,7 +231,7 @@ namespace chaos
         Tensor temp_w(Shape(n), DataType::D4, Packing::CHW, buf + urows * astep * 4ULL);
         Tensor temp_u(Shape(urows, m), DataType::D4, Packing::CHW, buf, { astep, 1U });
         Tensor temp_v;
-        if (compute_uv) temp_v = Tensor(Shape(n, n), DataType::D4, Packing::CHW, AlignPtr(buf + ((size_t)urows * astep + n) * 4ULL, 16), { vstep, 1U });
+        if (compute_uv) temp_v = Tensor(Shape(n, n), DataType::D4, Packing::CHW, AlignPtr(buf + (urows * astep + n) * 4ULL, 16), { vstep, 1U });
         if (urows > n) memset(temp_u.data, 0, urows * m * 4ULL);
 
         if (not at)
@@ -254,8 +254,8 @@ namespace chaos
             Tensor& Vt = top_blobs[2];
             if (!at)
             {
-                if (U.empty()) U.Create(Shape(m, urows), {urows, 1u}, DataType::D4, Packing::CHW, opt.blob_allocator);
-                if (Vt.empty()) Vt.Create(Shape(n, n), { n,1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
+                if (U.empty()) U.Create(Shape(m, urows), {urows, 1U}, DataType::D4, Packing::CHW, opt.blob_allocator);
+                if (Vt.empty()) Vt.Create(Shape(n, n), { n,1U }, DataType::D4, Packing::CHW, opt.blob_allocator);
                 Operator::Transpose(temp_u, U);
                 temp_v.CopyTo(Vt);
             }

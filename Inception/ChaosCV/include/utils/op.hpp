@@ -29,14 +29,20 @@ namespace chaos
 		static Tensor L2Norm(const Tensor& a);
 
 		static void Transpose(const Tensor& a, Tensor& b); // b = a^T;
+
+		static Tensor Diag(const Tensor& a, int k = 0);
 	private:
 		Operator() = delete;
 
 		static Ptr<Layer> binary_op;
 		static Ptr<Layer> cross;
+		static Ptr<Layer> diag;
 		static Ptr<Layer> dot;
 		static Ptr<Layer> gemm;
 		static Ptr<Layer> normalize;
 		static Ptr<Layer> permute;
+		
 	};
+
+	CHAOS_API Tensor operator*(const Tensor& lhs, const Tensor& rhs);
 }

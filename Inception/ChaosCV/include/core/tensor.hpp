@@ -76,6 +76,9 @@ namespace chaos
 			return zeros_;
 		}
 
+		static Tensor randu(const Shape& shape, float min = 0.f, float max = 1.f, Allocator* allocator = nullptr);
+		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
+
 		bool is_continuous() const noexcept { return shape.total() == total(); }
 
 		void* data = nullptr;

@@ -1,6 +1,8 @@
 #include "core/tensor.hpp"
 #include "core/buffer.hpp"
 
+#include <random>
+
 namespace chaos
 {
 	Tensor::Tensor(const Shape& shape, const DataType& dtype, const Packing& packing, Allocator* allocator)
@@ -150,11 +152,29 @@ namespace chaos
 		return tensor;
 	}
 
-	//bool Tensor::is_continuous() const noexcept
-	//{
-	//	return shape.total() == total();
-	//}
+	static std::default_random_engine engine;
+	Tensor Tensor::randu(const Shape& shape, float min, float max, Allocator* allocator)
+	{
+		std::uniform_real_distribution<float> uniform(min, max);
 
+		Tensor r = Tensor(shape, DataType::D4, Packing::CHW, allocator);
+		for (uint32 i = 0; i < shape.total(); i++)
+		{
+			r[i] = uniform(engine);
+		}
+		return r;
+	}
+	Tensor Tensor::randn(const Shape& shape, float mu, float sigma, Allocator* allocator)
+	{
+		std::normal_distribution<float> normal(mu, sigma);
+
+		Tensor r = Tensor(shape, DataType::D4, Packing::CHW, allocator);
+		for (uint32 i = 0; i < shape.total(); i++)
+		{
+			r[i] = normal(engine);
+		}
+		return r;
+	}
 
 	VulkanTensor::VulkanTensor(const Shape& shape, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator)
 	{

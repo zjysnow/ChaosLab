@@ -53,13 +53,16 @@ namespace chaos
 
 		SVD();
 
-		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& opt_blobs, const Option& opt = Option()) const override;
+		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
 
 		int flags = MODIFY_A;
 	};
 
-	class CHAOS_API Eig : public Decomp
+	class CHAOS_API Eigen : public Decomp
 	{
+	public:
+		Eigen();
 
+		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
 	};
 }

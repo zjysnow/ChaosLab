@@ -2,16 +2,18 @@
 
 #include "dnn/layers/binary_op.hpp"
 #include "dnn/layers/cross.hpp"
+#include "dnn/layers/diag.hpp"
 #include "dnn/layers/dot.hpp"
+#include "dnn/layers/gemm.hpp"
 #include "dnn/layers/normalize.hpp"
 #include "dnn/layers/permute.hpp"
-#include "dnn/layers/gemm.hpp"
 
 namespace chaos
 {
 	Ptr<Layer> Operator::binary_op = std::make_shared<chaos::BinaryOp>();
 	Ptr<Layer> Operator::cross = std::make_shared<chaos::Cross>();
 	Ptr<Layer> Operator::dot = std::make_shared<chaos::Dot>();
+	Ptr<Layer> Operator::diag = std::make_shared<chaos::Diag>();
 	Ptr<Layer> Operator::gemm = std::make_shared<chaos::GEMM>();
 	Ptr<Layer> Operator::normalize = std::make_shared<chaos::Normalize>();
 	Ptr<Layer> Operator::permute = std::make_shared<chaos::Permute>();
@@ -88,6 +90,7 @@ namespace chaos
 
 	inline void Operator::Transpose(const Tensor& a, Tensor& b)
 	{
+		CHECK_EQ(2, a.shape.dims) << "a must be a matrix";
 		std::vector<uint32> orders = {1,0};
 		permute->Set("orders", orders);
 		permute->Forward(a, b);
@@ -100,5 +103,17 @@ namespace chaos
 		std::vector<Tensor> d(1);
 		gemm->Forward({a,b,c}, d);
 		return d[0];
+	}
+
+	inline Tensor Operator::Diag(const Tensor& a, int k)
+	{
+		Tensor b;
+		diag->Forward(a, b);
+		return b;
+	}
+
+	Tensor operator*(const Tensor& lhs, const Tensor& rhs)
+	{
+		return Operator::GEMM(lhs, rhs, 1.f, Tensor(), 0.f);
 	}
 }
