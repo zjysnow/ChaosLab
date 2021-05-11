@@ -8,18 +8,21 @@ namespace chaos
 	class Normalize : public Layer
 	{
 	public:
-		Normalize();
-
-		enum NormType
+		enum Method
 		{
-			L1,
-			L2,
-			MINMAX,
+			ZSCORE, // center and scale to have mean 0 and standard deviation 1
+			NORM,	// p-norm or infinity norm
+			RANGE,	// rescale range of data to an interval of the form [f1, f2] (default is [0, 1]), where f1 < f2
 		};
+
+		Normalize();
 
 		void Forward(const Tensor& bottom_blob,Tensor& top_blob, const Option& opt) const override;
 		void Set(const std::string& pname, const std::any& val) override;
 
-		int norm_type = L2;
+		int method = ZSCORE;
+		float f1 = 0;
+		float f2 = 0;
+		int dim = 0;
 	};
 }

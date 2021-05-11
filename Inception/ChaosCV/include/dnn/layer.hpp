@@ -26,6 +26,7 @@ namespace chaos
 
 		const std::string type;
 
+
 		bool support_inplace;
 		bool support_vulkan;
 	};

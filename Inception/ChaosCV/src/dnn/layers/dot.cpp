@@ -17,7 +17,8 @@ namespace chaos
 
 		CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expect 1 output but got " << top_blobs.size();
 		Tensor& c = top_blobs[0];
-		c.Create(Shape(1u), Steps{ 1 }, DataType::D4, Packing::CHW, opt.blob_allocator);
+		if (c.empty()) c.Create(Shape(1u), { 1 }, DataType::D4, Packing::CHW, opt.blob_allocator);
+		CHECK_EQ(Shape(1u), c.shape);
 		c[0] = 0;
 
 		uint32 n = a.shape[0];

@@ -37,32 +37,22 @@ namespace chaos
     {
         //Op op;
         Op op;
-        if (a.is_continuous() && b.is_continuous())
+        size_t dims = c.shape.dims;
+        for (size_t i = 0; i < c.shape.total(); i++)
         {
-            for (size_t i = 0; i < c.shape.total(); i++)
+            size_t a_idx = 0;
+            size_t b_idx = 0;
+            size_t c_idx = 0;
+            size_t idx = i;
+            for (size_t d = 0; d < dims; d++)
             {
-                c[i] = op(a[i], b[i]);
+                size_t k = idx % c.shape[dims - d - 1];
+                a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
+                b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
+                c_idx += k * c.steps[dims - d - 1];
+                idx /= c.shape[dims - d - 1];
             }
-        }
-        else
-        {
-            size_t dims = c.shape.dims;
-            for (size_t i = 0; i < c.shape.total(); i++)
-            {
-                size_t a_idx = 0;
-                size_t b_idx = 0;
-                size_t c_idx = 0;
-                size_t idx = i;
-                for (size_t d = 0; d < dims; d++)
-                {
-                    size_t k = idx % c.shape[dims - d - 1];
-                    a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
-                    b_idx += (k >= b.shape[dims - d - 1] ? 0 : k) * b.steps[dims - d - 1];
-                    c_idx += k * c.steps[dims - d - 1];
-                    idx /= c.shape[dims - d - 1];
-                }
-                c[c_idx] = op(a[a_idx], b[b_idx]);
-            }
+            c[c_idx] = op(a[a_idx], b[b_idx]);
         }
     }
 
@@ -79,12 +69,12 @@ namespace chaos
         // reshape
         if (a_dims > b_dims)
         {
-            b.shape.Insert(0, a_dims - b_dims, (uint32)b.total());
+            b.shape.Insert(0, a_dims - b_dims, (uint32)b.shape.total());
             b.steps.Insert(0, a_dims - b_dims, 1);
         }
         else
         {
-            a.shape.Insert(0, b_dims - a_dims, (uint32)a.total());
+            a.shape.Insert(0, b_dims - a_dims, (uint32)a.shape.total());
             a.steps.Insert(0, a_dims - b_dims, 1);
         }
 

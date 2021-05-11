@@ -12,25 +12,31 @@ namespace chaos
 	class CHAOS_API Operator
 	{
 	public:
-		static Tensor Add(const Tensor& a, const Tensor& b);
-		static Tensor Sub(const Tensor& a, const Tensor& b);
-		static Tensor Mul(const Tensor& a, const Tensor& b);
-		static Tensor Div(const Tensor& a, const Tensor& b);
+		static void Add(const Tensor& a, const Tensor& b, Tensor& c);
+		static void Add(float a, const Tensor& b, Tensor& c);
 
-		static Tensor Mul(const Tensor& a, float b);
-		static Tensor Div(const Tensor& a, float b);
+		static void Cross(const Tensor& a, const Tensor& b, Tensor& c);
 
+		static void Diag(const Tensor& a, Tensor& b);
+		static void Div(const Tensor& a, const Tensor& b, Tensor& c);
+		static void Div(float a, const Tensor& b, Tensor& c);
+		static void Dot(const Tensor& a, const Tensor& b, Tensor& c);
 
-		static Tensor GEMM(const Tensor& a, const Tensor& b, float alpha = 1.f, const Tensor& c = Tensor(), float beta = 0.f);
+		// c = alpha * a * b + beta * c
+		static void GEMM(const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta);
 
-		static float Dot(const Tensor& a, const Tensor& b);
-		static Tensor Cross(const Tensor& a, const Tensor& b);
+		static void Mean(const Tensor& a, int dim, Tensor& m);
+		static void Mul(const Tensor& a, const Tensor& b, Tensor& c);
+		static void Mul(float a, const Tensor& b, Tensor& c);
 
-		static Tensor L2Norm(const Tensor& a);
+		static void Norm(const Tensor& a, float p, Tensor& n);
+		static void Normalize(const Tensor& a, int dim, const std::string& method, float p1, float p2, Tensor& n);
 
-		static void Transpose(const Tensor& a, Tensor& b); // b = a^T;
+		static void Sub(const Tensor& a, const Tensor& b, Tensor& c);
+		static void Sub(float a, const Tensor& b, Tensor& c);
+		
+		static void Transpose(const Tensor& a, Tensor& b);
 
-		static Tensor Diag(const Tensor& a, int k = 0);
 	private:
 		Operator() = delete;
 
@@ -39,10 +45,34 @@ namespace chaos
 		static Ptr<Layer> diag;
 		static Ptr<Layer> dot;
 		static Ptr<Layer> gemm;
+		static Ptr<Layer> mean;
+		static Ptr<Layer> norm;
 		static Ptr<Layer> normalize;
 		static Ptr<Layer> permute;
 		
 	};
 
-	CHAOS_API Tensor operator*(const Tensor& lhs, const Tensor& rhs);
+	CHAOS_API Tensor operator+(const Tensor& lhs, const Tensor& rhs);
+	CHAOS_API Tensor operator+(const Tensor& lhs, float rhs);
+	CHAOS_API Tensor operator+(float lhs, const Tensor& rhs);
+
+	CHAOS_API Tensor operator-(const Tensor& lhs, const Tensor& rhs);
+	CHAOS_API Tensor operator-(const Tensor& lhs, float rhs);
+	CHAOS_API Tensor operator-(float lhs, const Tensor& rhs);
+	
+	CHAOS_API Tensor operator*(const Tensor& lhs, const Tensor& rhs); // GEMM
+	CHAOS_API Tensor operator*(const Tensor& lhs, float rhs);
+	CHAOS_API Tensor operator*(float lhs, const Tensor& rhs);
+
+	CHAOS_API Tensor operator/(const Tensor& lhs, const Tensor& rhs);
+	CHAOS_API Tensor operator/(const Tensor& lhs, float rhs);
+	CHAOS_API Tensor operator/(float lhs, const Tensor& rhs);
+
+	CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
+	CHAOS_API Tensor diag(const Tensor& a, int k = 0);
+	CHAOS_API float dot(const Tensor& a, const Tensor& b);
+	CHAOS_API float mean(const Tensor& a);
+	CHAOS_API float norm(const Tensor& a, float p = 2.f);
+	CHAOS_API Tensor normalize(const Tensor& a, int dim = 0, const std::string& method = "zscore", float p1 = 0.f, float p2 = 0.f);
+	
 }

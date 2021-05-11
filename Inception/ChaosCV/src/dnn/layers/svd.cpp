@@ -243,7 +243,6 @@ namespace chaos
             A.CopyTo(temp_a);
         }
 
-        //JacobiSVD((float*)temp_a.data, astep, (float*)temp_w.data, (float*)temp_v.data, vstep, m, n, urows, FLT_MIN, FLT_EPSILON * 2);
         JacobiSVD((float*)temp_a.data, astep, (float*)temp_w.data, (float*)temp_v.data, vstep, m, n, compute_uv ? urows : 0);
 
         if (W.empty()) W.Create(Shape(n), { 1 }, DataType::D4, Packing::CHW, opt.blob_allocator);
@@ -261,6 +260,8 @@ namespace chaos
             }
             else
             {
+                if (U.empty()) U.Create(Shape(n, n), { n,1U }, DataType::D4, Packing::CHW, opt.blob_allocator);
+                if (Vt.empty()) Vt.Create(Shape(urows, m), { m,1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
                 Operator::Transpose(temp_v, U);
                 temp_u.CopyTo(Vt);
             }

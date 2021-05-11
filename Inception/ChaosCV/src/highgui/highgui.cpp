@@ -10,8 +10,8 @@ namespace chaos
 		const float c = cos(a);
 		const float s = sin(a);
 
-		Tensor axis = Operator::L2Norm(v);
-		Tensor temp = Operator::Mul(axis, 1 - c); //axis * (1 - c);
+		Tensor axis = normalize(v, 0, "norm", 2);
+		Tensor temp = axis * (1 - c);
 
 		Tensor Rotate = Tensor(Shape(3u, 3u), DataType::D4, Packing::CHW);
 		Rotate[0] = c + temp[0] * axis[0];
@@ -51,9 +51,9 @@ namespace chaos
 
 	Tensor LookAt(const Tensor& eye, const Tensor& center, const Tensor& up) // look at left hand
 	{
-		const Tensor f = Operator::L2Norm(Operator::Sub(center, eye));
-		const Tensor s = Operator::L2Norm(Operator::Cross(f, up));
-		const Tensor u = Operator::Cross(s, f);
+		const Tensor f = normalize(center-eye, 0, "norm", 2); 
+		const Tensor s = normalize(cross(f, up), 0, "norm", 2); 
+		const Tensor u = cross(s, f);
 
 		Tensor Result = Tensor::eye(4, 4);
 		Result[0] = s[0]; // .x;
@@ -65,9 +65,9 @@ namespace chaos
 		Result[2] = -f[0]; // .x;
 		Result[6] = -f[1]; // .y;
 		Result[10] = -f[2]; // .z;
-		Result[12] = -Operator::Dot(s, eye);
-		Result[13] = -Operator::Dot(u, eye);
-		Result[14] = Operator::Dot(f, eye);
+		Result[12] = -dot(s, eye);
+		Result[13] = -dot(u, eye);
+		Result[14] = dot(f, eye);
 		return Result;
 	}
 

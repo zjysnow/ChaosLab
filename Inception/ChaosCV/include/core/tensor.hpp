@@ -76,6 +76,19 @@ namespace chaos
 			return zeros_;
 		}
 
+		template<class Type = float, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
+		static Tensor ones(const Shape& shape, Allocator* allocator = nullptr)
+		{
+			Tensor ones_;
+			ones_.Create(shape, shape.steps(), static_cast<DataType>(sizeof(Type)), Packing::CHW, allocator);
+			Type* data = (Type*)ones_.data;
+			for (size_t i = 0; i < shape.total(); i++)
+			{
+				data[i] = 1;
+			}
+			return ones_;
+		}
+
 		static Tensor randu(const Shape& shape, float min = 0.f, float max = 1.f, Allocator* allocator = nullptr);
 		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
 
