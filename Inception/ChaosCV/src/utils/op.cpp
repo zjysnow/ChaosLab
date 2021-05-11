@@ -9,6 +9,7 @@
 #include "dnn/layers/norm.hpp"
 #include "dnn/layers/normalize.hpp"
 #include "dnn/layers/permute.hpp"
+#include "dnn/layers/sum.hpp"
 
 namespace chaos
 {
@@ -21,6 +22,7 @@ namespace chaos
 	Ptr<Layer> Operator::norm = std::make_shared<chaos::Norm>();
 	Ptr<Layer> Operator::normalize = std::make_shared<chaos::Normalize>();
 	Ptr<Layer> Operator::permute = std::make_shared<chaos::Permute>();
+	Ptr<Layer> Operator::sum = std::make_shared<chaos::Sum>();
 
 	inline void Operator::Add(const Tensor& a, const Tensor& b, Tensor& c)
 	{
@@ -173,6 +175,11 @@ namespace chaos
 		Tensor a_ = { a };
 		std::vector<Tensor> tops{ c };
 		binary_op->Forward({ a_,b }, tops);
+	}
+	void Operator::Sum(const Tensor& a, int dim, Tensor& b)
+	{
+		sum->Set("dim", dim);
+		sum->Forward(a, b);
 	}
 
 	void Operator::Transpose(const Tensor& a, Tensor& b)

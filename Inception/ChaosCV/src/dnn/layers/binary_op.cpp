@@ -69,14 +69,15 @@ namespace chaos
         // reshape
         if (a_dims > b_dims)
         {
-            b.shape.Insert(0, a_dims - b_dims, (uint32)b.shape.total());
-            b.steps.Insert(0, a_dims - b_dims, 1);
+            b.shape.Insert(0, a_dims - b_dims, 1);
+            b.steps.Insert(0, a_dims - b_dims, (uint32)b.shape.total());
         }
         else
         {
-            a.shape.Insert(0, b_dims - a_dims, (uint32)a.shape.total());
-            a.steps.Insert(0, a_dims - b_dims, 1);
+            a.shape.Insert(0, b_dims - a_dims, 1);
+            a.steps.Insert(0, b_dims - a_dims, (uint32)a.shape.total());
         }
+        std::cout << a.shape << std::endl << b.shape << std::endl;
 
         CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expcec 1 output but got " << top_blobs.size();
         Tensor& c = top_blobs[0];

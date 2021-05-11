@@ -34,7 +34,8 @@ namespace chaos
 
 		static void Sub(const Tensor& a, const Tensor& b, Tensor& c);
 		static void Sub(float a, const Tensor& b, Tensor& c);
-		
+		static void Sum(const Tensor& a, int dim, Tensor& b);
+
 		static void Transpose(const Tensor& a, Tensor& b);
 
 	private:
@@ -49,6 +50,7 @@ namespace chaos
 		static Ptr<Layer> norm;
 		static Ptr<Layer> normalize;
 		static Ptr<Layer> permute;
+		static Ptr<Layer> sum;
 		
 	};
 

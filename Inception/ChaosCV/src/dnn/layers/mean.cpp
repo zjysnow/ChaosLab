@@ -1,5 +1,5 @@
 #include "dnn/layers/mean.hpp"
-
+#include "utils/op.hpp"
 namespace chaos
 {
 	Mean::Mean() : Layer("Mean") {}
@@ -13,11 +13,9 @@ namespace chaos
 			CHECK_EQ(Shape(1u), top_blob.shape);
 
 			uint32 n = bottom_blob.shape[0];
-			float sum = 0.f;
-			for (uint32 i = 0; i < n; i++)
-			{
-				sum += bottom_blob[i];
-			}
+			Tensor sum;
+			Operator::Sum(bottom_blob, 0, sum);
+			top_blob[0] = sum[0] / (float)n;
 		}
 		else // bottom_blob.shape.dims >= 2
 		{

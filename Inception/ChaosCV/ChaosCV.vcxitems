@@ -39,6 +39,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\norm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\normalize.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\std.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp" />
@@ -70,6 +72,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\norm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\normalize.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\permute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp" />
