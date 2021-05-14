@@ -288,11 +288,11 @@ namespace chaos
 		Operator::Dot(a, b, ret);
 		return ret[0];
 	}
-	inline float mean(const Tensor& a)
+	inline Tensor mean(const Tensor& a, int dim)
 	{
 		Tensor ret;
-		Operator::Mean(a, -1, ret);
-		return ret[0];
+		Operator::Mean(a, dim, ret);
+		return ret;
 	}
 	inline float norm(const Tensor& a, float p)
 	{
@@ -304,6 +304,12 @@ namespace chaos
 	{
 		Tensor ret;
 		Operator::Normalize(a, dim, method, p1, p2, ret);
+		return ret;
+	}
+	inline Tensor sum(const Tensor& a, int dim)
+	{
+		Tensor ret;
+		Operator::Sum(a, dim, ret);
 		return ret;
 	}
 }

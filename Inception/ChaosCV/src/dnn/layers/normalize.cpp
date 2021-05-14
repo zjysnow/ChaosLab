@@ -20,7 +20,7 @@ namespace chaos
 		{
 			if (ZSCORE == method)
 			{
-				float m = mean(bottom_blob);
+				float m = mean(bottom_blob)[0];
 			}
 			if (NORM == method)
 			{

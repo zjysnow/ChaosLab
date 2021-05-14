@@ -233,5 +233,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\std.cpp" />
   </ItemGroup>
 </Project>

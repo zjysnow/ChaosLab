@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	class Sum : public Layer
+	class CHAOS_API Sum : public Layer
 	{
 	public:
 		Sum();

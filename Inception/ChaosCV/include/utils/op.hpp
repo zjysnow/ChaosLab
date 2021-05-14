@@ -70,11 +70,14 @@ namespace chaos
 	CHAOS_API Tensor operator/(const Tensor& lhs, float rhs);
 	CHAOS_API Tensor operator/(float lhs, const Tensor& rhs);
 
+	// just like Matlab for easy use
+
 	CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
 	CHAOS_API Tensor diag(const Tensor& a, int k = 0);
 	CHAOS_API float dot(const Tensor& a, const Tensor& b);
-	CHAOS_API float mean(const Tensor& a);
+	CHAOS_API Tensor mean(const Tensor& a, int dim = 0);
 	CHAOS_API float norm(const Tensor& a, float p = 2.f);
-	CHAOS_API Tensor normalize(const Tensor& a, int dim = 0, const std::string& method = "zscore", float p1 = 0.f, float p2 = 0.f);
+	CHAOS_API Tensor normalize(const Tensor& a, int dim = 0, const std::string& method = "norm", float p1 = 2.f, float p2 = 0.f);
+	CHAOS_API Tensor sum(const Tensor& a, int dim = 0);
 	
 }

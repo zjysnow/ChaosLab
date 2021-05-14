@@ -4,6 +4,12 @@
 
 namespace chaos
 {
+	template<class Type, std::enable_if_t<std::is_integral_v<Type>, bool> = true>
+	inline static uint32 IndexCast(const Type& idx)
+	{
+		return static_cast<uint32>(idx);
+	}
+
 	class VulkanBuffer;
 	class VulkanAllocator;
 	class VulkanTensor;
@@ -50,6 +56,22 @@ namespace chaos
 
 		float& operator[](size_t idx) noexcept { return ((float*)data)[idx]; }
 		const float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
+
+		template<class Type = float, class ...Index, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
+		const Type& At(Index... idx) const
+		{
+			std::vector<uint32> index = { IndexCast(idx)... };
+			CHECK_EQ(shape.dims, index.size()) << "dims expect " << shape.dims << " but got " << index.size();
+
+			size_t offset = 0.f;
+			for (size_t i = 0; i < index.size(); i++)
+			{
+				CHECK_LT(index[i], shape[i]) << "out of range.";
+				offset += steps[i] * index[i];
+			}
+
+			return ((Type*)data)[offset];
+		}
 
 		template<class Type = float, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
 		static Tensor eye(uint32 w, uint32 h, Allocator* allocator = nullptr)

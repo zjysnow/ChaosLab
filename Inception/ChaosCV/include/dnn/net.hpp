@@ -17,6 +17,12 @@ namespace chaos
 		std::vector<std::string> consumers{};
 	};
 
+	template<class Type>
+	inline static std::shared_ptr<Layer> LayerCast(const Type& layer)
+	{
+		return std::make_shared<Type>(layer);
+	}
+
 
 	class Extractor;
 	class CHAOS_API Net
@@ -25,13 +31,22 @@ namespace chaos
 		virtual ~Net() = default;
 		Extractor CreateExtractor() const;
 		
+		template<class...Layers>
+		static Net Sequential(Layers... layer)
+		{
+			Net net;
+			net.layers = { LayerCast(layer)... };
+			return net;
+		}
 
 	protected:
+		
+
 		void ForwardTo(const std::string& name, std::vector<Tensor>& blobs, const Option& opt) const;
 
 		friend class Extractor;
-		std::map<std::string, Ptr<Layer>> layers;
 		
+		std::vector<Ptr<Layer>> layers;
 	};
 
 	class CHAOS_API Extractor

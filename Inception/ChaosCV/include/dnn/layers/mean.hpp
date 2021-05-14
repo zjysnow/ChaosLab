@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	class Mean : public Layer
+	class CHAOS_API Mean : public Layer
 	{
 	public:
 		Mean();

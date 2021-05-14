@@ -26,5 +26,11 @@
     <ClCompile Include="svd_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sum_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mean_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

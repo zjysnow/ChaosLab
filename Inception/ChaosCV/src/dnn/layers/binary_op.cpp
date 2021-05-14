@@ -77,7 +77,6 @@ namespace chaos
             a.shape.Insert(0, b_dims - a_dims, 1);
             a.steps.Insert(0, b_dims - a_dims, (uint32)a.shape.total());
         }
-        std::cout << a.shape << std::endl << b.shape << std::endl;
 
         CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expcec 1 output but got " << top_blobs.size();
         Tensor& c = top_blobs[0];

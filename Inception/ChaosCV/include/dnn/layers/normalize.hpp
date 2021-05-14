@@ -21,6 +21,10 @@ namespace chaos
 		void Set(const std::string& pname, const std::any& val) override;
 
 		int method = ZSCORE;
+		/// <summary>
+		/// <para>1. method == NORM, f1 used for p of p-norm</para>
+		/// <para>2. method == RANGE, f1 used for min of range</para>
+		/// </summary>
 		float f1 = 0;
 		float f2 = 0;
 		int dim = 0;
