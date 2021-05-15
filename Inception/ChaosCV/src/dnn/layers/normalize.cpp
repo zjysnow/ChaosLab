@@ -20,15 +20,13 @@ namespace chaos
 		{
 			if (ZSCORE == method)
 			{
-				float m = mean(bottom_blob)[0];
+
 			}
 			if (NORM == method)
 			{
-				float n = norm(bottom_blob, f1);
-				for (size_t i = 0; i < shape[0]; i++)
-				{
-					top_blob[i] = bottom_blob[i] / n;
-				}
+				Tensor n;
+				Operator::Norm(bottom_blob, f1, n);
+				Operator::Div(bottom_blob, n, top_blob);
 			}
 			if (RANGE == method)
 			{

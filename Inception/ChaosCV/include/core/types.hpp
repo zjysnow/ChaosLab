@@ -91,6 +91,9 @@ namespace chaos
 		Steps() = default;
 		~Steps();
 
+		Steps(uint32 s0);
+		Steps(uint32 s0, uint32 s1);
+
 		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
 		Steps(const std::initializer_list<Type>& list) : Steps(list.size())
 		{

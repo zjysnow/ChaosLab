@@ -32,7 +32,12 @@ namespace chaos
         inline float operator()(const float& x, const float& y) const { return std::min(x, y); }
     };
 
-    template<typename Op>
+    struct BinaryPow
+    {
+        inline float operator()(const float& x, const float& y) const { return std::pow(x, y); };
+    };
+
+    template<class Op>
     static inline void Operator(const Tensor& a, const Tensor& b, Tensor& c)
     {
         //Op op;
@@ -53,6 +58,27 @@ namespace chaos
                 idx /= c.shape[dims - d - 1];
             }
             c[c_idx] = op(a[a_idx], b[b_idx]);
+        }
+    }
+
+    template<class Op>
+    static inline void Operator(const Tensor& a, float b, Tensor& c)
+    {
+        Op op;
+        size_t dims = c.shape.dims;
+        for (size_t i = 0; i < c.shape.total(); i++)
+        {
+            size_t a_idx = 0;
+            size_t c_idx = 0;
+            size_t idx = i;
+            for (size_t d = 0; d < dims; d++)
+            {
+                size_t k = idx % c.shape[dims - d - 1];
+                a_idx += (k >= a.shape[dims - d - 1] ? 0 : k) * a.steps[dims - d - 1];
+                c_idx += k * c.steps[dims - d - 1];
+                idx /= c.shape[dims - d - 1];
+            }
+            c[c_idx] = op(a[a_idx], b);
         }
     }
 
@@ -84,10 +110,32 @@ namespace chaos
         if (c.empty()) c.Create(c_shape, c_shape.steps(), DataType::D4, Packing::CHW, opt.blob_allocator);
         CHECK_EQ(c_shape, c.shape);
 
-        if (ADD == op_type) Operator<BinaryAdd>(a, b, c);
-        if (SUB == op_type) Operator<BinarySub>(a, b, c);
-        if (MUL == op_type) Operator<BinaryMul>(a, b, c);
-        if (DIV == op_type) Operator<BinaryDiv>(a, b, c);
+        switch (op_type)
+        {
+        case ADD:
+            Operator<BinaryAdd>(a, b, c);
+            break;
+        case SUB:
+            Operator<BinarySub>(a, b, c);
+            break;
+        case MUL:
+            Operator<BinaryMul>(a, b, c);
+            break;
+        case DIV:
+            Operator<BinaryDiv>(a, b, c);
+            break;
+        case MAX:
+            Operator<BinaryMax>(a, b, c);
+            break;
+        case MIN:
+            Operator<BinaryMin>(a, b, c);
+            break;
+        case POW:
+            Operator<BinaryPow>(a, b, c);
+            break;
+        default:
+            LOG(FATAL);
+        }
 	}
 
     void BinaryOp::Set(const std::string& pname, const std::any& val)
@@ -95,6 +143,10 @@ namespace chaos
         if ("op_type" == pname && val.type() == typeid(OpType))
         {
             op_type = std::any_cast<OpType>(val);
+        }
+        if ("f" == pname)
+        {
+            f = std::any_cast<float>(val);
         }
     }
 }

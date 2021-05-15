@@ -17,6 +17,16 @@ namespace chaos
 		}
 	}
 
+	Steps::Steps(uint32 s0) : Steps(1ULL)
+	{
+		data[0] = s0;
+	}
+	Steps::Steps(uint32 s0, uint32 s1) : Steps(2ULL)
+	{
+		data[0] = s0;
+		data[1] = s1;
+	}
+
 	Steps::Steps(const Steps& steps) : Steps(steps.size)
 	{
 		for (size_t i = 0; i < size; i++)

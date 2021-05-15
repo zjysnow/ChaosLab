@@ -156,6 +156,16 @@ namespace chaos
 		normalize->Forward(a, n);
 	}
 
+	void Operator::Pow(const Tensor& a, float e, Tensor& c)
+	{
+		binary_op->Set("op_type", BinaryOp::POW);
+		if (c.empty()) c.Create(a.shape, a.shape.steps(), DataType::D4, Packing::CHW, nullptr);
+
+		Tensor b = { e };
+		std::vector<Tensor> tops{ c };
+		binary_op->Forward({ a, b }, tops);
+	}
+
 	void Operator::Sub(const Tensor& a, const Tensor& b, Tensor& c)
 	{
 		binary_op->Set("op_type", BinaryOp::SUB);

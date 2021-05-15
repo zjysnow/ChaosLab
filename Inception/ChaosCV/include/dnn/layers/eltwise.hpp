@@ -4,27 +4,22 @@
 
 namespace chaos
 {
-	// support broadcast
-	class CHAOS_API BinaryOp : public Layer
+	class Eltwise : public Layer
 	{
 	public:
 		enum OpType
 		{
-			ADD,
-			SUB,
-			MUL,
-			DIV,
-			MAX,
-			MIN,
-			POW,
+			SUM,
+			PROD,
 		};
 
-		BinaryOp();
+		Eltwise();
 
+		void Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt) const override;
 		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
+
 		void Set(const std::string& pname, const std::any& val) override;
 
-		int op_type = ADD;
-		float f = 2.f;
+		int op_type
 	};
 }
