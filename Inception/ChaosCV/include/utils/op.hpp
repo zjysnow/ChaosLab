@@ -36,7 +36,10 @@ namespace chaos
 
 		static void Sub(const Tensor& a, const Tensor& b, Tensor& c);
 		static void Sub(float a, const Tensor& b, Tensor& c);
-		static void Sum(const Tensor& a, int dim, Tensor& b);
+
+		static void Sum(const Tensor& a, Tensor& b); // for sum all
+		static void Sum(const Tensor& a, uint32 dim, Tensor& b);
+		static void Sum(const Tensor& a, const std::vector<uint32>& vecdim, Tensor& b);
 
 		static void Transpose(const Tensor& a, Tensor& b);
 

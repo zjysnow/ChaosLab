@@ -24,8 +24,14 @@ namespace chaos
 
 		virtual void Set(const std::string& pname, const std::any& val);
 
-		const std::string type;
+		virtual size_t bottoms_count() const { return 0; }
+		virtual size_t tops_count() const { return 0; }
 
+		const std::string type;
+		std::string name;
+
+		std::vector<int> bottoms_idx;
+		std::vector<int> tops_idx;
 
 		bool support_inplace;
 		bool support_vulkan;

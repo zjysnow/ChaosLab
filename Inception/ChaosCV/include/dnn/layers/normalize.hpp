@@ -20,6 +20,7 @@ namespace chaos
 		void Forward(const Tensor& bottom_blob,Tensor& top_blob, const Option& opt) const override;
 		void Set(const std::string& pname, const std::any& val) override;
 
+
 		int method = ZSCORE;
 		/// <summary>
 		/// <para>1. method == NORM, f1 used for p of p-norm</para>

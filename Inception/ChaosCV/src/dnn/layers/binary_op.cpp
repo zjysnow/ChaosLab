@@ -83,6 +83,11 @@ namespace chaos
     }
 
 	BinaryOp::BinaryOp() : Layer("BinaryOp") {}
+    BinaryOp::BinaryOp(const std::string& name_, int type) : BinaryOp()
+    {
+        name = name_;
+        op_type = type;
+    }
 
 	void BinaryOp::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
@@ -143,10 +148,6 @@ namespace chaos
         if ("op_type" == pname && val.type() == typeid(OpType))
         {
             op_type = std::any_cast<OpType>(val);
-        }
-        if ("f" == pname)
-        {
-            f = std::any_cast<float>(val);
         }
     }
 }

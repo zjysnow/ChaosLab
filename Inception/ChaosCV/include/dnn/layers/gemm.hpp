@@ -14,6 +14,7 @@ namespace chaos
 
 		void Set(const std::string& name, const std::any& val);
 
+
 		float alpha = 1.f;
 		float beta = 0.f;
 		//bool transA = false;

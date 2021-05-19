@@ -12,6 +12,7 @@ namespace chaos
 		void Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt) const override;
 
 		void Set(const std::string& name, const std::any& val) override;
+
 		std::vector<uint32> orders;
 	};
 }

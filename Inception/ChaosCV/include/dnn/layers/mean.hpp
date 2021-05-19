@@ -11,7 +11,7 @@ namespace chaos
 
 		void Forward(const Tensor& bottom_blob, Tensor& top_blob, const Option& opt) const override;
 		void Set(const std::string& pname, const std::any& val) override;
-		
+
 		bool all = false;
 		std::vector<uint32> vecdim = { 0 };
 	};

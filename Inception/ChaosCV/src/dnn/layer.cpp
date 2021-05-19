@@ -27,4 +27,6 @@ namespace chaos
 	}
 
 	void Layer::Set(const std::string&, const std::any&) {}
+
+	//size_t Layer::top_blobs_num() const { return 0; };
 }

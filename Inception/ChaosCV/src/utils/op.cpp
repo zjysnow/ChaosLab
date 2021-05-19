@@ -186,10 +186,23 @@ namespace chaos
 		std::vector<Tensor> tops{ c };
 		binary_op->Forward({ a_,b }, tops);
 	}
-	void Operator::Sum(const Tensor& a, int dim, Tensor& b)
+
+	void Operator::Sum(const Tensor& a, Tensor& b)
 	{
-		sum->Set("dim", dim);
+		sum->Set("all", true);
 		sum->Forward(a, b);
+	}
+	void Operator::Sum(const Tensor& a, uint32 dim, Tensor& b)
+	{
+		sum->Set("all", false);
+		sum->Set("vecdim", std::vector<uint32>{dim});
+		sum->Forward(a, b);
+	}
+	void Operator::Sum(const Tensor& a, const std::vector<uint32>& vecdim, Tensor& b)
+	{
+		sum->Set("all", false);
+		sum->Set("vecdim", vecdim);
+		sum->Forward(a,b);
 	}
 
 	void Operator::Transpose(const Tensor& a, Tensor& b)
