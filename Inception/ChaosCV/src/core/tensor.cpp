@@ -176,22 +176,6 @@ namespace chaos
 		return r;
 	}
 
-	//template<class Type>
-	//std::ostream& PrintTensor(std::ostream& stream, const Tensor& tensor)
-	//{
-	//	const Type* data = tensor.data;
-	//	switch (tensor.shape.dims)
-	//	{
-	//	case 1:
-	//		for ()
-	//		break;
-	//	case 2:
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
-
 	std::ostream& operator<<(std::ostream& stream, const Tensor& tensor)
 	{
 		// just float now
@@ -221,17 +205,7 @@ namespace chaos
 			}
 			break;
 		default:
-			size_t dims = shape.dims;
-			uint32 h = shape[dims - 2];
-			uint32 w = shape[dims - 1];
-			uint32 cstep = steps[dims - 3];
-			uint32 rstep = steps[dims - 2];
-			uint32 k = shape.total() / h / w;
-			for (uint32 i = 0; i < k; i++)
-			{
-				stream << Tensor(Shape(h, w), DataType::D4, Packing::CHW, data + i * cstep, Steps(rstep, 1));
-				if (i < k - 1) stream << std::endl;
-			}
+			LOG(FATAL) << "not now";
 			break;
 		}
 		stream << "]";
