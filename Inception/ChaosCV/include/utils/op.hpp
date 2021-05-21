@@ -15,13 +15,6 @@ namespace chaos
             return op;
         }
 
-        Tensor operator()(const Tensor& a, const Tensor& b) const
-        {
-            std::vector<Tensor> tops(1);
-            layer->Forward({a,b}, tops);
-            return tops[0];
-        }
-
         Operator(const Operator&) = delete;
         Operator& operator=(const Operator&) = delete;
     public:
@@ -29,69 +22,6 @@ namespace chaos
         virtual ~Operator() = default;
         Ptr<dnn::Layer> layer;
     };
-
-    class CHAOS_API Add : public Operator<Add>
-    {
-    public:
-        Add();
-        
-        Add(const Add&) = delete;
-        Add& operator=(const Add&) = delete;
-    };
-
-    class CHAOS_API Div : public Operator<Div>
-    {
-    public:
-        Div();
-
-        Div(const Div&) = delete;
-        Div& operator=(const Div&) = delete;
-    };
-
-    class CHAOS_API Dot : public Operator<Dot>
-    {
-    public:
-        Dot();
-
-        Dot(const Dot&) = delete;
-        Dot& operator=(const Dot&) = delete;
-    };
-    class CHAOS_API GEMM : public Operator<GEMM>
-    {
-    public:
-        enum
-        {
-            NOTRANS = 0,
-            TRANSA = 1,
-            TRANSB = 2,
-            TRANSC = 4,
-        };
-
-        GEMM();
-        Tensor operator()(const Tensor& a, const Tensor& b);
-        Tensor operator()(int flag, const Tensor& a, const Tensor& b, float alpha, const Tensor& c, float beta) const;
-
-        GEMM(const GEMM&) = delete;
-        GEMM& operator=(const GEMM&) = delete;
-    };
-    class CHAOS_API Mul : public Operator<Mul>
-    {
-    public:
-        Mul();
-
-        Mul(const Mul&) = delete;
-        Mul& operator=(const Mul&) = delete;
-    };
-
-    class CHAOS_API Sub : public Operator<Sub>
-    {
-    public:
-        Sub();
-        
-        Sub(const Sub&) = delete;
-        Sub& operator=(const Sub&) = delete;
-    };
-
 
     template<class...Shapes>
     Shape BroadcastShapes(const Shapes&...shapes)
@@ -147,6 +77,7 @@ namespace chaos
     Tensor mean(const Tensor& a);
     Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim);
     Tensor mul(const Tensor& a, const Tensor& b);
+    Tensor permute(const Tensor& a, const std::vector<uint32> orders);
     Tensor sum(const Tensor& a);
     Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim);
 

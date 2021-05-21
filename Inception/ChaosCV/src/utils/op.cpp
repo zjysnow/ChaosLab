@@ -3,60 +3,146 @@
 #include "dnn/layers/binary_op.hpp"
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
+#include "dnn/layers/permute.hpp"
 
 namespace chaos
 {
-	Add::Add() 
+	class Add : public Operator<Add>
 	{
-		layer = std::make_shared<dnn::BinaryOp>();
-		layer->Set("op_type", dnn::BinaryOp::ADD);
-	}
-	Div::Div()
+	public:
+		Add()
+		{
+			layer = std::make_shared<dnn::BinaryOp>();
+			layer->Set("op_type", dnn::BinaryOp::ADD);
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Add(const Add&) = delete;
+		Add& operator=(const Add&) = delete;
+	};
+
+	class Div : public Operator<Div>
 	{
-		layer = std::make_shared<dnn::BinaryOp>();
-		layer->Set("op_type", dnn::BinaryOp::DIV);
-	}
-	Dot::Dot()
+	public:
+		Div()
+		{
+			layer = std::make_shared<dnn::BinaryOp>();
+			layer->Set("op_type", dnn::BinaryOp::DIV);
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Div(const Div&) = delete;
+		Div& operator=(const Div&) = delete;
+	};
+
+	class Dot : public Operator<Dot>
 	{
-		layer = std::make_shared<dnn::Dot>();
-	}
-	GEMM::GEMM()
+	public:
+		Dot()
+		{
+			layer = std::make_shared<dnn::Dot>();
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Dot(const Dot&) = delete;
+		Dot& operator=(const Dot&) = delete;
+	};
+	class GEMM : public Operator<GEMM>
 	{
-		layer = std::make_shared<dnn::GEMM>();
-	}
-	Tensor GEMM::operator()(const Tensor& a, const Tensor& b)
+	public:
+		GEMM()
+		{
+			layer = std::make_shared<dnn::GEMM>();
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		GEMM(const GEMM&) = delete;
+		GEMM& operator=(const GEMM&) = delete;
+	};
+	class Mul : public Operator<Mul>
 	{
-		layer->Set("alpha", 1.f);
-		layer->Set("beta", 0.f);
-		layer->Set("transA", false);
-		layer->Set("transB", false);
-		std::vector<Tensor> tops(1);
-		layer->Forward({ a,b }, tops);
-		return tops[0];
-	}
-	Tensor GEMM::operator()(int flag, const Tensor& a, const Tensor& b, float alpha, const Tensor& c, float beta) const
+	public:
+		Mul()
+		{
+			layer = std::make_shared<dnn::BinaryOp>();
+			layer->Set("op_type", dnn::BinaryOp::MUL);
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Mul(const Mul&) = delete;
+		Mul& operator=(const Mul&) = delete;
+	};
+
+	class Sub : public Operator<Sub>
 	{
-		layer->Set("alpha", alpha);
-		layer->Set("beta", beta);
-		layer->Set("transA", bool(flag & TRANSA));
-		layer->Set("transB", bool(flag & TRANSB));
-		layer->Set("transC", bool(flag & TRANSC));
-		std::vector<Tensor> tops(1);
-		layer->Forward({a,b,c}, tops);
-		return tops[0];
-	}
-	Mul::Mul()
+	public:
+		Sub()
+		{
+			layer = std::make_shared<dnn::BinaryOp>();
+			layer->Set("op_type", dnn::BinaryOp::SUB);
+		}
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Sub(const Sub&) = delete;
+		Sub& operator=(const Sub&) = delete;
+	};
+
+	class Permute : public Operator<Permute>
 	{
-		layer = std::make_shared<dnn::BinaryOp>();
-		layer->Set("op_type", dnn::BinaryOp::MUL);
-	}
-	Sub::Sub()
-	{
-		layer = std::make_shared<dnn::BinaryOp>();
-		layer->Set("op_type", dnn::BinaryOp::SUB);
-	}
-	
-	
+	public:
+		Permute()
+		{
+			layer = std::make_shared<dnn::Permute>();
+		}
+
+		Tensor operator()(const Tensor& a, const std::vector<uint32>& orders) const
+		{
+			layer->Set("orders", orders);
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a }, tops);
+			return tops[0];
+		}
+		Tensor operator()(const Tensor&, const Tensor&) const = delete;
+		Permute(const Permute&) = delete;
+		Permute& operator=(const Permute&) = delete;
+	};
+
+
 
 	Tensor operator+(const Tensor& a, const Tensor& b)
 	{
@@ -133,5 +219,9 @@ namespace chaos
 		auto& op = Mul::GetInstance();
 		return op(a, b);
 	}
-
+	Tensor permute(const Tensor& a, const std::vector<uint32>& orders)
+	{
+		auto& op = Permute::GetInstance();
+		return op(a, orders);
+	}
 }
