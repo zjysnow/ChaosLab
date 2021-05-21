@@ -35,6 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
@@ -64,6 +65,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\net.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\premute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

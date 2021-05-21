@@ -1,7 +1,6 @@
 #include "dnn/layers/svd.hpp"
 
 #include "core/buffer.hpp"
-#include "utils/op.hpp"
 
 namespace chaos
 {

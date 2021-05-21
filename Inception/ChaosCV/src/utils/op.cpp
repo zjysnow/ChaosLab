@@ -4,6 +4,7 @@
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/permute.hpp"
+#include "dnn/layers/sum.hpp"
 
 namespace chaos
 {
@@ -103,25 +104,6 @@ namespace chaos
 		Mul& operator=(const Mul&) = delete;
 	};
 
-	class Sub : public Operator<Sub>
-	{
-	public:
-		Sub()
-		{
-			layer = std::make_shared<dnn::BinaryOp>();
-			layer->Set("op_type", dnn::BinaryOp::SUB);
-		}
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
-		}
-
-		Sub(const Sub&) = delete;
-		Sub& operator=(const Sub&) = delete;
-	};
-
 	class Permute : public Operator<Permute>
 	{
 	public:
@@ -142,6 +124,50 @@ namespace chaos
 		Permute(const Permute&) = delete;
 		Permute& operator=(const Permute&) = delete;
 	};
+
+	class Sub : public Operator<Sub>
+	{
+	public:
+		Sub()
+		{
+			layer = std::make_shared<dnn::BinaryOp>();
+			layer->Set("op_type", dnn::BinaryOp::SUB);
+		}
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		Sub(const Sub&) = delete;
+		Sub& operator=(const Sub&) = delete;
+	};
+
+	class Sum : public Operator<Sum>
+	{
+	public:
+		Sum()
+		{
+			layer = std::make_shared<dnn::Sum>();
+		}
+		Tensor operator()(const Tensor& a) const
+		{
+			layer->Set("all", true);
+			std::vector<Tensor> tops(1);
+			layer->Forward({a}, tops);
+			return tops[0];
+		}
+		Tensor operator()(const Tensor& a, const std::vector<uint32>& vecdim) const
+		{
+			layer->Set("all", false);
+			layer->Set("vecdim", vecdim);
+			std::vector<Tensor> tops(1);
+			layer->Forward({a}, tops);
+			return tops[0];
+		}
+	};
+	
 
 
 	Tensor operator+(const Tensor& a, const Tensor& b)
@@ -229,5 +255,15 @@ namespace chaos
 		auto& op = Permute::GetInstance();
 		std::vector<uint32> orders = {1,0};
 		return op(a, orders);
+	}
+	Tensor sum(const Tensor& a)
+	{
+		auto& op = Sum::GetInstance();
+		return op(a);
+	}
+	Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim)
+	{
+		auto& op = Sum::GetInstance();
+		return op(a, vecdim);
 	}
 }
