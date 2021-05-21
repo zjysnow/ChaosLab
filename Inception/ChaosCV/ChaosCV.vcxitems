@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\blob.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\cross.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\data.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\dot.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
@@ -58,6 +59,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\blob.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\cross.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\data.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\dot.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />

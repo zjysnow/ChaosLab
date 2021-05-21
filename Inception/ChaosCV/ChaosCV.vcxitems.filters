@@ -135,6 +135,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\cross.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -210,6 +213,9 @@
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\cross.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>
