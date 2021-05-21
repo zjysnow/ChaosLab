@@ -176,22 +176,25 @@ namespace chaos
 		return r;
 	}
 
-	std::ostream& operator<<(std::ostream& stream, const Tensor& tensor)
-	{
-		// just float now
-		CHECK_EQ(DataType::D4, tensor.dtype);
-		CHECK_EQ(Packing::CHW, tensor.packing);
+	template<class Type, std::enable_if_t<std::is_floating_point_v<Type>, bool> = true>
+	inline std::string Print(Type* data, uint32 p, uint32 i) { return Format(", %f" + 2 * !p, data[i]); }
 
+	template<class Type, std::enable_if_t<std::is_integral_v<Type>, bool> = true>
+	inline std::string Print(Type* data, uint32 p, uint32 i) { return Format(", %d" + 2 * !p, data[i]); }
+
+	template<class Type>
+	std::ostream& PrintTensor(std::ostream& stream, const Tensor& tensor)
+	{
 		const Shape& shape = tensor.shape;
 		const Steps& steps = tensor.steps;
-		float* data = (float*)tensor.data;
+		Type* data = (Type*)tensor.data;
 		stream << "[";
 		switch (shape.dims)
 		{
 		case 1:
 			for (uint32 i = 0; i < shape[0]; i++)
 			{
-				stream << Format(", %f" + 2 * !i, data[i]);
+				stream << Print(data, i, i);
 			}
 			break;
 		case 2:
@@ -199,16 +202,51 @@ namespace chaos
 			{
 				for (uint32 j = 0; j < shape[1]; j++)
 				{
-					stream << Format(", %f" + 2 * !j, data[i * steps[0] + j]);
+					//stream << Format(", %f" + 2 * !j, data[i * steps[0] + j]);
+					stream << Print(data, j, i * steps[0] + j);
 				}
 				if (i < shape[0] - 1) stream << std::endl;
 			}
 			break;
 		default:
-			LOG(FATAL) << "not now";
+			size_t dims = shape.dims;
+			uint32 h = shape[dims - 2];
+			uint32 w = shape[dims - 1];
+			uint32 rstep = steps[dims - 2];
+			for (size_t i = 0; i < shape.total(); i += h * w)
+			{
+				size_t offset = 0;
+				size_t idx = i;
+				for (size_t d = 0; d < dims; d++)
+				{
+					size_t k = idx % shape[dims - d - 1];
+					offset += k * steps[dims - d - 1];
+					idx /= shape[dims - d - 1];
+				}
+				PrintTensor<Type>(stream, Tensor(Shape(h, w), DataType::D4, Packing::CHW, data + offset, Steps(rstep, 1)));
+				if (i < shape.total() - h * w) stream << ";" << std::endl;
+			}
 			break;
 		}
 		stream << "]";
+		return stream;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const Tensor& tensor)
+	{
+		switch (tensor.dtype)
+		{
+		case DataType::D1:
+			PrintTensor<uchar>(stream, tensor);
+			break;
+		case DataType::D4:
+			PrintTensor<float>(stream, tensor);
+			break;
+		default:
+			stream << "[...]";
+			break;
+		}
+		stream << std::endl << "<Tensor " << tensor.shape << ">";
 		return stream;
 	}
 
