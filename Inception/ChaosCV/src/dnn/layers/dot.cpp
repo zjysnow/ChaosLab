@@ -23,11 +23,13 @@ namespace chaos
 			}
 			else
 			{
-				for (const auto& i : vecdim)
-				{
-					CHECK_LE(i, dims) << "out of range";
-					c_shape[i] = 1;
-				}
+				CHECK_LE(dim, dims) << "out of range";
+				c_shape[dim] = 1;
+				//for (const auto& i : vecdim)
+				//{
+				//	CHECK_LE(i, dims) << "out of range";
+				//	c_shape[i] = 1;
+				//}
 			}
 			Steps c_steps = c_shape.steps();
 
@@ -55,9 +57,13 @@ namespace chaos
 
 		void Dot::Set(const std::string& pname, const std::any& val)
 		{
-			if ("vecdim" == pname)
+			//if ("vecdim" == pname)
+			//{
+			//	vecdim = std::any_cast<std::vector<uint32>>(val);
+			//}
+			if ("dim" == pname)
 			{
-				vecdim = std::any_cast<std::vector<uint32>>(val);
+				dim = std::any_cast<uint32>(val);
 			}
 			if ("all" == pname)
 			{

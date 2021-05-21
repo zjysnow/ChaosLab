@@ -17,7 +17,8 @@ namespace chaos
 			//size_t tops_count() const final { return 1; }
 
 			bool all = false;
-			std::vector<uint32> vecdim = { 0 };
+			uint32 dim = 0;
+			//std::vector<uint32> vecdim = { 0 };
 		};
 	}
 }
