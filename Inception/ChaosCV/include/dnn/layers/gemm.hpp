@@ -4,20 +4,25 @@
 
 namespace chaos
 {
-	// Y = alpha*A*B+beta*C
-	class CHAOS_API GEMM : public Layer
+	namespace dnn
 	{
-	public:
-		GEMM();
+		// General Matrix Multiplication
+		// C = alpha * A * B + beta * C
+		class CHAOS_API GEMM : public Layer
+		{
+		public:
+			GEMM();
 
-		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const override;
+			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
 
-		void Set(const std::string& name, const std::any& val);
+			void Set(const std::string& pname, const std::any& val) final;
 
+			float alpha = 1.f;
+			float beta = 0.f;
 
-		float alpha = 1.f;
-		float beta = 0.f;
-		//bool transA = false;
-		//bool transB = false;
-	};
+			bool transA = false;
+			bool transB = false;
+			bool transC = false;
+		};
+	}
 }

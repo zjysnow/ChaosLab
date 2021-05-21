@@ -1,15 +1,19 @@
 #pragma once
+
 #include "dnn/layer.hpp"
 
 namespace chaos
 {
-	class Data : public Layer
+	namespace dnn
 	{
-	public:
-		Data();
+		class CHAOS_API Data : public Layer
+		{
+		public:
+			Data();
+			void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt) const override;
 
-		void Forward(Tensor& bottom_top_blob, const Option& opt) const override;
-
-		size_t top_blobs_num() const final { return 1; }
-	};
+			//size_t bottoms_count() const final { return 1; }
+			//size_t tops_count() const final { return 1; }
+		};
+	}
 }

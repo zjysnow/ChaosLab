@@ -1,88 +1,153 @@
 #pragma once
 
 #include "core/core.hpp"
-#include "core/tensor.hpp"
-
 #include "dnn/layer.hpp"
 
 namespace chaos
 {
-	static  inline float radians(float degrees) { return degrees * 0.01745329251994329576923690768489f; }
+    template<class Op>
+    class Operator
+    {
+    public:
+        static Op& GetInstance()
+        {
+            static Op op;
+            return op;
+        }
 
-	class CHAOS_API Operator
-	{
-	public:
-		static void Add(const Tensor& a, const Tensor& b, Tensor& c);
-		static void Add(float a, const Tensor& b, Tensor& c);
+        Tensor operator()(const Tensor& a, const Tensor& b) const
+        {
+            std::vector<Tensor> tops(1);
+            layer->Forward({a,b}, tops);
+            return tops[0];
+        }
 
-		static void Cross(const Tensor& a, const Tensor& b, Tensor& c);
+        Operator(const Operator&) = delete;
+        Operator& operator=(const Operator&) = delete;
+    public:
+        Operator() = default;
+        virtual ~Operator() = default;
+        Ptr<dnn::Layer> layer;
+    };
 
-		static void Diag(const Tensor& a, Tensor& b);
-		static void Div(const Tensor& a, const Tensor& b, Tensor& c);
-		static void Div(float a, const Tensor& b, Tensor& c);
-		static void Dot(const Tensor& a, const Tensor& b, Tensor& c);
+    class CHAOS_API Add : public Operator<Add>
+    {
+    public:
+        Add();
+        
+        Add(const Add&) = delete;
+        Add& operator=(const Add&) = delete;
+    };
 
-		// c = alpha * a * b + beta * c
-		static void GEMM(const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta);
+    class CHAOS_API Div : public Operator<Div>
+    {
+    public:
+        Div();
 
-		static void Mean(const Tensor& a, int dim, Tensor& m);
-		static void Mul(const Tensor& a, const Tensor& b, Tensor& c);
-		static void Mul(float a, const Tensor& b, Tensor& c);
+        Div(const Div&) = delete;
+        Div& operator=(const Div&) = delete;
+    };
 
-		static void Norm(const Tensor& a, float p, Tensor& n);
-		static void Normalize(const Tensor& a, int dim, const std::string& method, float p1, float p2, Tensor& n);
+    class CHAOS_API Dot : public Operator<Dot>
+    {
+    public:
+        Dot();
 
-		static void Pow(const Tensor& a, float e, Tensor& c);
+        Dot(const Dot&) = delete;
+        Dot& operator=(const Dot&) = delete;
+    };
+    class CHAOS_API GEMM : public Operator<GEMM>
+    {
+    public:
+        enum
+        {
+            NOTRANS = 0,
+            TRANSA = 1,
+            TRANSB = 2,
+            TRANSC = 4,
+        };
 
-		static void Sub(const Tensor& a, const Tensor& b, Tensor& c);
-		static void Sub(float a, const Tensor& b, Tensor& c);
+        GEMM();
+        Tensor operator()(const Tensor& a, const Tensor& b);
+        Tensor operator()(int flag, const Tensor& a, const Tensor& b, float alpha, const Tensor& c, float beta) const;
 
-		static void Sum(const Tensor& a, Tensor& b); // for sum all
-		static void Sum(const Tensor& a, uint32 dim, Tensor& b);
-		static void Sum(const Tensor& a, const std::vector<uint32>& vecdim, Tensor& b);
+        GEMM(const GEMM&) = delete;
+        GEMM& operator=(const GEMM&) = delete;
+    };
+    class CHAOS_API Mul : public Operator<Mul>
+    {
+    public:
+        Mul();
 
-		static void Transpose(const Tensor& a, Tensor& b);
+        Mul(const Mul&) = delete;
+        Mul& operator=(const Mul&) = delete;
+    };
 
-	private:
-		Operator() = delete;
+    class CHAOS_API Sub : public Operator<Sub>
+    {
+    public:
+        Sub();
+        
+        Sub(const Sub&) = delete;
+        Sub& operator=(const Sub&) = delete;
+    };
 
-		static Ptr<Layer> binary_op;
-		static Ptr<Layer> cross;
-		static Ptr<Layer> diag;
-		static Ptr<Layer> dot;
-		static Ptr<Layer> gemm;
-		static Ptr<Layer> mean;
-		static Ptr<Layer> norm;
-		static Ptr<Layer> normalize;
-		static Ptr<Layer> permute;
-		static Ptr<Layer> sum;
-		
-	};
 
-	CHAOS_API Tensor operator+(const Tensor& lhs, const Tensor& rhs);
-	CHAOS_API Tensor operator+(const Tensor& lhs, float rhs);
-	CHAOS_API Tensor operator+(float lhs, const Tensor& rhs);
+    template<class...Shapes>
+    Shape BroadcastShapes(const Shapes&...shapes)
+    {
+        std::vector<Shape> shapes_;
+        int dims = 0;
+        auto Cast = [&](const Shape& shape) {
+            shapes_.push_back(shape);
+            dims = std::max(dims, (int)shape.dims);
+        };
+        (..., Cast(shapes));
 
-	CHAOS_API Tensor operator-(const Tensor& lhs, const Tensor& rhs);
-	CHAOS_API Tensor operator-(const Tensor& lhs, float rhs);
-	CHAOS_API Tensor operator-(float lhs, const Tensor& rhs);
-	
-	CHAOS_API Tensor operator*(const Tensor& lhs, const Tensor& rhs); // GEMM
-	CHAOS_API Tensor operator*(const Tensor& lhs, float rhs);
-	CHAOS_API Tensor operator*(float lhs, const Tensor& rhs);
+        Shape broadcast = std::vector<uint32>(dims, 1);
+        for (int i = 0; i < dims; i++)
+        {
+            for (const auto& shape : shapes_)
+            {
+                int offset = shape.dims - dims;
+                if (i + offset >= 0)
+                {
+                    if (broadcast[i] == 1)
+                    {
+                        broadcast[i] = shape[i + offset];
+                    }
+                    else // new_shape[i] != 1
+                    {
+                        if (shape[i + offset] != 1) CHECK_EQ(broadcast[i], shape[i + offset]) << "can not broadcast";
+                    }
+                }
+            }
+        }
+        return broadcast;
+    }
 
-	CHAOS_API Tensor operator/(const Tensor& lhs, const Tensor& rhs);
-	CHAOS_API Tensor operator/(const Tensor& lhs, float rhs);
-	CHAOS_API Tensor operator/(float lhs, const Tensor& rhs);
+	Tensor operator+(const Tensor& a, const Tensor& b);
+    Tensor operator+(float a, const Tensor& b);
+    Tensor operator+(const Tensor& a, float b);
 
-	// just like Matlab for easy use
+    Tensor operator-(const Tensor& a, const Tensor& b);
+    Tensor operator-(float a, const Tensor& b);
+    Tensor operator-(const Tensor& a, float b);
 
-	CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
-	CHAOS_API Tensor diag(const Tensor& a, int k = 0);
-	CHAOS_API float dot(const Tensor& a, const Tensor& b);
-	CHAOS_API Tensor mean(const Tensor& a, int dim = 0);
-	CHAOS_API float norm(const Tensor& a, float p = 2.f);
-	CHAOS_API Tensor normalize(const Tensor& a, int dim = 0, const std::string& method = "norm", float p1 = 2.f, float p2 = 0.f);
-	CHAOS_API Tensor sum(const Tensor& a, int dim = 0);
-	
+    Tensor operator*(const Tensor& a, const Tensor& b);
+    Tensor operator*(float a, const Tensor& b);
+    Tensor operator*(const Tensor& a, float b);
+
+    Tensor operator/(const Tensor& a, const Tensor& b);
+    Tensor operator/(float a, const Tensor& b);
+    Tensor operator/(const Tensor& a, float b);
+
+    Tensor cross(const Tensor& a, const Tensor& b);
+    Tensor dot(const Tensor& a, const Tensor& b);
+    Tensor mean(const Tensor& a);
+    Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim);
+    Tensor mul(const Tensor& a, const Tensor& b);
+    Tensor sum(const Tensor& a);
+    Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim);
+
 }

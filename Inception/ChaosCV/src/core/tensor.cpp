@@ -114,8 +114,8 @@ namespace chaos
 	void Tensor::CopyTo(Tensor& tensor) const
 	{
 		if (this == &tensor) return;
-		if (tensor.empty()) tensor.CreateLike(*this);
-
+		//if (tensor.empty()) tensor.CreateLike(*this);
+		CHECK(not tensor.empty());
 		CHECK_EQ(shape, tensor.shape) << "expect " << shape << " but got " << tensor.shape;
 
 		if (steps == tensor.steps)

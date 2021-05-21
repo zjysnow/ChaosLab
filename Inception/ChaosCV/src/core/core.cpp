@@ -69,4 +69,13 @@ namespace chaos
 			return std::string(buf.data(), len);
 		}
 	}
+
+	std::ostream& operator<<(std::ostream& stream, const std::vector<std::string>& list)
+	{
+		for (size_t i = 0; i < list.size(); i++)
+		{
+			stream << Format(",%d" + !i, list[i]);
+		}
+		return stream;
+	}
 }

@@ -19,6 +19,8 @@ namespace chaos
 	/// <param name="fmt">printf-compatible formatting specifiers.</param>
 	CHAOS_API std::string Format(const char* fmt, ...);
 
+	CHAOS_API std::ostream& operator<<(std::ostream& stream, const std::vector<std::string>& list);
+
 	constexpr uint64 prime = 0x100000001B3ULL;
 	constexpr uint64 basis = 0xCBF29CE484222325ULL;
 	constexpr uint64 Hash(const char* data, uint64 last_value = basis)

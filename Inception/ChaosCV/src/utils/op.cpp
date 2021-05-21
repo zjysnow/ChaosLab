@@ -1,338 +1,137 @@
 #include "utils/op.hpp"
 
 #include "dnn/layers/binary_op.hpp"
-#include "dnn/layers/cross.hpp"
-#include "dnn/layers/diag.hpp"
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
-#include "dnn/layers/mean.hpp"
-#include "dnn/layers/norm.hpp"
-#include "dnn/layers/normalize.hpp"
-#include "dnn/layers/permute.hpp"
-#include "dnn/layers/sum.hpp"
 
 namespace chaos
 {
-	Ptr<Layer> Operator::binary_op = std::make_shared<chaos::BinaryOp>();
-	Ptr<Layer> Operator::cross = std::make_shared<chaos::Cross>();
-	Ptr<Layer> Operator::dot = std::make_shared<chaos::Dot>();
-	Ptr<Layer> Operator::diag = std::make_shared<chaos::Diag>();
-	Ptr<Layer> Operator::gemm = std::make_shared<chaos::GEMM>();
-	Ptr<Layer> Operator::mean = std::make_shared<chaos::Mean>();
-	Ptr<Layer> Operator::norm = std::make_shared<chaos::Norm>();
-	Ptr<Layer> Operator::normalize = std::make_shared<chaos::Normalize>();
-	Ptr<Layer> Operator::permute = std::make_shared<chaos::Permute>();
-	Ptr<Layer> Operator::sum = std::make_shared<chaos::Sum>();
-
-	inline void Operator::Add(const Tensor& a, const Tensor& b, Tensor& c)
+	Add::Add() 
 	{
-		binary_op->Set("op_type", BinaryOp::ADD);
+		layer = std::make_shared<dnn::BinaryOp>();
+		layer->Set("op_type", dnn::BinaryOp::ADD);
+	}
+	Div::Div()
+	{
+		layer = std::make_shared<dnn::BinaryOp>();
+		layer->Set("op_type", dnn::BinaryOp::DIV);
+	}
+	Dot::Dot()
+	{
+		layer = std::make_shared<dnn::Dot>();
+	}
+	GEMM::GEMM()
+	{
+		layer = std::make_shared<dnn::GEMM>();
+	}
+	Tensor GEMM::operator()(const Tensor& a, const Tensor& b)
+	{
+		layer->Set("alpha", 1.f);
+		layer->Set("beta", 0.f);
+		layer->Set("transA", false);
+		layer->Set("transB", false);
+		std::vector<Tensor> tops(1);
+		layer->Forward({ a,b }, tops);
+		return tops[0];
+	}
+	Tensor GEMM::operator()(int flag, const Tensor& a, const Tensor& b, float alpha, const Tensor& c, float beta) const
+	{
+		layer->Set("alpha", alpha);
+		layer->Set("beta", beta);
+		layer->Set("transA", bool(flag & TRANSA));
+		layer->Set("transB", bool(flag & TRANSB));
+		layer->Set("transC", bool(flag & TRANSC));
+		std::vector<Tensor> tops(1);
+		layer->Forward({a,b,c}, tops);
+		return tops[0];
+	}
+	Mul::Mul()
+	{
+		layer = std::make_shared<dnn::BinaryOp>();
+		layer->Set("op_type", dnn::BinaryOp::MUL);
+	}
+	Sub::Sub()
+	{
+		layer = std::make_shared<dnn::BinaryOp>();
+		layer->Set("op_type", dnn::BinaryOp::SUB);
+	}
+	
+	
 
-		Shape shape = a.shape.total() > b.shape.total() ? a.shape : b.shape;
-		if (c.empty()) c.Create(shape, shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		std::vector<Tensor> tops{c};
-		binary_op->Forward({ a,b }, tops);
+	Tensor operator+(const Tensor& a, const Tensor& b)
+	{
+		auto& op = Add::GetInstance();
+		return op(a, b);
+	}
+	Tensor operator+(float a, const Tensor& b)
+	{
+		auto& op = Add::GetInstance();
+		return op({ a }, b);
+	}
+	Tensor operator+(const Tensor& a, float b)
+	{
+		auto& op = Add::GetInstance();
+		return op(a, { b });
 	}
 
-	void Operator::Add(float a, const Tensor& b, Tensor& c)
+	Tensor operator-(const Tensor& a, const Tensor& b)
 	{
-		binary_op->Set("op_type", BinaryOp::ADD);
-
-		if (c.empty()) c.Create(b.shape, b.shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		Tensor a_ = { a };
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a_,b }, tops);
+		auto& op = Sub::GetInstance();
+		return op(a, b);
+	}
+	Tensor operator-(float a, const Tensor& b)
+	{
+		auto& op = Sub::GetInstance();
+		return op({ a }, b);
+	}
+	Tensor operator-(const Tensor& a, float b)
+	{
+		auto& op = Sub::GetInstance();
+		return op(a, { b });
 	}
 
-	void Operator::Cross(const Tensor& a, const Tensor& b, Tensor& c)
+	Tensor operator*(const Tensor& a, const Tensor& b)
 	{
-		if (c.empty()) c.Create(Shape(3u), { 1 }, DataType::D4, Packing::CHW, nullptr);
-		std::vector<Tensor> top{ c };
-		cross->Forward({a,b}, top);
+		auto& op = GEMM::GetInstance();
+		return op(a, b);
+	}
+	Tensor operator*(float a, const Tensor& b)
+	{
+		auto& op = Mul::GetInstance();
+		return op({ a }, b);
+	}
+	Tensor operator*(const Tensor& a, float b)
+	{
+		auto& op = Mul::GetInstance();
+		return op(a, {b});
 	}
 
-	void Operator::Diag(const Tensor& a, Tensor& b)
+	Tensor operator/(const Tensor& a, const Tensor& b)
 	{
-		diag->Forward(a, b);
+		auto& op = Div::GetInstance();
+		return op(a, b);
 	}
-	void Operator::Div(const Tensor& a, const Tensor& b, Tensor& c)
+	Tensor operator/(float a, const Tensor& b)
 	{
-		binary_op->Set("op_type", BinaryOp::DIV);
-
-		Shape shape = a.shape.total() > b.shape.total() ? a.shape : b.shape;
-		if (c.empty()) c.Create(shape, shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a,b }, tops);
+		auto& op = Div::GetInstance();
+		return op({ a }, b);
 	}
-	void Operator::Div(float a, const Tensor& b, Tensor& c)
+	Tensor operator/(const Tensor& a, float b)
 	{
-		binary_op->Set("op_type", BinaryOp::DIV);
-
-		if (c.empty()) c.Create(b.shape, b.shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		Tensor a_ = { a };
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a_,b }, tops);
-	}
-	void Operator::Dot(const Tensor& a, const Tensor& b, Tensor& c)
-	{
-		if (c.empty()) c.Create({ 1 }, {1}, DataType::D4, Packing::CHW, nullptr);
-		std::vector<Tensor> top{ c };
-		dot->Forward({a,b}, top);
+		auto& op = Div::GetInstance();
+		return op(a, { b });
 	}
 
-	void Operator::GEMM(const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta)
+	
+	Tensor dot(const Tensor& a, const Tensor& b)
 	{
-		gemm->Set("alpha", alpha);
-		gemm->Set("beta", beta);
-
-		CHECK_EQ(2, a.shape.dims) << "input A must be a matrix";
-		CHECK_EQ(2, b.shape.dims) << "input B must be a matrix";
-		Shape shape = { a.shape[0], b.shape[1] };
-
-		if (c.empty()) c.Create(shape, shape.steps(), DataType::D4, Packing::CHW, nullptr);
-		std::vector<Tensor> top{ c };
-		gemm->Forward({a,b,c}, top);
+		auto& op = Dot::GetInstance();
+		return op(a, b);
+	}
+	Tensor mul(const Tensor& a, const Tensor& b)
+	{
+		auto& op = Mul::GetInstance();
+		return op(a, b);
 	}
 
-	void Operator::Mean(const Tensor& a, int dim, Tensor& m)
-	{
-		mean->Set("dim", dim);
-		mean->Forward(a, m);
-	}
-
-	void Operator::Mul(const Tensor& a, const Tensor& b, Tensor& c)
-	{
-		binary_op->Set("op_type", BinaryOp::MUL);
-
-		Shape shape = a.shape.total() > b.shape.total() ? a.shape : b.shape;
-		if (c.empty()) c.Create(shape, shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a,b }, tops);
-	}
-	void Operator::Mul(float a, const Tensor& b, Tensor& c)
-	{
-		binary_op->Set("op_type", BinaryOp::MUL);
-
-		if (c.empty()) c.Create(b.shape, b.shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		Tensor a_ = { a };
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a_,b }, tops);
-	}
-
-	void Operator::Norm(const Tensor& a, float p, Tensor& n)
-	{
-		norm->Set("p", p);
-		norm->Forward(a, n);
-	}
-	void Operator::Normalize(const Tensor& a, int dim, const std::string& method, float p1, float p2, Tensor& n)
-	{
-		if ("norm" == method)
-		{
-			normalize->Set("method", Normalize::NORM);
-			normalize->Set("p1", p1);
-		}
-		else if ("zscore" == method)
-		{
-			normalize->Set("method", Normalize::ZSCORE);
-		}
-		else if ("range" == method)
-		{
-			normalize->Set("method", Normalize::RANGE);
-			normalize->Set("p1", p1);
-			normalize->Set("p2", p2);
-		}
-		else
-		{
-			LOG(FATAL) << "method should be 'norm', 'zscore' or 'range'";
-		}
-		normalize->Set("dim", dim);
-
-		normalize->Forward(a, n);
-	}
-
-	void Operator::Pow(const Tensor& a, float e, Tensor& c)
-	{
-		binary_op->Set("op_type", BinaryOp::POW);
-		if (c.empty()) c.Create(a.shape, a.shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		Tensor b = { e };
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a, b }, tops);
-	}
-
-	void Operator::Sub(const Tensor& a, const Tensor& b, Tensor& c)
-	{
-		binary_op->Set("op_type", BinaryOp::SUB);
-
-		Shape shape = a.shape.total() > b.shape.total() ? a.shape : b.shape;
-		if (c.empty()) c.Create(shape, shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a,b }, tops);
-	}
-	void Operator::Sub(float a, const Tensor& b, Tensor& c)
-	{
-		binary_op->Set("op_type", BinaryOp::SUB);
-
-		if (c.empty()) c.Create(b.shape, b.shape.steps(), DataType::D4, Packing::CHW, nullptr);
-
-		Tensor a_ = { a };
-		std::vector<Tensor> tops{ c };
-		binary_op->Forward({ a_,b }, tops);
-	}
-
-	void Operator::Sum(const Tensor& a, Tensor& b)
-	{
-		sum->Set("all", true);
-		sum->Forward(a, b);
-	}
-	void Operator::Sum(const Tensor& a, uint32 dim, Tensor& b)
-	{
-		sum->Set("all", false);
-		sum->Set("vecdim", std::vector<uint32>{dim});
-		sum->Forward(a, b);
-	}
-	void Operator::Sum(const Tensor& a, const std::vector<uint32>& vecdim, Tensor& b)
-	{
-		sum->Set("all", false);
-		sum->Set("vecdim", vecdim);
-		sum->Forward(a,b);
-	}
-
-	void Operator::Transpose(const Tensor& a, Tensor& b)
-	{
-		CHECK_EQ(2, a.shape.dims) << "a must be a matrix";
-		std::vector<uint32> orders = { 1,0 };
-		permute->Set("orders", orders);
-		permute->Forward(a, b);
-	}
-
-
-
-
-	inline Tensor operator+(const Tensor& lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Add(lhs, rhs, ret);
-		return ret;
-	}
-	inline Tensor operator+(const Tensor& lhs, float rhs)
-	{
-		Tensor ret;
-		Operator::Add(rhs, lhs, ret);
-		return ret;
-	}
-	inline Tensor operator+(float lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Add(lhs, rhs, ret);
-		return ret;
-	}
-
-	inline Tensor operator-(const Tensor& lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Sub(lhs, rhs, ret);
-		return ret;
-	}
-	inline Tensor operator-(const Tensor& lhs, float rhs)
-	{
-		Tensor ret;
-		Operator::Add(-rhs, lhs, ret);
-		return ret;
-	}
-	inline Tensor operator-(float lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Sub(lhs, rhs, ret);
-		return ret;
-
-	}
-
-	inline Tensor operator*(const Tensor& lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::GEMM(lhs, rhs, 1.f, ret, 0.f);
-		return ret;
-	}
-	inline Tensor operator*(const Tensor& lhs, float rhs)
-	{
-		Tensor ret;
-		Operator::Mul(rhs, lhs, ret);
-		return ret;
-	}
-	inline Tensor operator*(float lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Mul(lhs, rhs, ret);
-		return ret;
-	}
-
-	inline Tensor operator/(const Tensor& lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Div(lhs, rhs, ret);
-		return ret;
-	}
-	inline Tensor operator/(const Tensor& lhs, float rhs)
-	{
-		Tensor ret;
-		Operator::Mul(1.f/rhs, lhs, ret);
-		return ret;
-	}
-	inline Tensor operator/(float lhs, const Tensor& rhs)
-	{
-		Tensor ret;
-		Operator::Div(lhs, rhs, ret);
-		return ret;
-	}
-
-	inline Tensor cross(const Tensor& a, const Tensor& b)
-	{
-		Tensor ret;
-		Operator::Cross(a, b, ret);
-		return ret;
-	}
-	Tensor diag(const Tensor& a, int k)
-	{
-		Tensor ret;
-		Operator::Diag(a, ret);
-		return ret;
-	}
-	inline float dot(const Tensor& a, const Tensor& b)
-	{
-		Tensor ret;
-		Operator::Dot(a, b, ret);
-		return ret[0];
-	}
-	inline Tensor mean(const Tensor& a, int dim)
-	{
-		Tensor ret;
-		Operator::Mean(a, dim, ret);
-		return ret;
-	}
-	inline float norm(const Tensor& a, float p)
-	{
-		Tensor ret;
-		Operator::Norm(a, p, ret);
-		return ret[0];
-	}
-	inline Tensor normalize(const Tensor& a, int dim, const std::string& method, float p1, float p2)
-	{
-		Tensor ret;
-		Operator::Normalize(a, dim, method, p1, p2, ret);
-		return ret;
-	}
-	inline Tensor sum(const Tensor& a, int dim)
-	{
-		Tensor ret;
-		Operator::Sum(a, dim, ret);
-		return ret;
-	}
 }

@@ -17,11 +17,11 @@ namespace chaos
 		}
 	}
 
-	Steps::Steps(uint32 s0) : Steps(1ULL)
+	Steps::Steps(int s0) : Steps(1ULL)
 	{
 		data[0] = s0;
 	}
-	Steps::Steps(uint32 s0, uint32 s1) : Steps(2ULL)
+	Steps::Steps(int s0, int s1) : Steps(2ULL)
 	{
 		data[0] = s0;
 		data[1] = s1;
@@ -83,16 +83,16 @@ namespace chaos
 	}
 
 
-	Shape::Shape(uint32 d0) : Shape(1ULL)
+	Shape::Shape(int d0) : Shape(1ULL)
 	{
 		data[0] = d0;
 	}
-	Shape::Shape(uint32 d0, uint32 d1) : Shape(2ULL)
+	Shape::Shape(int d0, int d1) : Shape(2ULL)
 	{
 		data[0] = d0;
 		data[1] = d1;
 	}
-	Shape::Shape(uint32 d0, uint32 d1, uint32 d2) : Shape(3ULL)
+	Shape::Shape(int d0, int d1, int d2) : Shape(3ULL)
 	{
 		data[0] = d0;
 		data[1] = d1;

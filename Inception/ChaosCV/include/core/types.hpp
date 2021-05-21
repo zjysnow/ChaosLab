@@ -2,6 +2,7 @@
 
 #include "core/def.hpp"
 
+#include <vector>
 #include <numeric>
 
 namespace chaos
@@ -91,8 +92,8 @@ namespace chaos
 		Steps() = default;
 		~Steps();
 
-		Steps(uint32 s0);
-		Steps(uint32 s0, uint32 s1);
+		Steps(int s0);
+		Steps(int s0, int s1);
 
 		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
 		Steps(const std::initializer_list<Type>& list) : Steps(list.size())
@@ -102,7 +103,7 @@ namespace chaos
 				data[i++] = static_cast<uint32>(val);
 			}
 		}
-		
+
 		Steps(const Steps& steps);
 		Steps& operator=(const Steps& steps);
 
@@ -125,12 +126,21 @@ namespace chaos
 		Shape() = default;
 		~Shape();
 
-		Shape(uint32 d0);
-		Shape(uint32 d0, uint32 d1);
-		Shape(uint32 d0, uint32 d1, uint32 d2);
+		Shape(int d0);
+		Shape(int d0, int d1);
+		Shape(int d0, int d1, int d2);
 
 		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
-		Shape(const std::initializer_list<Type>& list) : Shape(list.size()) 
+		Shape(const std::initializer_list<Type>& list) : Shape(list.size())
+		{
+			for (size_t i = 0; const auto & val : list)
+			{
+				data[i++] = static_cast<uint32>(val);
+			}
+		}
+
+		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
+		Shape(const std::vector<Type>& list) : Shape(list.size())
 		{
 			for (size_t i = 0; const auto & val : list)
 			{
@@ -159,5 +169,4 @@ namespace chaos
 	private:
 		Shape(size_t dims);
 	};
-
 }

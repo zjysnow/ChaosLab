@@ -4,11 +4,12 @@
 
 namespace chaos
 {
-	template<class Type, std::enable_if_t<std::is_integral_v<Type>, bool> = true>
-	inline static uint32 IndexCast(const Type& idx)
-	{
-		return static_cast<uint32>(idx);
-	}
+
+	//template<class Type, std::enable_if_t<std::is_integral_v<Type>, bool> = true>
+	//inline static uint32 IndexCast(const Type& idx)
+	//{
+	//	return static_cast<uint32>(idx);
+	//}
 
 	class VulkanBuffer;
 	class VulkanAllocator;
@@ -60,7 +61,7 @@ namespace chaos
 		template<class Type = float, class ...Index, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
 		const Type& At(Index... idx) const
 		{
-			std::vector<uint32> index = { IndexCast(idx)... };
+			std::vector<uint32> index = { static_cast<uint32>(idx)... };
 			CHECK_EQ(shape.dims, index.size()) << "dims expect " << shape.dims << " but got " << index.size();
 
 			size_t offset = 0.f;
