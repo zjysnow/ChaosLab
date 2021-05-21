@@ -224,4 +224,10 @@ namespace chaos
 		auto& op = Permute::GetInstance();
 		return op(a, orders);
 	}
+	Tensor transpose(const Tensor& a)
+	{
+		auto& op = Permute::GetInstance();
+		std::vector<uint32> orders = {1,0};
+		return op(a, orders);
+	}
 }
