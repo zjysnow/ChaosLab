@@ -1,6 +1,7 @@
 #include "utils/op.hpp"
 
 #include "dnn/layers/binary_op.hpp"
+#include "dnn/layers/cross.hpp"
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/permute.hpp"
@@ -26,6 +27,25 @@ namespace chaos
 
 		Add(const Add&) = delete;
 		Add& operator=(const Add&) = delete;
+	};
+
+	class Cross : public Operator<Cross>
+	{
+	public:
+		Cross()
+		{
+			layer = std::make_shared<dnn::Cross>();
+		}
+
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({a,b}, tops);
+			return tops[0];
+		}
+
+		Cross(const Cross&) = delete;
+		Cross& operator=(const Cross&) = delete;
 	};
 
 	class Div : public Operator<Div>
@@ -166,6 +186,9 @@ namespace chaos
 			layer->Forward({a}, tops);
 			return tops[0];
 		}
+
+		Sum(const Sum&) = delete;
+		Sum& operator=(const Sum&) = delete;
 	};
 	
 
@@ -234,7 +257,11 @@ namespace chaos
 		return op(a, { b });
 	}
 
-	
+	Tensor cross(const Tensor& a, const Tensor& b)
+	{
+		auto& op = Cross::GetInstance();
+		return op(a, b);
+	}
 	Tensor dot(const Tensor& a, const Tensor& b)
 	{
 		auto& op = Dot::GetInstance();
