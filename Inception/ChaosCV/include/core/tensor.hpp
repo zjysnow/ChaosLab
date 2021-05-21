@@ -117,6 +117,8 @@ namespace chaos
 
 		bool is_continuous() const noexcept { return shape.total() == total(); }
 
+		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const Tensor& tensor);
+
 		void* data = nullptr;
 		Allocator* allocator = nullptr;
 		int* ref_cnt = nullptr;

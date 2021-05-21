@@ -176,6 +176,72 @@ namespace chaos
 		return r;
 	}
 
+	//template<class Type>
+	//std::ostream& PrintTensor(std::ostream& stream, const Tensor& tensor)
+	//{
+	//	const Type* data = tensor.data;
+	//	switch (tensor.shape.dims)
+	//	{
+	//	case 1:
+	//		for ()
+	//		break;
+	//	case 2:
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
+
+	std::ostream& operator<<(std::ostream& stream, const Tensor& tensor)
+	{
+		// just float now
+		CHECK_EQ(DataType::D4, tensor.dtype);
+		CHECK_EQ(Packing::CHW, tensor.packing);
+
+		const Shape& shape = tensor.shape;
+		const Steps& steps = tensor.steps;
+		float* data = (float*)tensor.data;
+		stream << "[";
+		switch (shape.dims)
+		{
+		case 1:
+			for (uint32 i = 0; i < shape[0]; i++)
+			{
+				stream << Format(", %f" + 2 * !i, data[i]);
+			}
+			break;
+		case 2:
+			for (uint32 i = 0; i < shape[0]; i++)
+			{
+				for (uint32 j = 0; j < shape[1]; j++)
+				{
+					stream << Format(", %f" + 2 * !j, data[i * steps[0] + j]);
+				}
+				if (i < shape[0] - 1) stream << std::endl;
+			}
+			break;
+		default:
+			size_t dims = shape.dims;
+			uint32 h = shape[dims - 2];
+			uint32 w = shape[dims - 1];
+			uint32 cstep = steps[dims - 3];
+			uint32 rstep = steps[dims - 2];
+			uint32 k = shape.total() / h / w;
+			for (uint32 i = 0; i < k; i++)
+			{
+				stream << Tensor(Shape(h, w), DataType::D4, Packing::CHW, data + i * cstep, Steps(rstep, 1));
+				if (i < k - 1) stream << std::endl;
+			}
+			break;
+		}
+		stream << "]";
+		return stream;
+	}
+
+
+
+
+
 	VulkanTensor::VulkanTensor(const Shape& shape, const DataType& dtype, const Packing& packing, VulkanAllocator* allocator)
 	{
 		Create(shape, shape.steps(), dtype, packing, allocator);
