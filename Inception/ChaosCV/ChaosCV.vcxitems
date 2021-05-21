@@ -30,9 +30,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\data.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\decomp.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\dot.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
@@ -57,6 +57,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\data.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\dot.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\net.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

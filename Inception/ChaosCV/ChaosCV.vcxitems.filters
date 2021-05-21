@@ -120,7 +120,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\decomp.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -183,6 +183,9 @@
       <Filter>src\utils</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>
