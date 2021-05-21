@@ -137,11 +137,11 @@ namespace chaos
 			layer->Forward({ a }, tops);
 			return tops[0];
 		}
+
 		Tensor operator()(const Tensor&, const Tensor&) const = delete;
 		Permute(const Permute&) = delete;
 		Permute& operator=(const Permute&) = delete;
 	};
-
 
 
 	Tensor operator+(const Tensor& a, const Tensor& b)
