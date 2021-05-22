@@ -141,6 +141,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\norm.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\normalize.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -222,6 +225,9 @@
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\norm.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\normalize.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>

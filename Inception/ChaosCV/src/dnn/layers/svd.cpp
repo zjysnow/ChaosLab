@@ -288,7 +288,7 @@ namespace chaos
 
 		void SVD::Set(const std::string& pname, const std::any& val)
 		{
-            if ("uv" == pname) uv = std::any_cast<UV>(val);
+            if ("uv" == pname) uv = std::any_cast<Flag>(val);
 		}
 	}
 }

@@ -20,6 +20,21 @@ namespace chaos
 			return op;
 		}
 
+		// return a op b
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a,b }, tops);
+			return tops[0];
+		}
+
+		// c = a op b
+		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const
+		{
+			std::vector<Tensor> tops{ c };
+			layer->Forward({ a,b }, tops);
+		}
+
 		Operator(const Operator&) = delete;
 		Operator& operator=(const Operator&) = delete;
 	public:
@@ -37,13 +52,6 @@ namespace chaos
 			layer->Set("op_type", dnn::BinaryOp::ADD);
 		}
 
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
-		}
-
 		Add(const Add&) = delete;
 		Add& operator=(const Add&) = delete;
 	};
@@ -54,13 +62,6 @@ namespace chaos
 		Cross()
 		{
 			layer = std::make_shared<dnn::Cross>();
-		}
-
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({a,b}, tops);
-			return tops[0];
 		}
 
 		Cross(const Cross&) = delete;
@@ -76,13 +77,6 @@ namespace chaos
 			layer->Set("op_type", dnn::BinaryOp::DIV);
 		}
 
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
-		}
-
 		Div(const Div&) = delete;
 		Div& operator=(const Div&) = delete;
 	};
@@ -93,13 +87,6 @@ namespace chaos
 		Dot()
 		{
 			layer = std::make_shared<dnn::Dot>();
-		}
-
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
 		}
 
 		Dot(const Dot&) = delete;
@@ -115,6 +102,11 @@ namespace chaos
 
 		Tensor operator()(const Tensor& a, const Tensor& b) const
 		{
+			layer->Set("alpha", 1.f);
+			layer->Set("beta", 0.f);
+			layer->Set("transA", false);
+			layer->Set("transB", false);
+			layer->Set("transC", false);
 			std::vector<Tensor> tops(1);
 			layer->Forward({ a,b }, tops);
 			return tops[0];
@@ -130,13 +122,6 @@ namespace chaos
 		{
 			layer = std::make_shared<dnn::BinaryOp>();
 			layer->Set("op_type", dnn::BinaryOp::MUL);
-		}
-
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
 		}
 
 		Mul(const Mul&) = delete;
@@ -158,6 +143,8 @@ namespace chaos
 			return tops[0];
 		}
 
+		Tensor operator()(const Tensor&, const Tensor&) = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
 		Norm(const Norm&) = delete;
 		Norm& operator=(const Norm&) = delete;
 	};
@@ -179,6 +166,7 @@ namespace chaos
 		}
 
 		Tensor operator()(const Tensor&, const Tensor&) const = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
 		Permute(const Permute&) = delete;
 		Permute& operator=(const Permute&) = delete;
 	};
@@ -190,12 +178,6 @@ namespace chaos
 		{
 			layer = std::make_shared<dnn::BinaryOp>();
 			layer->Set("op_type", dnn::BinaryOp::SUB);
-		}
-		Tensor operator()(const Tensor& a, const Tensor& b) const
-		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({ a,b }, tops);
-			return tops[0];
 		}
 
 		Sub(const Sub&) = delete;
@@ -225,6 +207,8 @@ namespace chaos
 			return tops[0];
 		}
 
+		Tensor operator()(const Tensor&, const Tensor&) const = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
 		Sum(const Sum&) = delete;
 		Sum& operator=(const Sum&) = delete;
 	};
@@ -300,6 +284,11 @@ namespace chaos
 		auto& op = Cross::GetInstance();
 		return op(a, b);
 	}
+	void div(const Tensor& a, const Tensor& b, Tensor& c)
+	{
+		auto& op = Div::GetInstance();
+		op(a, b, c);
+	}
 	Tensor dot(const Tensor& a, const Tensor& b)
 	{
 		auto& op = Dot::GetInstance();
@@ -320,12 +309,6 @@ namespace chaos
 		auto& op = Permute::GetInstance();
 		return op(a, orders);
 	}
-	Tensor transpose(const Tensor& a)
-	{
-		auto& op = Permute::GetInstance();
-		std::vector<uint32> orders = {1,0};
-		return op(a, orders);
-	}
 	Tensor sum(const Tensor& a)
 	{
 		auto& op = Sum::GetInstance();
@@ -335,5 +318,11 @@ namespace chaos
 	{
 		auto& op = Sum::GetInstance();
 		return op(a, vecdim);
+	}
+	Tensor transpose(const Tensor& a)
+	{
+		auto& op = Permute::GetInstance();
+		std::vector<uint32> orders = { 1,0 };
+		return op(a, orders);
 	}
 }

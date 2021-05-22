@@ -51,7 +51,7 @@ namespace chaos
 					}
 				}
 			}
-			else
+			else // 2 == dims
 			{
 
 			}

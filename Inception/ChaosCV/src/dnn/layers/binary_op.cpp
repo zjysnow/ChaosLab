@@ -116,7 +116,7 @@ namespace chaos
         }
         void BinaryOp::Set(const std::string& pname, const std::any& val)
         {
-            if ("op_type" == name)
+            if ("op_type" == pname)
             {
                 op_type = (int)std::any_cast<OpType>(val);
             }

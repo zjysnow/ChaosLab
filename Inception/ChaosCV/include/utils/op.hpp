@@ -54,14 +54,22 @@ namespace chaos
     CHAOS_API Tensor operator/(float a, const Tensor& b);
     CHAOS_API Tensor operator/(const Tensor& a, float b);
 
+    CHAOS_API void add(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
+    CHAOS_API void div(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor dot(const Tensor& a, const Tensor& b);
+    CHAOS_API void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, bool transC, Tensor& c, float beta);
     CHAOS_API Tensor mean(const Tensor& a);
-    CHAOS_API Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim = {0});
+    CHAOS_API Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim = { 0 });
     CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);
+    CHAOS_API void mul(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor norm(const Tensor& a, float p = 2.f);
+    CHAOS_API Tensor normalize(const Tensor& a);
     CHAOS_API Tensor permute(const Tensor& a, const std::vector<uint32>& orders);
+    CHAOS_API void sub(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor sum(const Tensor& a);
-    CHAOS_API Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim = {0});
+    CHAOS_API Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim = { 0 });
     CHAOS_API Tensor transpose(const Tensor& a);
+
+    //CHAOS_API std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& A);
 }
