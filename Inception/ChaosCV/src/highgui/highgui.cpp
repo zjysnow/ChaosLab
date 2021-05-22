@@ -65,9 +65,9 @@ namespace chaos
 		Result[2] = -f[0]; // .x;
 		Result[6] = -f[1]; // .y;
 		Result[10] = -f[2]; // .z;
-		Result[12] = -dot(s, eye);
-		Result[13] = -dot(u, eye);
-		Result[14] = dot(f, eye);
+		Result[12] = -dot(s, eye).At(0);
+		Result[13] = -dot(u, eye).At(0);
+		Result[14] = dot(f, eye).At(0);
 		return Result;
 	}
 

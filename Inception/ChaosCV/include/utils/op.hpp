@@ -64,12 +64,13 @@ namespace chaos
     CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);
     CHAOS_API void mul(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor norm(const Tensor& a, float p = 2.f);
-    CHAOS_API Tensor normalize(const Tensor& a);
+    CHAOS_API Tensor normalize(const Tensor& a, const std::string& type = "norm");
     CHAOS_API Tensor permute(const Tensor& a, const std::vector<uint32>& orders);
     CHAOS_API void sub(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor sum(const Tensor& a);
     CHAOS_API Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim = { 0 });
     CHAOS_API Tensor transpose(const Tensor& a);
+    CHAOS_API void transpose(const Tensor& a, Tensor& p);
 
     //CHAOS_API std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& A);
 }

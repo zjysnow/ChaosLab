@@ -1,6 +1,7 @@
 #include "dnn/layers/svd.hpp"
 
 #include "core/buffer.hpp"
+#include "utils/op.hpp"
 
 namespace chaos
 {
@@ -229,14 +230,14 @@ namespace chaos
 
             if (not at)
             {
-                //Transpose(A, temp_a);
-                for (uint32 i = 0; i < m; i++)
-                {
-                    for (uint32 j = 0; j < n; j++)
-                    {
-                        temp_a[j * astep + i] = A[i * A.steps[0] + j];
-                    }
-                }
+                transpose(A, temp_a);
+                //for (uint32 i = 0; i < m; i++)
+                //{
+                //    for (uint32 j = 0; j < n; j++)
+                //    {
+                //        temp_a[j * astep + i] = A[i * A.steps[0] + j];
+                //    }
+                //}
             }
             else
             {
@@ -257,14 +258,14 @@ namespace chaos
                     CHECK_EQ(Shape(m, urows), U.shape);
                     if (Vt.empty()) Vt.Create(Shape(n, n), { n,1U }, DataType::D4, Packing::CHW, opt.blob_allocator);
                     CHECK_EQ(Shape(n,n), Vt.shape);
-                    //Transpose(temp_u,U);
-                    for (uint32 i = 0; i < m; i++)
-                    {
-                        for (uint32 j = 0; j < urows; j++)
-                        {
-                            U[i * U.steps[0] + j] = temp_u[j * astep  + i];
-                        }
-                    }
+                    transpose(temp_u, U);
+                    //for (uint32 i = 0; i < m; i++)
+                    //{
+                    //    for (uint32 j = 0; j < urows; j++)
+                    //    {
+                    //        U[i * U.steps[0] + j] = temp_u[j * astep  + i];
+                    //    }
+                    //}
                     temp_v.CopyTo(Vt);
                 }
                 else
@@ -273,14 +274,14 @@ namespace chaos
                     CHECK_EQ(Shape(n,n), U.shape);
                     if (Vt.empty()) Vt.Create(Shape(urows, m), { m,1u }, DataType::D4, Packing::CHW, opt.blob_allocator);
                     CHECK_EQ(Shape(urows, m), Vt.shape);
-                    // Transpose(temp_v, U);
-                    for (uint32 i = 0; i < n; i++)
-                    {
-                        for (uint32 j = 0; j < n; j++)
-                        {
-                            U[i * U.steps[0] + j] = temp_v[j * vstep + i];
-                        }
-                    }
+                    transpose(temp_v, U);
+                    //for (uint32 i = 0; i < n; i++)
+                    //{
+                    //    for (uint32 j = 0; j < n; j++)
+                    //    {
+                    //        U[i * U.steps[0] + j] = temp_v[j * vstep + i];
+                    //    }
+                    //}
                     temp_u.CopyTo(Vt);
                 }
             }

@@ -5,6 +5,7 @@
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/norm.hpp"
+#include "dnn/layers/normalize.hpp"
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/sum.hpp"
 
@@ -148,7 +149,25 @@ namespace chaos
 		Norm(const Norm&) = delete;
 		Norm& operator=(const Norm&) = delete;
 	};
+	class Normalize : public Operator<Normalize>
+	{
+	public:
+		Normalize()
+		{
+			layer = std::make_shared<dnn::Normalize>();
+		}
 
+		Tensor operator()(const Tensor& a, const dnn::Normalize::Method& method) const
+		{
+			layer->Set("method", method);
+			std::vector<Tensor> tops(1);
+			layer->Forward({a}, tops);
+			return tops[0];
+		}
+
+		Normalize(const Normalize&) = delete;
+		Normalize& operator=(const Normalize&) = delete;
+	};
 	class Permute : public Operator<Permute>
 	{
 	public:
@@ -163,6 +182,13 @@ namespace chaos
 			std::vector<Tensor> tops(1);
 			layer->Forward({ a }, tops);
 			return tops[0];
+		}
+
+		void operator()(const Tensor& a, const std::vector<uint32>& orders, Tensor& p) const
+		{
+			layer->Set("orders", orders);
+			std::vector<Tensor> tops{p};
+			layer->Forward({ a }, tops);
 		}
 
 		Tensor operator()(const Tensor&, const Tensor&) const = delete;
@@ -304,6 +330,14 @@ namespace chaos
 		auto& op = Norm::GetInstance();
 		return op(a, p);
 	}
+	Tensor normalize(const Tensor& a, const std::string& type)
+	{
+		auto& op = Normalize::GetInstance();
+		if ("norm" == type) return op(a, dnn::Normalize::NORM);
+		if ("zscore" == type) return op(a, dnn::Normalize::ZSCORE);
+		LOG(FATAL);
+		return Tensor(); // warning C4715
+	}
 	Tensor permute(const Tensor& a, const std::vector<uint32>& orders)
 	{
 		auto& op = Permute::GetInstance();
@@ -324,5 +358,11 @@ namespace chaos
 		auto& op = Permute::GetInstance();
 		std::vector<uint32> orders = { 1,0 };
 		return op(a, orders);
+	}
+	void transpose(const Tensor& a, Tensor& p)
+	{
+		auto& op = Permute::GetInstance();
+		std::vector<uint32> orders = { 1,0 };
+		op(a, orders, p);
 	}
 }

@@ -20,7 +20,7 @@ namespace chaos
 
 			void Set(const std::string& pname, const std::any& val) final;
 
-			int method;
+			int method = NORM;
 		};
 	}
 }
