@@ -20,7 +20,8 @@ namespace chaos
 
 			CHECK_EQ(1, top_blobs.size()) << "layer 'Cross' expect 1 output but got " << top_blobs.size();
 			Tensor& cross = top_blobs[0];
-			cross.Create(Shape(3), Steps(1), DataType::D4, Packing::CHW, opt.blob_allocator);
+			if (cross.empty()) cross.Create(Shape(3), Steps(1), DataType::D4, Packing::CHW, opt.blob_allocator);
+			CHECK_EQ(Shape(3), cross.shape);
 
 			cross[0] = a[1] * b[2] - a[2] * b[1];
 			cross[1] = a[2] * b[0] - a[0] * b[2];

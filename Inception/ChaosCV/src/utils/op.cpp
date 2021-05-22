@@ -4,11 +4,30 @@
 #include "dnn/layers/cross.hpp"
 #include "dnn/layers/dot.hpp"
 #include "dnn/layers/gemm.hpp"
+#include "dnn/layers/norm.hpp"
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/sum.hpp"
 
 namespace chaos
 {
+	template<class Op>
+	class Operator
+	{
+	public:
+		static Op& GetInstance()
+		{
+			static Op op;
+			return op;
+		}
+
+		Operator(const Operator&) = delete;
+		Operator& operator=(const Operator&) = delete;
+	public:
+		Operator() = default;
+		virtual ~Operator() = default;
+		Ptr<dnn::Layer> layer;
+	};
+
 	class Add : public Operator<Add>
 	{
 	public:
@@ -122,6 +141,25 @@ namespace chaos
 
 		Mul(const Mul&) = delete;
 		Mul& operator=(const Mul&) = delete;
+	};
+	class Norm : public Operator<Norm>
+	{
+	public:
+		Norm()
+		{
+			layer = std::make_shared<dnn::Norm>();
+		}
+
+		Tensor operator()(const Tensor& a, float p) const
+		{
+			layer->Set("p", p);
+			std::vector<Tensor> tops(1);
+			layer->Forward({a}, tops);
+			return tops[0];
+		}
+
+		Norm(const Norm&) = delete;
+		Norm& operator=(const Norm&) = delete;
 	};
 
 	class Permute : public Operator<Permute>
@@ -271,6 +309,11 @@ namespace chaos
 	{
 		auto& op = Mul::GetInstance();
 		return op(a, b);
+	}
+	Tensor norm(const Tensor& a, float p)
+	{
+		auto& op = Norm::GetInstance();
+		return op(a, p);
 	}
 	Tensor permute(const Tensor& a, const std::vector<uint32>& orders)
 	{

@@ -5,24 +5,6 @@
 
 namespace chaos
 {
-    template<class Op>
-    class Operator
-    {
-    public:
-        static Op& GetInstance()
-        {
-            static Op op;
-            return op;
-        }
-
-        Operator(const Operator&) = delete;
-        Operator& operator=(const Operator&) = delete;
-    public:
-        Operator() = default;
-        virtual ~Operator() = default;
-        Ptr<dnn::Layer> layer;
-    };
-
     template<class...Shapes>
     Shape BroadcastShapes(const Shapes&...shapes)
     {
@@ -75,10 +57,11 @@ namespace chaos
     CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
     CHAOS_API Tensor dot(const Tensor& a, const Tensor& b);
     CHAOS_API Tensor mean(const Tensor& a);
-    CHAOS_API Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim);
+    CHAOS_API Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim = {0});
     CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);
+    CHAOS_API Tensor norm(const Tensor& a, float p = 2.f);
     CHAOS_API Tensor permute(const Tensor& a, const std::vector<uint32>& orders);
     CHAOS_API Tensor sum(const Tensor& a);
-    CHAOS_API Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim);
+    CHAOS_API Tensor sum(const Tensor& a, const std::vector<uint32>& vecdim = {0});
     CHAOS_API Tensor transpose(const Tensor& a);
 }
