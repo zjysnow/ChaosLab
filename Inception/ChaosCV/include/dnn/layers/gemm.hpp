@@ -7,7 +7,7 @@ namespace chaos
 	namespace dnn
 	{
 		// General Matrix Multiplication
-		// C = alpha * A * B + beta * C
+		// D = alpha * A * B + beta * C
 		class CHAOS_API GEMM : public Layer
 		{
 		public:
@@ -22,7 +22,7 @@ namespace chaos
 
 			bool transA = false;
 			bool transB = false;
-			bool transC = false;
+			//bool transC = false;
 		};
 	}
 }

@@ -58,7 +58,7 @@ namespace chaos
     CHAOS_API Tensor cross(const Tensor& a, const Tensor& b);
     CHAOS_API void div(const Tensor& a, const Tensor& b, Tensor& c);
     CHAOS_API Tensor dot(const Tensor& a, const Tensor& b);
-    CHAOS_API void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, bool transC, Tensor& c, float beta);
+    CHAOS_API void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta);
     CHAOS_API Tensor mean(const Tensor& a);
     CHAOS_API Tensor mean(const Tensor& a, const std::vector<uint32>& vecdim = { 0 });
     CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);

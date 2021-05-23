@@ -107,10 +107,19 @@ namespace chaos
 			layer->Set("beta", 0.f);
 			layer->Set("transA", false);
 			layer->Set("transB", false);
-			layer->Set("transC", false);
 			std::vector<Tensor> tops(1);
 			layer->Forward({ a,b }, tops);
 			return tops[0];
+		}
+
+		void operator()(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta) const
+		{
+			layer->Set("alpha", alpha);
+			layer->Set("beta", beta);
+			layer->Set("transA", transA);
+			layer->Set("transB", transB);
+			std::vector<Tensor> tops{c};
+			layer->Forward({ a,b,c }, tops);
 		}
 
 		GEMM(const GEMM&) = delete;
@@ -305,6 +314,11 @@ namespace chaos
 		return op(a, { b });
 	}
 
+	void add(const Tensor& a, const Tensor& b, Tensor& c)
+	{
+		auto& op = Add::GetInstance();
+		op(a,b,c);
+	}
 	Tensor cross(const Tensor& a, const Tensor& b)
 	{
 		auto& op = Cross::GetInstance();
@@ -319,6 +333,11 @@ namespace chaos
 	{
 		auto& op = Dot::GetInstance();
 		return op(a, b);
+	}
+	void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta)
+	{
+		auto& op = GEMM::GetInstance();
+		op(transA, transB, a, b, alpha, c, beta);
 	}
 	Tensor mul(const Tensor& a, const Tensor& b)
 	{

@@ -1,5 +1,7 @@
 #include "dnn/layers/gemm.hpp"
 
+#include "utils/op.hpp"
+
 namespace chaos
 {
 	namespace dnn
@@ -29,6 +31,7 @@ namespace chaos
 			CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expect 1 output but got " << top_blobs.size();
 			Tensor& C = top_blobs[0];
 			if (C.empty()) C.Create(Shape(m, k), Steps(k, 1), DataType::D4, Packing::CHW, opt.blob_allocator);
+			CHECK_EQ(Shape(m,k), C.shape);
 
 			uint32 astep = A.steps[0];
 			uint32 bstep = B.steps[0];
@@ -41,27 +44,10 @@ namespace chaos
 			else
 			{
 				CHECK_EQ(2, bottom_blobs[2].shape.dims) << "input C must be a matrix";
-				if (transC)
-				{
-					CHECK_EQ(bottom_blobs[2].shape, Shape(k,m)) << "shape of input C shoule be " << k << "x" << m;
-					uint32 rstep = bottom_blobs[2].steps[0];
-					// Transpos C
-					for (size_t r = 0; r < m; r++)
-					{
-						for (size_t c = 0; c < k; c++)
-						{
-							C[r * cstep + c] = bottom_blobs[2][c * rstep + r];
-						}
-					}
-				}
-				else
-				{
-					CHECK_EQ(bottom_blobs[2].shape, C.shape) << "shape of input C shoule be " << m << "x" << k;
-					bottom_blobs[2].CopyTo(C);
-				}
+				CHECK_EQ(bottom_blobs[2].shape, C.shape) << "shape of input C shoule be " << m << "x" << k;
+				bottom_blobs[2].CopyTo(C);
 			}
 
-			
 			for (size_t r = 0; r < m; r++)
 			{
 				for (size_t c = 0; c < k; c++)
@@ -83,7 +69,7 @@ namespace chaos
 			if ("beta" == pname) beta = std::any_cast<float>(val);
 			if ("transA" == pname) transA = std::any_cast<bool>(val);
 			if ("transB" == pname) transB = std::any_cast<bool>(val);
-			if ("transC" == pname) transC = std::any_cast<bool>(val);
+			//if ("transC" == pname) transC = std::any_cast<bool>(val);
 		}
 	}
 }
