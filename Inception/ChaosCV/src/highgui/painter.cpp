@@ -89,8 +89,8 @@ namespace chaos
 				data[4] = colors[i].b;
 			}
 
-			Tensor vertex_data = Tensor(Shape((uint32)buffer.size()), DataType::D4, Packing::CHW, buffer.data());
-			Tensor indices_data = Tensor(Shape((uint32)ind.size()), DataType::D2, Packing::CHW, (void*)ind.data());
+			Tensor vertex_data = Tensor(Shape((int)buffer.size()), DataType::D4, Packing::CHW, buffer.data());
+			Tensor indices_data = Tensor(Shape((int)ind.size()), DataType::D2, Packing::CHW, (void*)ind.data());
 
 			// default ubo
 			Tensor ubo = CreateUniformObject();

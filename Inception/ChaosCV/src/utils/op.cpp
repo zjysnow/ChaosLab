@@ -344,6 +344,11 @@ namespace chaos
 		auto& op = Mul::GetInstance();
 		return op(a, b);
 	}
+	void mul(const Tensor& a, const Tensor& b, Tensor& c)
+	{
+		auto& op = Mul::GetInstance();
+		op(a, b, c);
+	}
 	Tensor norm(const Tensor& a, float p)
 	{
 		auto& op = Norm::GetInstance();
@@ -361,6 +366,11 @@ namespace chaos
 	{
 		auto& op = Permute::GetInstance();
 		return op(a, orders);
+	}
+	void sub(const Tensor& a, const Tensor& b, Tensor& c)
+	{
+		auto& op = Sub::GetInstance();
+		op(a, b, c);
 	}
 	Tensor sum(const Tensor& a)
 	{
