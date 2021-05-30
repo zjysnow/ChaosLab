@@ -1,18 +1,20 @@
 #pragma once
 
-#include "core/types.hpp"
+#include "core/def.hpp"
 
 #include <sstream>
 
 namespace chaos
 {
+	enum class LogSeverity;
+
 	class CHAOS_API LogMessage
 	{
 	public:
 		LogMessage(const char* file, int line, const LogSeverity& severity);
 		~LogMessage();
 
-		std::ostream& stream();
+		std::ostream& stream() { return message_data; };
 	private:
 		void Flush();
 
@@ -24,7 +26,7 @@ namespace chaos
 	{
 	public:
 		LogMessageVoidify() = default;
-		
+
 		// This has to be an operator with a precedence lower than << but
 		// higher than ?:
 		void operator&(std::ostream&) {}

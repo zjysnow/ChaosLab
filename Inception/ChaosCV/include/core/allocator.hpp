@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/def.hpp"
 #include "core/log.hpp"
+#include "core/types.hpp"
 
 #define ALIGNMENT 16
 
@@ -23,9 +23,6 @@
 
 namespace chaos
 {
-	class VulkanDevice;
-	class VulkanBuffer;
-
 	/// <summary>
 	/// <para>Aligns a pointer to the specified number of bytes</para>
 	/// <para>The function returns the aligned pointer of the same type as the input pointer:</para>
@@ -36,7 +33,7 @@ namespace chaos
 	/// <return>The aligned pointer of the same type as the input pointer</return>
 	template<class Type> static inline Type* AlignPtr(Type* ptr, int n = (int)sizeof(Type))
 	{
-		CHECK((n & (n - 1)) == 0) << "n should be a power of 2.";
+		//CHECK((n & (n - 1)) == 0) << "n should be a power of 2.";
 		return (Type*)(((size_t)ptr + n - 1) & -n);
 	}
 
@@ -50,56 +47,61 @@ namespace chaos
 	/// <return>The minimum number that is greater than or equal to sz and is divisible by n</return>
 	static inline size_t AlignSize(size_t sz, int n)
 	{
-		CHECK((n & (n - 1)) == 0) << "n should be a power of 2.";
+		//CHECK((n & (n - 1)) == 0) << "n should be a power of 2.";
 		return (sz + n - 1) & -n;
 	}
 
 	static inline void* FastMalloc(size_t capacity)
-	{ 
+	{
 		return ALIGNED_MALLOC(capacity, ALIGNMENT);
 	}
-	static inline void FastFree(void* buffer) 
-	{ 
-		ALIGNED_FREE(buffer);
+	static inline void FastFree(void* data)
+	{
+		ALIGNED_FREE(data);
 	}
 
 	class CHAOS_API Allocator
 	{
 	public:
 		virtual ~Allocator() = default;
-		virtual void* FastaMalloc(size_t capacity) = 0;
-		virtual void FastFree(void* buffer) = 0;
+		virtual void* FastMalloc(size_t capacity) = 0;
+		virtual void FastFree(void* data) = 0;
 	};
 
-
+	class VulkanDevice;
 	class CHAOS_API VulkanAllocator
 	{
 	public:
+		//VulkanAllocator(uint32 device_id, BufferUsageFlag usage);
 		VulkanAllocator(const VulkanDevice* vkdev);
-		virtual ~VulkanAllocator() { Clear(); }
+		virtual ~VulkanAllocator();
 
-		virtual VulkanBuffer* FastMalloc(size_t capacity);
-		virtual void FastFree(VulkanBuffer* buffer);
-
-		virtual void Clear() {}
+		virtual VulkanBufferMemory* FastMalloc(size_t capacity) = 0;
+		virtual void FastFree(VulkanBufferMemory* data) = 0;
 
 		const VulkanDevice* vkdev;
-
-		uint32 memory_type_index = -1;
-		bool mappable = false;
-		bool coherent = false;
+		bool mappable;
+		bool coherent;
+		
 	protected:
-		void* CreateBuffer(size_t size, uint32 usage);
-		void* AllocateMemory(size_t size, uint32 memory_type_index);
-	};
+		BufferUsageFlag buffer_usage;
+		uint32 memory_type_index = -1;
 
+		VkBuffer CreateBuffer(size_t size);
+		VkDeviceMemory AllocateMemory(size_t size, uint32 memory_type_index);
+	};
+	class CHAOS_API VulkanLocalAllocator : public VulkanAllocator
+	{
+	public:
+		VulkanLocalAllocator(const VulkanDevice* vkdev);
+		VulkanBufferMemory* FastMalloc(size_t capacity) override;
+		void FastFree(VulkanBufferMemory* data) override;
+	};
 	class CHAOS_API VulkanStagingAllocator : public VulkanAllocator
 	{
 	public:
 		VulkanStagingAllocator(const VulkanDevice* vkdev);
-
-		virtual VulkanBuffer* FastMalloc(size_t capacity) override;
+		VulkanBufferMemory* FastMalloc(size_t capacity) override;
+		void FastFree(VulkanBufferMemory* data) override;
 	};
-
-	
 }

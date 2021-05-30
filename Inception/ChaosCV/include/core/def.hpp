@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <iostream>
+#include <format>
 
 #define APPLICATION_NAME "ChaosCV"
 #define ENGINE_NAME "ChaosEngine"

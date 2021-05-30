@@ -15,67 +15,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\command.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\array.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\inputs.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\blob.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\cross.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\data.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\dot.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\norm.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\normalize.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\utils\op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\vulkan.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\io.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\pipeline.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\blob.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\cross.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\data.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\dot.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\net.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\norm.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\normalize.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\premute.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\utils\op.cpp" />
   </ItemGroup>
 </Project>

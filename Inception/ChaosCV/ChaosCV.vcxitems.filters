@@ -43,6 +43,9 @@
     <Filter Include="src\utils">
       <UniqueIdentifier>{0aca6843-877c-461d-ad36-a46341a6933b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\dnn\layers\x86">
+      <UniqueIdentifier>{c63839f3-ec63-414d-986c-7496fc9e01a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp">
@@ -51,98 +54,32 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\array.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\gpu.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\vulkan.hpp">
       <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\highgui.hpp">
-      <Filter>include\highgui</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp">
-      <Filter>include\dnn</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp">
-      <Filter>include\dnn</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\command.hpp">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\pipeline.hpp">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp">
-      <Filter>include\highgui</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp">
-      <Filter>include\highgui</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp">
-      <Filter>include\dnn</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\blob.hpp">
-      <Filter>include\dnn</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\inputs.hpp">
-      <Filter>include\core</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\data.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\dot.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\utils\op.hpp">
-      <Filter>include\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp">
-      <Filter>include\dnn</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\lup.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\cross.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\norm.hpp">
-      <Filter>include\dnn\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\normalize.hpp">
-      <Filter>include\dnn\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +92,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
@@ -164,71 +104,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\gpu.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\io.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp">
-      <Filter>src\dnn</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\highgui.cpp">
-      <Filter>src\highgui</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\pipeline.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp">
       <Filter>src\core</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp">
-      <Filter>src\highgui</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp">
-      <Filter>src\highgui</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\net.cpp">
-      <Filter>src\dnn</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\blob.cpp">
-      <Filter>src\dnn</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\data.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\dot.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\utils\op.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\lup.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\premute.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\cross.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\norm.cpp">
-      <Filter>src\dnn\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\normalize.cpp">
-      <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

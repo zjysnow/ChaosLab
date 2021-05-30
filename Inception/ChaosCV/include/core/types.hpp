@@ -1,9 +1,7 @@
 #pragma once
 
 #include "core/def.hpp"
-
-#include <vector>
-#include <numeric>
+#include <ostream>
 
 namespace chaos
 {
@@ -16,15 +14,8 @@ namespace chaos
 	using uint32 = unsigned __int32;
 	using int64 = __int64;
 	using uint64 = unsigned __int64;
-
-	template<class Type>
-	using Ptr = std::shared_ptr<Type>;
-
-	enum class DeviceType
-	{
-		CPU,
-		GPU,
-	};
+	
+	using Flag = int32;
 
 	enum class LogSeverity
 	{
@@ -34,40 +25,58 @@ namespace chaos
 		FATAL,
 	};
 
-	enum class DataType : size_t
+	enum class Depth
 	{
-		D1 = 1, // int8 or uint8
-		D2 = 2, // float16, int16 or uint16
-		D4 = 4, // float, int32 or uint32
-		D8 = 8, // double, int64 or uint64
+		D1 = 1,
+		D2 = 2,
+		D4 = 4,
+		D8 = 8,
 	};
 
 	enum class Packing
 	{
-		CHW = 1, //scalar
-		C2HW2 = 2, // complex
-		C3HW3 = 3, // 3-channel image
-		C4HW4 = 4, // 4-channel image, sse or neon
-		C8HW8 = 8, // avx or fp16
+		CHW = 1,
+		C2HW2 = 2,
+		C3HW3 = 3,
+		C4HW4 = 4,
+		C8HW8 = 8,
 	};
 
-	template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
-	static inline Type operator*(const Type& lhs, const DataType& rhs)
+	template<class Type>
+	Type operator*(const Type& val, const Depth& depth)
 	{
-		return lhs * static_cast<Type>(rhs);
+		return static_cast<Type>(depth) * val;
+	}
+	static inline std::ostream& operator<<(std::ostream& stream, const Depth& depth)
+	{
+		switch (depth)
+		{
+		case Depth::D1: return stream << "D1";
+		case Depth::D2: return stream << "D2";
+		case Depth::D4: return stream << "D4";
+		case Depth::D8: return stream << "D8";
+		default: return stream << "invalid depth";
+		}
 	}
 
-	template<class Type, std::enable_if_t<std::is_arithmetic_v<Type>, bool> = true>
-	static inline Type operator*(const Type& lhs, const Packing& rhs)
+	template<class Type>
+	Type operator*(const Type& val, const Packing& packing)
 	{
-		return lhs * static_cast<Type>(rhs);
+		return static_cast<Type>(packing) * val;
+	}
+	static inline std::ostream& operator<<(std::ostream& stream, const Packing& packing)
+	{
+		switch (packing)
+		{
+		case Packing::CHW: return stream << "CHW";
+		case Packing::C2HW2: return stream << "C2HW2";
+		case Packing::C3HW3: return stream << "C3HW3";
+		case Packing::C4HW4: return stream << "C4HW4";
+		case Packing::C8HW8: return stream << "C8HW8";
+		default: return stream << "invalid packing";
+		}
 	}
 
-	union VkConstantType
-	{
-		int i;
-		float f;
-	};
 
 	class CHAOS_API Point
 	{
@@ -84,89 +93,43 @@ namespace chaos
 		float b;
 	};
 
-	class CHAOS_API Steps
+	class CHAOS_API Complex
 	{
 	public:
-		friend class Shape;
+		constexpr Complex() {}
+		constexpr Complex(float re, float im = 0) : re(re), im(im) {}
 
-		Steps() = default;
-		~Steps();
+		Complex conj() const noexcept { return Complex(re, -im); }
 
-		Steps(int s0);
-		Steps(int s0, int s1);
-
-		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
-		Steps(const std::initializer_list<Type>& list) : Steps(list.size())
-		{
-			for (size_t i = 0; const auto & val : list)
-			{
-				data[i++] = static_cast<uint32>(val);
-			}
-		}
-
-		Steps(const Steps& steps);
-		Steps& operator=(const Steps& steps);
-
-		void Insert(size_t pos, size_t cnt, uint32 val);
-
-		uint32& operator[](size_t idx) noexcept { return data[idx]; }
-		const uint32& operator[](size_t idx) const noexcept { return data[idx]; }
-
-		CHAOS_API friend bool operator==(const Steps& lhs, const Steps& rhs);
-		uint32* data = nullptr;
-		size_t size = 0;
-
-	private:
-		Steps(size_t size);
+		float re = 0.f; // real
+		float im = 0.f; // image
 	};
 
-	class CHAOS_API Shape
+	static inline constexpr Complex operator ""i(long double im) { return Complex(0, static_cast<float>(im)); }
+	static inline constexpr Complex operator ""i(unsigned long long im) { return Complex(0, static_cast<float>(im)); }
+	static inline Complex operator+(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re + rhs.re, lhs.im + rhs.im); }
+	static inline Complex operator-(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re - rhs.re, lhs.im - rhs.im); }
+	static inline Complex operator*(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re * rhs.re - lhs.im * rhs.im, lhs.re * rhs.im + lhs.im * rhs.re); }
+	static inline Complex operator/(const Complex& lhs, const Complex& rhs)
 	{
-	public:
-		Shape() = default;
-		~Shape();
-
-		Shape(int d0);
-		Shape(int d0, int d1);
-		Shape(int d0, int d1, int d2);
-
-		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
-		Shape(const std::initializer_list<Type>& list) : Shape(list.size())
+		float base = rhs.re * rhs.re + rhs.im * rhs.im;
+		float re = (lhs.re * rhs.re + lhs.im * rhs.im) / base;
+		float im = (lhs.im * rhs.re - lhs.re * rhs.im) / base;
+		return Complex(re, im);
+	}
+	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
+	{
+		return stream << std::format("{0:}{1:+}i", complex.re, complex.im);
+	}
+	template<class CharT>
+	struct std::formatter<chaos::Complex, CharT> : std::formatter<std::string, CharT>
+	{
+		template<class FormatContext>
+		auto format(const chaos::Complex& complex, FormatContext& fc)
 		{
-			for (size_t i = 0; const auto & val : list)
-			{
-				data[i++] = static_cast<uint32>(val);
-			}
+			std::string val = std::format("{}{:+}i", complex.re, complex.im);
+			return std::formatter<std::string, CharT>::format(val, fc);
 		}
-
-		template<class Type, std::enable_if_t<std::is_convertible_v<Type, uint32>, bool> = true>
-		Shape(const std::vector<Type>& list) : Shape(list.size())
-		{
-			for (size_t i = 0; const auto & val : list)
-			{
-				data[i++] = static_cast<uint32>(val);
-			}
-		}
-
-		Shape(const Shape& shape);
-		Shape& operator=(const Shape& shape);
-
-		void Insert(size_t pos, size_t cnt, uint32 val);
-
-		Steps steps() const;
-
-		uint32& operator[](size_t idx) noexcept { return data[idx]; }
-		const uint32& operator[](size_t idx) const noexcept { return data[idx]; }
-
-		size_t total() const;
-
-		CHAOS_API friend bool operator==(const Shape& lhs, const Shape& rhs);
-		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const Shape& shape);
-
-		size_t dims = 0;
-		uint32* data = nullptr;
-
-	private:
-		Shape(size_t dims);
 	};
 }
+
