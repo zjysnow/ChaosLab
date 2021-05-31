@@ -7,6 +7,7 @@
 namespace chaos
 {
 	static std::mutex g_instance_lock;
+	static std::mutex g_device_lock;
 
 	VulkanInstance VulkanInstance::holder;
 	VulkanInstance::VulkanInstance()
@@ -348,7 +349,11 @@ namespace chaos
 
 		for (size_t i = 0; i < MAX_GPU_COUNT; i++)
 		{
-
+			if (nullptr != g_devices[i])
+			{
+				delete g_devices[i];
+				g_devices[i] = nullptr;
+			}
 		}
 
 		if (g_instance.support_VK_EXT_debug_utils)
@@ -420,7 +425,7 @@ namespace chaos
 		transfer_queue_create_info.pQueuePriorities = transfer_queue_priorities.data();
 
 		std::vector<VkDeviceQueueCreateInfo> device_queue_create_infos;
-		auto have = [=](uint32 queue_family_index) {
+		auto have = [&](uint32 queue_family_index) {
 			return 1 == std::count_if(device_queue_create_infos.begin(), device_queue_create_infos.end(), 
 				[=](const VkDeviceQueueCreateInfo& info) { return info.queueFamilyIndex == queue_family_index; });
 		};
@@ -438,6 +443,7 @@ namespace chaos
 		}
 
 		VkDeviceCreateInfo device_create_info{};
+		device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		device_create_info.pQueueCreateInfos = device_queue_create_infos.data();
 		device_create_info.queueCreateInfoCount = (uint32)device_queue_create_infos.size();
 		device_create_info.enabledLayerCount = 0;
@@ -552,5 +558,73 @@ namespace chaos
 	bool VulkanDevice::IsMemoryCoherent(uint32 memory_type_index) const
 	{
 		return info.memory_properties[memory_type_index] & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	}
+
+	VkQueue VulkanDevice::AcquireQueue(uint32 queue_family_index) const
+	{
+		if (queue_family_index != info.compute_queue_family_index
+			&& queue_family_index != info.graphics_queue_family_index
+			&& queue_family_index != info.transfer_queue_family_index)
+		{
+			LOG(FATAL) << "invalid queue_family_index " << queue_family_index;
+			return nullptr;
+		}
+
+		std::lock_guard lock(queue_lock);
+
+		std::vector<VkQueue>& queues = queue_family_index == info.compute_queue_family_index ? compute_queues
+			: queue_family_index == info.graphics_queue_family_index ? graphics_queues : transfer_queues;
+		for (size_t i = 0; i < queues.size(); i++)
+		{
+			VkQueue queue = queues[i];
+			if (queue)
+			{
+				queues[i] = nullptr;
+				return queue;
+			}
+		}
+		LOG(FATAL) << "out of hardware queue " << queue_family_index;
+		return nullptr;
+	}
+	void VulkanDevice::ReclaimQueue(uint32 queue_family_index, VkQueue queue) const
+	{
+		if (queue_family_index != info.compute_queue_family_index
+			&& queue_family_index != info.graphics_queue_family_index
+			&& queue_family_index != info.transfer_queue_family_index)
+		{
+			LOG(FATAL) << "invalid queue_family_index " << queue_family_index;
+			return;
+		}
+
+		std::lock_guard lock(queue_lock);
+
+		std::vector<VkQueue>& queues = queue_family_index == info.compute_queue_family_index ? compute_queues
+			: queue_family_index == info.graphics_queue_family_index ? graphics_queues : transfer_queues;
+		for (int i = 0; i < (int)queues.size(); i++)
+		{
+			if (not queues[i])
+			{
+				queues[i] = queue;
+				return;
+			}
+		}
+		LOG(FATAL) << "reclaim_queue get wild queue " << queue_family_index << " " << queue;
+	}
+
+
+	const VulkanDevice* GetGPUDevice(int device_index)
+	{
+		TryCreateGPUInstance();
+
+		//CHECK(device_index >= 0 and device_index < g_gpu_count) << "";
+		if (device_index < 0 or device_index >= (int)g_gpu_count)
+			return nullptr;
+
+		std::lock_guard lock(g_device_lock);
+
+		if (nullptr == g_devices[device_index])
+			g_devices[device_index] = new VulkanDevice(device_index);
+
+		return g_devices[device_index];
 	}
 }

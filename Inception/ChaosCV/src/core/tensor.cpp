@@ -2,8 +2,12 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include <random>
+
 namespace chaos
 {
+	static std::default_random_engine engine;
+
 	Tensor::Tensor(const Shape& shape, const Depth& depth, const Packing& packing, Allocator* allocator)
 	{
 		Create(shape, shape.steps(), depth, packing, allocator);
@@ -109,6 +113,19 @@ namespace chaos
 	{
 		Create(tensor.shape, tensor.steps, tensor.depth, tensor.packing, allocator);
 	}
+
+	Tensor Tensor::randn(const Shape& shape, float mu, float sigma, Allocator* allocator)
+	{
+		std::normal_distribution<float> normal(mu, sigma);
+		Tensor r = Tensor(shape, Depth::D4, Packing::CHW, allocator);
+		for (uint32 i = 0; i < shape.total(); i++)
+		{
+			r[i] = normal(engine);
+		}
+		return r;
+	}
+
+
 
 
 

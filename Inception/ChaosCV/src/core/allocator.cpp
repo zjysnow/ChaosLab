@@ -49,7 +49,7 @@ namespace chaos
 		VkMemoryRequirements memory_requirements;
 		vkGetBufferMemoryRequirements(vkdev->GetDevice(), data->buffer, &memory_requirements);
 
-		if (memory_type_index == (size_t)-1)
+		if (memory_type_index == (uint32)-1)
 		{
 			if (vkdev->info.type == GPUInfo::Type::INTEGRATED)
 			{
@@ -104,7 +104,7 @@ namespace chaos
 		VkMemoryRequirements memory_requirements;
 		vkGetBufferMemoryRequirements(vkdev->GetDevice(), data->buffer, &memory_requirements);
 
-		if (memory_type_index == (size_t)-1)
+		if (memory_type_index == (uint32)-1)
 		{
 			memory_type_index = vkdev->FindMemoryTypeIndex(memory_requirements.memoryTypeBits,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, VK_MEMORY_PROPERTY_HOST_CACHED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);

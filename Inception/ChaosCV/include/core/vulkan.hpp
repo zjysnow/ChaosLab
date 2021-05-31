@@ -16,12 +16,28 @@ DEFINE_VULKAN_HANDLE(VkQueue)
 DEFINE_VULKAN_HANDLE(VkBuffer)
 DEFINE_VULKAN_HANDLE(VkDeviceMemory)
 
+DEFINE_VULKAN_HANDLE(VkPipeline)
+DEFINE_VULKAN_HANDLE(VkPipelineLayout)
+DEFINE_VULKAN_HANDLE(VkDescriptorSetLayout)
+
+DEFINE_VULKAN_HANDLE(VkShaderModule)
+
+DEFINE_VULKAN_HANDLE(VkCommandPool)
+DEFINE_VULKAN_HANDLE(VkCommandBuffer)
+DEFINE_VULKAN_HANDLE(VkFence)
+DEFINE_VULKAN_HANDLE(VkSemaphore)
+DEFINE_VULKAN_HANDLE(VkDescriptorPool)
+
 DEFINE_VULKAN_HANDLE(VkDebugUtilsMessengerEXT)
 
 namespace chaos
 {
 	using MemoryPropertyFlag = Flag;
 	using BufferUsageFlag = Flag;
+	using ShaderStageFlag = Flag;
+	using DescriptorType = Flag;
+	using AccessFlag = Flag;
+	using PipelineStageFlag = Flag;
 
 	union VulkanSpecializationType
 	{
@@ -39,11 +55,11 @@ namespace chaos
 	class VulkanBufferMemory
 	{
 	public:
-		VkBuffer buffer;
-		VkDeviceMemory memory;
-		size_t capacity;
-		size_t offset;
+		VkBuffer buffer = nullptr;
+		VkDeviceMemory memory = nullptr;
+		size_t capacity = 0;
+		size_t offset = 0;
 		void* mapped_data = nullptr;
-		int ref_cnt;
+		int ref_cnt = 0;
 	};
 }

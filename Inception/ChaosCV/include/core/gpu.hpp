@@ -77,6 +77,8 @@ namespace chaos
 		bool IsMemoryMappable(uint32 memory_type_index) const;
 		bool IsMemoryCoherent(uint32 memory_type_index) const;
 
+		VkQueue AcquireQueue(uint32 queue_family_index) const;
+		void ReclaimQueue(uint32 queue_family_index, VkQueue queue) const;
 	private:
 		VkDevice device;
 
@@ -86,4 +88,6 @@ namespace chaos
 		mutable std::vector<VkQueue> transfer_queues;
 		mutable std::mutex queue_lock;
 	};
+
+	CHAOS_API const VulkanDevice* GetGPUDevice(int device_index = GetDefaultGPUIndex());
 }

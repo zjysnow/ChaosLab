@@ -85,6 +85,10 @@ namespace chaos
 			return ((Type*)data)[offset];
 		}
 
+		uint32 total() const noexcept { return shape[0] * steps[0]; }
+
+		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
+
 		void* data = nullptr;
 		Allocator* allocator = nullptr;
 		int* ref_cnt = nullptr;
@@ -114,6 +118,14 @@ namespace chaos
 
 		/// <summary> ref_cnt++ </summary>
 		void AddRef() noexcept { if (ref_cnt) CHAOS_XADD(ref_cnt, 1); }
+
+		uint32 total() const noexcept { return shape[0] * steps[0]; }
+
+		// low-level reference
+		void* mapped_data() const noexcept { return data->mapped_data; }
+		VkBuffer buffer() const noexcept { return data->buffer; }
+		size_t buffer_offset() const noexcept { return data->offset; }
+		size_t buffer_capacity() const noexcept { return data->capacity; }
 
 		VulkanBufferMemory* data = nullptr;
 		VulkanAllocator* allocator = nullptr;

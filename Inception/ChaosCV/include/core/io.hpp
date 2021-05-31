@@ -2,6 +2,7 @@
 
 #include "core/def.hpp"
 #include "core/gpu.hpp"
+#include "core/types.hpp"
 #include "core/tensor.hpp"
 
 #include <format>
@@ -11,47 +12,50 @@ namespace chaos
 	CHAOS_API std::ostream& operator<<(std::ostream& stream, const GPUInfo& info);
 
 
-	template<class Type>
-	void PrintTensor(const Tensor& tensor)
+	template<class Type = float>
+	void PrintTensor(std::ostream& stream, const Tensor& tensor)
 	{
 		const Shape& shape = tensor.shape;
 		const Steps& steps = tensor.steps;
-		int packing = static_cast<int>(tensor.packing);
+		const Depth& depth = tensor.depth;
+		const Packing& packing = tensor.packing;
 		Type* data = static_cast<Type*>(tensor.data);
-		std::cout << "[";
+		stream << "[";
 		switch (shape.size())
 		{
 		case 1:
-			for (uint32 i = 0; i < shape[0] * packing; i+=packing)
+			for (uint32 i = 0; i < shape[0] * packing; i += static_cast<int>(packing))
 			{
 				switch (packing)
 				{
-				case 1:
-					std::cout << std::format(", {}" + 2 * !i, data[i]);
+				case Packing::CHW:
+					stream << std::format(", {0}" + 2 * !i, data[i]);
 					break;
-				case 2:
-					std::cout << std::format(", {} {}" + 2 * !i, data[i], data[i+1]);
+				case Packing::C2HW2:
+					stream << std::format(", {0} {1}" + 2 * !i, data[i], data[i+1]);
 					break;
-				case 3:
-					std::cout << std::format(", {} {} {}" + 2 * !i, data[i], data[i + 1], data[i + 2]);
+				case Packing::C3HW3:
+					stream << std::format(", {0} {1} {2}" + 2 * !i,
+						data[i], data[i + 1], data[i + 2]);
 					break;
-				case 4:
-					std::cout << std::format(", {} {}" + 2 * !i, data[i], data[i + 1]);
+				case Packing::C4HW4:
+					stream << std::format(", {0} {1} {2} {3}" + 2 * !i,
+						data[i], data[i + 1], data[i + 2], data[i + 3]);
 					break;
-				case 8:
-					std::cout << std::format(", {} {}" + 2 * !i, data[i], data[i + 1]);
+				case Packing::C8HW8:
+					stream << std::format(", {0} {1} {2} {3} {4} {5} {6} {7}" + 2 * !i,
+						data[i], data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], data[i + 6], data[i + 7]);
 					break;
 				default:
 					LOG(FATAL) << "invalid packing data";
 				}
-				 //Print(data, i, i);
 			}
 			break;
 		case 2:
 			for (uint32 i = 0; i < shape[0]; i++)
 			{
-				PrintTensor<Type>(Tensor(Shape(shape[1]), tensor.depth, tensor.packing, data + i * steps[0] * packing));
-				if (i < shape[0] - 1) std::cout << std::endl;
+				PrintTensor<Type>(stream, Tensor(Shape(shape[1]), depth, packing, data + i * steps[0] * packing));
+				if (i < shape[0] - 1) stream << std::endl;
 			}
 			break;
 		default:
@@ -59,7 +63,8 @@ namespace chaos
 			uint32 h = shape[dims - 2];
 			uint32 w = shape[dims - 1];
 			uint32 rstep = steps[dims - 2];
-			for (size_t i = 0; i < shape.total(); i += h * w)
+			uint32 total = shape.total();
+			for (size_t i = 0; i < total; i += h * w)
 			{
 				size_t offset = 0;
 				size_t idx = i;
@@ -69,11 +74,11 @@ namespace chaos
 					offset += k * steps[dims - d - 1];
 					idx /= shape[dims - d - 1];
 				}
-				PrintTensor<Type>(Tensor(Shape(h, w), tensor.depth, tensor.packing, data + offset * packing, Steps(rstep, 1)));
-				if (i < shape.total() - h * w) std::cout << ";" << std::endl;
+				PrintTensor<Type>(stream, Tensor(Shape(h, w), depth, packing, data + offset * packing, Steps(rstep, 1)));
+				if (i < total - h * w) stream << ";" << std::endl;
 			}
 			break;
 		}
-		std::cout << "]";
+		stream << "]";
 	}
 }
