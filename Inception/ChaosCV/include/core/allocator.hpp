@@ -83,6 +83,9 @@ namespace chaos
 		bool mappable;
 		bool coherent;
 		
+		void Flush(VulkanBufferMemory* data);
+		void Invalidate(VulkanBufferMemory* data);
+
 	protected:
 		BufferUsageFlag buffer_usage;
 		uint32 memory_type_index = -1;

@@ -59,6 +59,8 @@ namespace chaos
 		VkDeviceMemory memory = nullptr;
 		size_t capacity = 0;
 		size_t offset = 0;
+		mutable AccessFlag access_flag;
+		mutable PipelineStageFlag stage_flag;
 		void* mapped_data = nullptr;
 		int ref_cnt = 0;
 	};

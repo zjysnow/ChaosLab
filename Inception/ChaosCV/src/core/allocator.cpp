@@ -35,6 +35,32 @@ namespace chaos
 
 		return memory;
 	}
+	void VulkanAllocator::Flush(VulkanBufferMemory* data)
+	{
+		if (coherent) return;
+		VkMappedMemoryRange mapped_memory_range{};
+		mapped_memory_range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mapped_memory_range.memory = data->memory;
+		mapped_memory_range.offset = data->offset; // round_down(data->offset, vkdev->info.non_coherent_atom_size);
+		mapped_memory_range.size = data->capacity; // round_up(data->offset + data->capacity, vkdev->info.non_coherent_atom_size) - mapped_memory_range.offset;
+
+		VkResult ret = vkFlushMappedMemoryRanges(vkdev->GetDevice(), 1, &mapped_memory_range);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkFlushMappedMemoryRanges failed " << ret;
+	}
+	void VulkanAllocator::Invalidate(VulkanBufferMemory* data)
+	{
+		if (coherent) return;
+		VkMappedMemoryRange mapped_memory_range{};
+		mapped_memory_range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mapped_memory_range.memory = data->memory;
+		mapped_memory_range.offset = data->offset; //round_down(ptr->offset, vkdev->info.non_coherent_atom_size);
+		mapped_memory_range.size = data->capacity; // round_up(ptr->offset + ptr->capacity, vkdev->info.non_coherent_atom_size) - mappedMemoryRange.offset;
+
+		VkResult ret = vkInvalidateMappedMemoryRanges(vkdev->GetDevice(), 1, &mapped_memory_range);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkInvalidateMappedMemoryRanges failed " << ret;
+	}
+
+
 
 	VulkanLocalAllocator::VulkanLocalAllocator(const VulkanDevice* vkdev) : VulkanAllocator(vkdev)
 	{

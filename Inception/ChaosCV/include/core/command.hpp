@@ -23,11 +23,10 @@ namespace chaos
 		ComputeCommand(const VulkanDevice* vkdev);
 		virtual ~ComputeCommand();
 
-		void RecordUpload(const Tensor& src, VulkanTensor& dst, VulkanAllocator* allocator);
-		void RecordDownload(const VulkanTensor& src, Tensor& dst, Allocator* allocator);
+		void RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt);
+		void RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt);
 
-
-		void RecordPipeline(const ComputePipeline* pipeline);
+		void RecordClone(const VulkanTensor& src, VulkanTensor& dst);
 
 		void SubmitAndWait();
 	protected:
@@ -35,5 +34,29 @@ namespace chaos
 		VkFence fence;
 		VkSemaphore semaphore;
 		VkDescriptorPool descriptor_pool;
+
+		class Record
+		{
+		public:
+			enum
+			{
+				TYPE_DOWNLOAD,
+			};
+			int type;
+
+			union
+			{
+				struct
+				{
+					uint32 src;
+					uint32 dst;
+				} post_download;
+			};
+		};
+
+		std::vector<Record> delayed_records;
+
+		std::vector<Tensor> download_post;
+		std::vector<VulkanTensor> buffers;
 	};
 }

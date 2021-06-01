@@ -34,132 +34,110 @@ namespace chaos
 		fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		ret = vkCreateFence(vkdev->GetDevice(), &fence_create_info, 0, &fence);
 		CHECK_EQ(VK_SUCCESS, ret);
+
+		VkCommandBufferBeginInfo command_buffer_begin_info{};
+		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		ret = vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
+		CHECK_EQ(VK_SUCCESS, ret);
 	}
 	ComputeCommand::~ComputeCommand()
 	{
-		
-
 		vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
-
 		vkDestroyCommandPool(vkdev->GetDevice(), command_pool, nullptr);
-		
 	}
 
-	void ComputeCommand::RecordUpload(const Tensor& src, VulkanTensor& dst, VulkanAllocator* allocator)
+	void ComputeCommand::RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt)
 	{
-	
-		dst.CreateLike(src, allocator);
-		if (allocator->mappable)
+		dst.CreateLike(src, opt.vkallocator);
+		if (dst.allocator->mappable)
 		{
 			memcpy(dst.mapped_data(), src.data, src.total() * src.depth * src.packing);
 		}
 		else
 		{
-			VkResult ret;
-			VkCommandBufferBeginInfo command_buffer_begin_info{};
-			command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			ret = vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
-			CHECK_EQ(VK_SUCCESS, ret);
-
 			VulkanTensor staging;
-			VulkanAllocator* staging_vkallocator = new VulkanStagingAllocator(vkdev);
-			staging.CreateLike(src, staging_vkallocator);
+			staging.CreateLike(src, opt.staging_vkallocator);
 			memcpy(staging.mapped_data(), src.data, src.total() * src.depth * src.packing);
+			//staging.allocator->Flush(staging.data);
 
-			VkBufferCopy copy_region{};
-			copy_region.size = staging.data->capacity;
-			copy_region.dstOffset = dst.buffer_offset();
-			copy_region.srcOffset = staging.buffer_offset();
-			vkCmdCopyBuffer(command_buffer, staging.buffer(), dst.buffer(), 1, &copy_region);
+			staging.data->access_flag = VK_ACCESS_HOST_WRITE_BIT;
+			staging.data->stage_flag = VK_PIPELINE_STAGE_HOST_BIT;
 
-			ret = vkEndCommandBuffer(command_buffer);
-			CHECK_EQ(VK_SUCCESS, ret);
+			RecordClone(staging, dst);
 
-			VkSubmitInfo submit_info{};
-			submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submit_info.commandBufferCount = 1;
-			submit_info.pCommandBuffers = &command_buffer;
-
-			VkQueue compute_queue = vkdev->AcquireQueue(vkdev->info.compute_queue_family_index);
-
-			vkQueueSubmit(compute_queue, 1, &submit_info, VK_NULL_HANDLE);
-			vkQueueWaitIdle(compute_queue);
-
-			vkdev->ReclaimQueue(vkdev->info.compute_queue_family_index, compute_queue);
-
-			staging.Release();
-			delete staging_vkallocator;
-
+			buffers.push_back(staging);
 		}
-		
-
-		
 	}
-	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst, Allocator* allocator)
+	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt)
 	{
-		
-
-		dst.CreateLike(src, allocator);
+		dst.CreateLike(src, opt.allocator);
 		if (src.allocator->mappable)
 		{
 			memcpy(dst.data, src.mapped_data(), src.total() * src.depth * src.packing);
 		}
 		else
 		{
-			VkResult ret;
-			VkCommandBufferBeginInfo command_buffer_begin_info{};
-			command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			ret = vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
-			CHECK_EQ(VK_SUCCESS, ret);
-
 			VulkanTensor staging;
-			VulkanAllocator* staging_vkallocator = new VulkanStagingAllocator(vkdev);
-			staging.CreateLike(src, staging_vkallocator);
+			staging.CreateLike(src, opt.staging_vkallocator);
 
-			VkBufferCopy copy_region{};
-			copy_region.size = src.data->capacity;
-			copy_region.dstOffset = staging.buffer_offset();
-			copy_region.srcOffset = src.buffer_offset();
-			vkCmdCopyBuffer(command_buffer, src.buffer(), staging.buffer(), 1, &copy_region);
+			RecordClone(src, staging);
 
-			ret = vkEndCommandBuffer(command_buffer);
-			CHECK_EQ(VK_SUCCESS, ret);
+			buffers.push_back(staging);
+			download_post.push_back(dst);
 
-			VkSubmitInfo submit_info{};
-			submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submit_info.commandBufferCount = 1;
-			submit_info.pCommandBuffers = &command_buffer;
-
-			VkQueue compute_queue = vkdev->AcquireQueue(vkdev->info.compute_queue_family_index);
-
-			vkQueueSubmit(compute_queue, 1, &submit_info, VK_NULL_HANDLE);
-			vkQueueWaitIdle(compute_queue);
-
-			vkdev->ReclaimQueue(vkdev->info.compute_queue_family_index, compute_queue);
-
-			memcpy(dst.data, staging.mapped_data(), staging.total() * staging.depth * staging.packing);
-
-			staging.Release();
-			delete staging_vkallocator;
+			Record r;
+			r.type = Record::TYPE_DOWNLOAD;
+			r.post_download.src = (uint32)buffers.size() - 1;
+			r.post_download.dst = (uint32)download_post.size() - 1;
+			delayed_records.push_back(r);
 		}
-		
 	}
 
-	
-
-	void ComputeCommand::RecordPipeline(const ComputePipeline* pipeline)
+	void ComputeCommand::RecordClone(const VulkanTensor& src, VulkanTensor& dst)
 	{
-		// record pipeline
-		//vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+		if (src.data->access_flag & VK_ACCESS_TRANSFER_WRITE_BIT || src.data->stage_flag != VK_PIPELINE_STAGE_TRANSFER_BIT)
+		{
+			// barrier device any @ compute to transfer-read @ compute
+			VkBufferMemoryBarrier barrier{};
+			barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+			barrier.srcAccessMask = src.data->access_flag;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.buffer = src.buffer();
+			barrier.offset = src.buffer_offset();
+			barrier.size = src.buffer_capacity();
 
+			VkPipelineStageFlags src_stage = src.data->stage_flag;
+			VkPipelineStageFlags dst_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+			vkCmdPipelineBarrier(command_buffer, src_stage, dst_stage, 0, 0, 0, 1, &barrier, 0, 0);
+
+			// mark device transfer-read @ transfer
+			src.data->access_flag = VK_ACCESS_TRANSFER_READ_BIT;
+			src.data->stage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+
+		// mark device transfer - write @ transfer
+		dst.data->access_flag = VK_ACCESS_TRANSFER_WRITE_BIT;
+		dst.data->stage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+		VkBufferCopy region{};
+		region.srcOffset = src.buffer_offset();
+		region.dstOffset = dst.buffer_offset();
+		region.size = std::min(src.buffer_capacity(), dst.buffer_capacity());
+
+		vkCmdCopyBuffer(command_buffer, src.buffer(), dst.buffer(), 1, &region);
 	}
+	
 
 	void ComputeCommand::SubmitAndWait()
 	{
-		
 		VkResult ret;
+		ret = vkEndCommandBuffer(command_buffer);
+		CHECK_EQ(VK_SUCCESS, ret);
+
 		VkQueue compute_queue = vkdev->AcquireQueue(vkdev->info.compute_queue_family_index);
 		CHECK_NE(nullptr, compute_queue) << "out of compute queue";
 
@@ -175,6 +153,25 @@ namespace chaos
 
 		ret = vkWaitForFences(vkdev->GetDevice(), 1, &fence, VK_TRUE, (uint64)-1);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkWaitForFences failed " << ret;
+
+		for (const auto& record : delayed_records)
+		{
+			switch (record.type)
+			{
+			case Record::TYPE_DOWNLOAD:
+			{
+				VulkanTensor& src = buffers[record.post_download.src];
+				Tensor& dst = download_post[record.post_download.dst];
+				memcpy(dst.data, src.mapped_data(), src.total() * src.depth * src.packing);
+				break;
+			}
+			default:
+				LOG(FATAL) << "invalid record type";
+				break;
+			}
+		}
+
+		delayed_records.clear();
 	}
 
 }

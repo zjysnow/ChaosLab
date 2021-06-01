@@ -8,10 +8,11 @@ namespace chaos
 	class CHAOS_API Option
 	{
 	public:
+		Option() = default;
 
-		Allocator* blob_allocator = nullptr;
+		Allocator* allocator = nullptr;
 
-		VulkanAllocator* blob_vkallocator = nullptr;
+		VulkanAllocator* vkallocator = nullptr;
 		VulkanAllocator* staging_vkallocator = nullptr;
 	};
 }
