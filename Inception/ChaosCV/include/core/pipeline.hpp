@@ -28,5 +28,9 @@ namespace chaos
 	{
 	public:
 		ComputePipeline(const VulkanDevice* vkdev);
+
+
+
+		VkShaderModule comp;
 	};
 }

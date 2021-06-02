@@ -122,7 +122,7 @@ namespace chaos
 		uint32 total() const noexcept { return shape[0] * steps[0]; }
 
 		// low-level reference
-		void* mapped_data() const noexcept { return data->mapped_data; }
+		void* mapped_data() const noexcept { CHECK(allocator->mappable);  return (uchar*)data->mapped_data + data->offset; }
 		VkBuffer buffer() const noexcept { return data->buffer; }
 		size_t buffer_offset() const noexcept { return data->offset; }
 		size_t buffer_capacity() const noexcept { return data->capacity; }

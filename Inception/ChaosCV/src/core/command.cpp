@@ -21,7 +21,6 @@ namespace chaos
 		ret = vkCreateCommandPool(vkdev->GetDevice(), &pool_info, nullptr, &command_pool);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateCommandPool failed " << ret;
 
-		
 		VkCommandBufferAllocateInfo command_buffer_allocate_info{};
 		command_buffer_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		command_buffer_allocate_info.commandPool = command_pool;
@@ -131,6 +130,11 @@ namespace chaos
 		vkCmdCopyBuffer(command_buffer, src.buffer(), dst.buffer(), 1, &region);
 	}
 	
+	void ComputeCommand::RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt)
+	{
+		dst.CreateLike(src, opt.vkallocator);
+		RecordClone(src, dst);
+	}
 
 	void ComputeCommand::SubmitAndWait()
 	{

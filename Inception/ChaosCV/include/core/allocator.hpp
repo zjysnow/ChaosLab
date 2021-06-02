@@ -72,7 +72,6 @@ namespace chaos
 	class CHAOS_API VulkanAllocator
 	{
 	public:
-		//VulkanAllocator(uint32 device_id, BufferUsageFlag usage);
 		VulkanAllocator(const VulkanDevice* vkdev);
 		virtual ~VulkanAllocator();
 

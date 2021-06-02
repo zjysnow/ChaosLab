@@ -27,6 +27,7 @@ namespace chaos
 		void RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt);
 
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst);
+		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt);
 
 		void SubmitAndWait();
 	protected:

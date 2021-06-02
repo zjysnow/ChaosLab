@@ -8,8 +8,14 @@
 
 namespace chaos
 {
-	template<class Type> 
-	requires std::is_arithmetic_v<Type> or std::is_same_v<Complex, Type> class Array
+	// arithmetic
+	// integral
+	//template<class Type> std::integral<Type>;
+	template<class Type>
+	concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
+
+	template<Arithmetic Type>
+	class Array
 	{
 	public:
 		Array() = default;
