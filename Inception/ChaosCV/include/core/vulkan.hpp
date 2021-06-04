@@ -17,8 +17,12 @@ DEFINE_VULKAN_HANDLE(VkBuffer)
 DEFINE_VULKAN_HANDLE(VkDeviceMemory)
 
 DEFINE_VULKAN_HANDLE(VkPipeline)
+DEFINE_VULKAN_HANDLE(VkPipelineCache)
 DEFINE_VULKAN_HANDLE(VkPipelineLayout)
+
+DEFINE_VULKAN_HANDLE(VkDescriptorSet)
 DEFINE_VULKAN_HANDLE(VkDescriptorSetLayout)
+DEFINE_VULKAN_HANDLE(VkDescriptorUpdateTemplate)
 
 DEFINE_VULKAN_HANDLE(VkShaderModule)
 
@@ -29,6 +33,10 @@ DEFINE_VULKAN_HANDLE(VkSemaphore)
 DEFINE_VULKAN_HANDLE(VkDescriptorPool)
 
 DEFINE_VULKAN_HANDLE(VkDebugUtilsMessengerEXT)
+
+struct VkAllocationCallbacks;
+struct VkDescriptorUpdateTemplateCreateInfo;
+enum VkResult;
 
 namespace chaos
 {

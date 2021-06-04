@@ -235,8 +235,13 @@ namespace chaos
 			{
 				g_instance.support_VK_EXT_debug_utils = exp.specVersion;
 			}
+			if (0 == std::strcmp(exp.extensionName, "VK_KHR_get_physical_device_properties2"))
+			{
+				g_instance.support_VK_KHR_get_physical_device_properties2 = exp.specVersion;
+			}
 		}
 		if (g_instance.support_VK_EXT_debug_utils) enabled_extensions.push_back("VK_EXT_debug_utils");
+		if (g_instance.support_VK_KHR_get_physical_device_properties2) enabled_extensions.push_back("VK_KHR_get_physical_device_properties2");
 
 		uint32 instance_api_version = VK_MAKE_VERSION(MAJOR, MINOR, PATCH);
 
@@ -279,7 +284,7 @@ namespace chaos
 		std::vector<VkPhysicalDevice> physical_devices(g_gpu_count);
 		ret = vkEnumeratePhysicalDevices(g_instance, &g_gpu_count, physical_devices.data());
 		CHECK_EQ(VK_SUCCESS, ret) << "vkEnumeratePhysicalDevices " << ret;
-		for (uint32_t i = 0; i < g_gpu_count; i++)
+		for (uint32 i = 0; i < g_gpu_count; i++)
 		{
 			const VkPhysicalDevice& physical_device = physical_devices[i];
 			GPUInfo& gpu_info = g_gpu_infos[i];
@@ -336,6 +341,19 @@ namespace chaos
 			std::vector<VkExtensionProperties> device_extension_properties(device_extension_property_count);
 			ret = vkEnumerateDeviceExtensionProperties(physical_device, NULL, &device_extension_property_count, device_extension_properties.data());
 			CHECK_EQ(VK_SUCCESS, ret) << "vkEnumerateDeviceExtensionProperties failed " << ret;
+
+			for (uint32 j = 0; j < device_extension_property_count; j++)
+			{
+				const VkExtensionProperties& exp = device_extension_properties[j];
+				if (strcmp(exp.extensionName, "VK_KHR_descriptor_update_template") == 0)
+				{
+					gpu_info.support_VK_KHR_descriptor_update_template = exp.specVersion;
+				}
+				if (strcmp(exp.extensionName, "VK_KHR_push_descriptor") == 0)
+				{
+					gpu_info.support_VK_KHR_push_descriptor = exp.specVersion;
+				}
+			}
 		}
 
 		g_default_gpu_index = FindDefaultVulkanDeviceIndex();
@@ -398,6 +416,8 @@ namespace chaos
 	VulkanDevice::VulkanDevice(int device_index) : info(g_gpu_infos[device_index])
 	{
 		std::vector<const char*> enabled_extensions;
+		if (info.support_VK_KHR_descriptor_update_template) enabled_extensions.push_back("VK_KHR_descriptor_update_template");
+		if (info.support_VK_KHR_push_descriptor) enabled_extensions.push_back("VK_KHR_push_descriptor");
 
 		VkPhysicalDeviceFeatures device_features{};
 		device_features.fillModeNonSolid = true;
@@ -455,6 +475,7 @@ namespace chaos
 		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDevice failed " << ret;
 
 		// init device extension
+		InitDeviceExtension();
 
 		// create queues
 		compute_queues.resize(info.compute_queue_count);
@@ -612,6 +633,27 @@ namespace chaos
 	}
 
 
+	void VulkanDevice::CreateDescriptorUpdateTemplate(const VkDescriptorUpdateTemplateCreateInfo* create_info, VkDescriptorUpdateTemplate* descriptor_update_template) const
+	{
+		VkResult ret = vkCreateDescriptorUpdateTemplate(device, create_info, nullptr, descriptor_update_template);
+	}
+	void VulkanDevice::DestroyDescriptorUpdateTemplate(VkDescriptorUpdateTemplate descriptor_update_template) const
+	{
+		vkDestroyDescriptorUpdateTemplate(device, descriptor_update_template, nullptr);
+	}
+
+
+	void VulkanDevice::InitDeviceExtension()
+	{
+		if (info.support_VK_KHR_descriptor_update_template)
+		{
+			vkCreateDescriptorUpdateTemplate = (PFN_vkCreateDescriptorUpdateTemplateKHR)vkGetDeviceProcAddr(device, "vkCreateDescriptorUpdateTemplateKHR");
+			vkDestroyDescriptorUpdateTemplate = (PFN_vkDestroyDescriptorUpdateTemplateKHR)vkGetDeviceProcAddr(device, "vkDestroyDescriptorUpdateTemplateKHR");
+			//vkUpdateDescriptorSetWithTemplateKHR = (PFN_vkUpdateDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(device, "vkUpdateDescriptorSetWithTemplateKHR");
+		}
+	}
+
+
 	const VulkanDevice* GetGPUDevice(int device_index)
 	{
 		TryCreateGPUInstance();
@@ -627,4 +669,6 @@ namespace chaos
 
 		return g_devices[device_index];
 	}
+
+	
 }

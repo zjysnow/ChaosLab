@@ -190,4 +190,14 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\abs.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\abs.comp">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
 </Project>

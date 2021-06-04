@@ -34,9 +34,6 @@
     <Filter Include="include\dnn\layers\vulkan">
       <UniqueIdentifier>{3abd9c6e-e7d2-44eb-b8e4-1f26fd6ad569}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dnn\layers\vulkan">
-      <UniqueIdentifier>{3cde3ce6-8bc8-45b8-a9c9-d98f3ee11d10}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\utils">
       <UniqueIdentifier>{4e242971-4b82-46b0-98e2-407cf3b7b748}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,12 @@
     </Filter>
     <Filter Include="include\dnn\layers\x86">
       <UniqueIdentifier>{c63839f3-ec63-414d-986c-7496fc9e01a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn\layers\vulkan">
+      <UniqueIdentifier>{2d57f7b7-0c3e-4be9-b9d6-29f0475621b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn\layers\vulkan\shaders">
+      <UniqueIdentifier>{6f0cd54e-9316-4147-978a-0fe1f740b08e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +93,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp">
       <Filter>include\dnn</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp">
+      <Filter>include\dnn\layers\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -125,5 +137,19 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp">
+      <Filter>src\dnn\layers\vulkan</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp">
+      <Filter>src\dnn\layers\vulkan\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include "core/vulkan.hpp"
 
 #include <mutex>
+#include <functional>
 
 namespace chaos
 {
@@ -18,6 +19,7 @@ namespace chaos
 		VkDebugUtilsMessengerEXT debug_messenger;
 
 		int support_VK_EXT_debug_utils = 0;
+		int support_VK_KHR_get_physical_device_properties2 = 0;
 	protected:
 		VulkanInstance();
 		~VulkanInstance();
@@ -60,6 +62,8 @@ namespace chaos
 		uint32 transfer_queue_count;
 		uint32 compute_queue_count;
 
+		int support_VK_KHR_push_descriptor;
+		int support_VK_KHR_descriptor_update_template;
 	};
 	CHAOS_API const GPUInfo& GetGPUInfo(int device_index);
 
@@ -79,6 +83,9 @@ namespace chaos
 
 		VkQueue AcquireQueue(uint32 queue_family_index) const;
 		void ReclaimQueue(uint32 queue_family_index, VkQueue queue) const;
+
+		void CreateDescriptorUpdateTemplate(const VkDescriptorUpdateTemplateCreateInfo* create_info, VkDescriptorUpdateTemplate* descriptor_update_template) const;
+		void DestroyDescriptorUpdateTemplate(VkDescriptorUpdateTemplate descriptor_update_template) const;
 	private:
 		VkDevice device;
 
@@ -87,6 +94,13 @@ namespace chaos
 		mutable std::vector<VkQueue> graphics_queues;
 		mutable std::vector<VkQueue> transfer_queues;
 		mutable std::mutex queue_lock;
+
+		std::function<VkResult(VkDevice, const VkDescriptorUpdateTemplateCreateInfo*, const VkAllocationCallbacks*, VkDescriptorUpdateTemplate*)> vkCreateDescriptorUpdateTemplate;
+		std::function<void(VkDevice, VkDescriptorUpdateTemplate, const VkAllocationCallbacks*)> vkDestroyDescriptorUpdateTemplate; //vkDescriptorUpdateTemplate;
+
+		// void (VKAPI_PTR *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+
+		void InitDeviceExtension();
 	};
 
 	CHAOS_API const VulkanDevice* GetGPUDevice(int device_index = GetDefaultGPUIndex());

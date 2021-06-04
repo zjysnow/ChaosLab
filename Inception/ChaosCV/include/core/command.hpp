@@ -29,12 +29,16 @@ namespace chaos
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst);
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt);
 
+		void RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& shpae);
+
 		void SubmitAndWait();
 	protected:
 		VkCommandBuffer command_buffer;
 		VkFence fence;
 		VkSemaphore semaphore;
 		VkDescriptorPool descriptor_pool;
+
+		//std::vector<VkDescriptorSet> descriptor_sets;
 
 		class Record
 		{

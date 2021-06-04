@@ -136,6 +136,55 @@ namespace chaos
 		RecordClone(src, dst);
 	}
 
+	void ComputeCommand::RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& shpae)
+	{
+		for (const auto& binding : buffer_bindings)
+		{
+			if (binding.data->access_flag & VK_ACCESS_SHADER_WRITE_BIT || binding.data->stage_flag != VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT)
+			{
+				// barrier device any @ compute/null to shader-readwrite @ compute
+				VkBufferMemoryBarrier* barriers = new VkBufferMemoryBarrier[1];
+				barriers[0].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+				barriers[0].pNext = 0;
+				barriers[0].srcAccessMask = binding.data->access_flag;
+				barriers[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+				barriers[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barriers[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barriers[0].buffer = binding.buffer();
+				barriers[0].offset = binding.buffer_offset();
+				barriers[0].size = binding.buffer_capacity();
+
+				VkPipelineStageFlags src_stage = binding.data->stage_flag;
+				VkPipelineStageFlags dst_stage = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+				vkCmdPipelineBarrier(command_buffer, src_stage, dst_stage, 0, 0, 0, 1, barriers, 0, 0);
+
+				binding.data->access_flag = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+				binding.data->stage_flag = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+			}
+		}
+
+		// record bind pipeline
+		vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
+
+		std::vector<VkDescriptorBufferInfo> descriptor_buffer_infos(buffer_bindings.size());
+		for (size_t i = 0; const auto& binding : buffer_bindings)
+		{
+			descriptor_buffer_infos[i].buffer = binding.buffer();
+			descriptor_buffer_infos[i].offset = binding.buffer_offset();
+			descriptor_buffer_infos[i].range = binding.total() * binding.depth * binding.packing;
+			i++;
+		}
+		
+		auto vkCmdPushDescriptorSetWithTemplateKHR = (PFN_vkCmdPushDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(vkdev->GetDevice(), "vkCmdPushDescriptorSetWithTemplateKHR");
+		vkCmdPushDescriptorSetWithTemplateKHR(command_buffer, pipeline->descriptor_update_template, pipeline->pipeline_layout, 0, descriptor_buffer_infos.data());
+
+		// push constant
+		vkCmdPushConstants(command_buffer, pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32)(constants.size() * sizeof(VulkanConstantType)), constants.data());
+
+		vkCmdDispatch(command_buffer, 4,3,2); // x y z
+	}
+
 	void ComputeCommand::SubmitAndWait()
 	{
 		VkResult ret;
@@ -146,7 +195,7 @@ namespace chaos
 		CHECK_NE(nullptr, compute_queue) << "out of compute queue";
 
 		VkSubmitInfo submit_info{};
-		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO; 
 		submit_info.commandBufferCount = 1;
 		submit_info.pCommandBuffers = &command_buffer;
 
