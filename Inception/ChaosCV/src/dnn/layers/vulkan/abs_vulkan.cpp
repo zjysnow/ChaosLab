@@ -12,6 +12,7 @@ namespace chaos
 	{
 		std::vector<VulkanSpecializationType> specializations;
 		pipeline_abs = new ComputePipeline(vkdev);
+		pipeline_abs->SetOptimalLocalSize(4, 4, 4);
 		pipeline_abs->Create(abs_spv_data, sizeof(abs_spv_data), "abs", specializations, 1, 3);
 	}
 
@@ -22,11 +23,14 @@ namespace chaos
 
 	void AbsVulkan::Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd) const
 	{
+		uint32 total = (uint32)bottom_top_blobs[0].total();
 		std::vector<VulkanConstantType> constants(3);
-		constants[0].i = bottom_top_blobs[0].shape[0];
-		constants[1].i = bottom_top_blobs[0].shape[1];
-		constants[2].i = bottom_top_blobs[0].shape[2];
+		constants[0].i = 1; // bottom_top_blobs[0].shape[0];
+		constants[1].i = 1; // bottom_top_blobs[0].shape[1];
+		constants[2].i = total; // bottom_top_blobs[0].shape[2];
 
-		cmd.RecordPipeline(pipeline_abs, bottom_top_blobs, constants, bottom_top_blobs[0].shape);
+		Shape dispatcher(1,1,total);
+
+		cmd.RecordPipeline(pipeline_abs, bottom_top_blobs, constants, dispatcher);
 	}
 }

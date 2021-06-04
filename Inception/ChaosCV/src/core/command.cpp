@@ -39,6 +39,11 @@ namespace chaos
 		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		ret = vkBeginCommandBuffer(command_buffer, &command_buffer_begin_info);
 		CHECK_EQ(VK_SUCCESS, ret);
+
+		if (vkdev->info.support_VK_KHR_descriptor_update_template)
+		{
+			vkCmdPushDescriptorSetWithTemplate = (PFN_vkCmdPushDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(vkdev->GetDevice(), "vkCmdPushDescriptorSetWithTemplateKHR");
+		}
 	}
 	ComputeCommand::~ComputeCommand()
 	{
@@ -136,28 +141,27 @@ namespace chaos
 		RecordClone(src, dst);
 	}
 
-	void ComputeCommand::RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& shpae)
+	void ComputeCommand::RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& dispatcher)
 	{
 		for (const auto& binding : buffer_bindings)
 		{
 			if (binding.data->access_flag & VK_ACCESS_SHADER_WRITE_BIT || binding.data->stage_flag != VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT)
 			{
 				// barrier device any @ compute/null to shader-readwrite @ compute
-				VkBufferMemoryBarrier* barriers = new VkBufferMemoryBarrier[1];
-				barriers[0].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-				barriers[0].pNext = 0;
-				barriers[0].srcAccessMask = binding.data->access_flag;
-				barriers[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
-				barriers[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barriers[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barriers[0].buffer = binding.buffer();
-				barriers[0].offset = binding.buffer_offset();
-				barriers[0].size = binding.buffer_capacity();
+				VkBufferMemoryBarrier barrier{}; // = new VkBufferMemoryBarrier[1];
+				barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+				barrier.srcAccessMask = binding.data->access_flag;
+				barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.buffer = binding.buffer();
+				barrier.offset = binding.buffer_offset();
+				barrier.size = binding.buffer_capacity();
 
 				VkPipelineStageFlags src_stage = binding.data->stage_flag;
 				VkPipelineStageFlags dst_stage = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 
-				vkCmdPipelineBarrier(command_buffer, src_stage, dst_stage, 0, 0, 0, 1, barriers, 0, 0);
+				vkCmdPipelineBarrier(command_buffer, src_stage, dst_stage, 0, 0, 0, 1, &barrier, 0, 0);
 
 				binding.data->access_flag = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
 				binding.data->stage_flag = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -176,13 +180,15 @@ namespace chaos
 			i++;
 		}
 		
-		auto vkCmdPushDescriptorSetWithTemplateKHR = (PFN_vkCmdPushDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(vkdev->GetDevice(), "vkCmdPushDescriptorSetWithTemplateKHR");
-		vkCmdPushDescriptorSetWithTemplateKHR(command_buffer, pipeline->descriptor_update_template, pipeline->pipeline_layout, 0, descriptor_buffer_infos.data());
+		vkCmdPushDescriptorSetWithTemplate(command_buffer, pipeline->descriptor_update_template, pipeline->pipeline_layout, 0, descriptor_buffer_infos.data());
 
 		// push constant
 		vkCmdPushConstants(command_buffer, pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32)(constants.size() * sizeof(VulkanConstantType)), constants.data());
-
-		vkCmdDispatch(command_buffer, 4,3,2); // x y z
+		//
+		//uint32 group_count_x = dispatcher[2]; // (dispatcher[2] + pipeline->local_size_x - 1) / pipeline->local_size_x;
+		//uint32 group_count_y = dispatcher[1]; // (dispatcher[1] + pipeline->local_size_y - 1) / pipeline->local_size_y;
+		//uint32 group_count_z = dispatcher[0]; // (dispatcher[0] + pipeline->local_size_z - 1) / pipeline->local_size_z;
+		vkCmdDispatch(command_buffer, dispatcher[2], dispatcher[1], dispatcher[0]);
 	}
 
 	void ComputeCommand::SubmitAndWait()

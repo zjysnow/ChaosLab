@@ -29,7 +29,7 @@ namespace chaos
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst);
 		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt);
 
-		void RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& shpae);
+		void RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& dispatcher);
 
 		void SubmitAndWait();
 	protected:
@@ -63,5 +63,7 @@ namespace chaos
 
 		std::vector<Tensor> download_post;
 		std::vector<VulkanTensor> buffers;
+		
+		std::function<void(VkCommandBuffer, VkDescriptorUpdateTemplate, VkPipelineLayout, uint32, const void*)> vkCmdPushDescriptorSetWithTemplate;
 	};
 }

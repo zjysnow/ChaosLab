@@ -322,6 +322,11 @@ namespace chaos
 				gpu_info.memory_properties.push_back(physical_device_memory_properties.memoryTypes[i].propertyFlags);
 			}
 
+			gpu_info.max_workgroup_count_x = physical_device_properties.limits.maxComputeWorkGroupCount[0];
+			gpu_info.max_workgroup_count_y = physical_device_properties.limits.maxComputeWorkGroupCount[1];
+			gpu_info.max_workgroup_count_z = physical_device_properties.limits.maxComputeWorkGroupCount[2];
+			gpu_info.max_workgroup_invocations = physical_device_properties.limits.maxComputeWorkGroupInvocations;
+
 			// find compute queue
 			uint32_t queue_family_properties_count;
 			vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queue_family_properties_count, 0);
@@ -477,7 +482,7 @@ namespace chaos
 		// init device extension
 		InitDeviceExtension();
 
-		// create queues
+		// get queues
 		compute_queues.resize(info.compute_queue_count);
 		for (uint32_t i = 0; i < info.compute_queue_count; i++)
 		{
@@ -636,6 +641,7 @@ namespace chaos
 	void VulkanDevice::CreateDescriptorUpdateTemplate(const VkDescriptorUpdateTemplateCreateInfo* create_info, VkDescriptorUpdateTemplate* descriptor_update_template) const
 	{
 		VkResult ret = vkCreateDescriptorUpdateTemplate(device, create_info, nullptr, descriptor_update_template);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorUpdateTemplate failed " << ret;
 	}
 	void VulkanDevice::DestroyDescriptorUpdateTemplate(VkDescriptorUpdateTemplate descriptor_update_template) const
 	{
@@ -649,7 +655,7 @@ namespace chaos
 		{
 			vkCreateDescriptorUpdateTemplate = (PFN_vkCreateDescriptorUpdateTemplateKHR)vkGetDeviceProcAddr(device, "vkCreateDescriptorUpdateTemplateKHR");
 			vkDestroyDescriptorUpdateTemplate = (PFN_vkDestroyDescriptorUpdateTemplateKHR)vkGetDeviceProcAddr(device, "vkDestroyDescriptorUpdateTemplateKHR");
-			//vkUpdateDescriptorSetWithTemplateKHR = (PFN_vkUpdateDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(device, "vkUpdateDescriptorSetWithTemplateKHR");
+			vkUpdateDescriptorSetWithTemplate = (PFN_vkUpdateDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(device, "vkUpdateDescriptorSetWithTemplateKHR");
 		}
 	}
 

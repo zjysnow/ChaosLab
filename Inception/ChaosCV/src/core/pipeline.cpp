@@ -127,6 +127,32 @@ namespace chaos
 		CreateDescriptorUpdateTemplate(binding_count);
 	}
 
+	void ComputePipeline::SetOptimalLocalSize(uint32 x, uint32 y, uint32 z)
+	{
+		if (x == 0 and y == 0 and z == 0)
+		{
+			x = y = z = 4;
+		}
+
+		x = std::min(x, vkdev->info.max_workgroup_count_x);
+		y = std::min(y, vkdev->info.max_workgroup_count_y);
+		z = std::min(z, vkdev->info.max_workgroup_count_z);
+
+		if (x * y * z > vkdev->info.max_workgroup_invocations) // why ?
+		{
+			uint32 max_xy = std::max(1u, (uint32)sqrt(vkdev->info.max_workgroup_invocations / z));
+			while (x * y >= max_xy)
+			{
+				x = std::max(1u, x / 2);
+				y = std::max(1u, y / 2);
+			}
+		}
+
+		local_size_x = x;
+		local_size_y = y;
+		local_size_z = z;
+	}
+
 	void ComputePipeline::CreateDescriptorUpdateTemplate(size_t binding_count)
 	{
 		if (binding_count == 0) return;
@@ -146,17 +172,11 @@ namespace chaos
 		descriptor_update_template_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR;
 		descriptor_update_template_create_info.descriptorUpdateEntryCount = (uint32)binding_count;// TODO do not update weights
 		descriptor_update_template_create_info.pDescriptorUpdateEntries = descriptor_update_template_entries.data();
-		descriptor_update_template_create_info.templateType = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR; // ???
-		// descriptorSetLayout should be ignored if VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR
-		// FIXME HACK WARNING TODO NOTE but crash on radv if set NULL  :(
+		descriptor_update_template_create_info.templateType = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR; 
 		descriptor_update_template_create_info.descriptorSetLayout = descriptorset_layout;
 		descriptor_update_template_create_info.pipelineBindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
 		descriptor_update_template_create_info.pipelineLayout = pipeline_layout;
 
-		//auto vkCreateDescriptorUpdateTemplateKHR = (PFN_vkCreateDescriptorUpdateTemplateKHR)vkGetDeviceProcAddr(vkdev->GetDevice(), "vkCreateDescriptorUpdateTemplateKHR");
-
 		vkdev->CreateDescriptorUpdateTemplate(&descriptor_update_template_create_info, &descriptor_update_template);
-		//VkResult ret = vkCreateDescriptorUpdateTemplateKHR(vkdev->GetDevice(), &descriptor_update_template_create_info, 0, &descriptor_update_template);
-		//CHECK_EQ(VK_SUCCESS, ret) << "vkCreateDescriptorUpdateTemplateKHR failed " << ret;
 	}
 }

@@ -55,6 +55,11 @@ namespace chaos
 
 		std::vector<MemoryPropertyFlag> memory_properties;
 
+		uint32 max_workgroup_invocations;
+		uint32 max_workgroup_count_x;
+		uint32 max_workgroup_count_y;
+		uint32 max_workgroup_count_z;
+
 		uint32 graphics_queue_family_index;
 		uint32 transfer_queue_family_index;
 		uint32 compute_queue_family_index;
@@ -97,8 +102,7 @@ namespace chaos
 
 		std::function<VkResult(VkDevice, const VkDescriptorUpdateTemplateCreateInfo*, const VkAllocationCallbacks*, VkDescriptorUpdateTemplate*)> vkCreateDescriptorUpdateTemplate;
 		std::function<void(VkDevice, VkDescriptorUpdateTemplate, const VkAllocationCallbacks*)> vkDestroyDescriptorUpdateTemplate; //vkDescriptorUpdateTemplate;
-
-		// void (VKAPI_PTR *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+		std::function<void(VkDevice, VkDescriptorSet, VkDescriptorUpdateTemplate, const void*)> vkUpdateDescriptorSetWithTemplate;
 
 		void InitDeviceExtension();
 	};
