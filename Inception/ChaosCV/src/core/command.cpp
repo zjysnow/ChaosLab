@@ -188,7 +188,7 @@ namespace chaos
 		//uint32 group_count_x = dispatcher[2]; // (dispatcher[2] + pipeline->local_size_x - 1) / pipeline->local_size_x;
 		//uint32 group_count_y = dispatcher[1]; // (dispatcher[1] + pipeline->local_size_y - 1) / pipeline->local_size_y;
 		//uint32 group_count_z = dispatcher[0]; // (dispatcher[0] + pipeline->local_size_z - 1) / pipeline->local_size_z;
-		vkCmdDispatch(command_buffer, dispatcher[2], dispatcher[1], dispatcher[0]);
+		vkCmdDispatch(command_buffer, 3,1,1);
 	}
 
 	void ComputeCommand::SubmitAndWait()
