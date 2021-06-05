@@ -180,7 +180,14 @@ namespace chaos
 			i++;
 		}
 		
-		vkCmdPushDescriptorSetWithTemplate(command_buffer, pipeline->descriptor_update_template, pipeline->pipeline_layout, 0, descriptor_buffer_infos.data());
+		if (vkdev->info.support_VK_KHR_descriptor_update_template)
+		{
+			vkCmdPushDescriptorSetWithTemplate(command_buffer, pipeline->descriptor_update_template, pipeline->pipeline_layout, 0, descriptor_buffer_infos.data());
+		}
+		else
+		{
+			// should use descritor pool and sets
+		}
 
 		// push constant
 		vkCmdPushConstants(command_buffer, pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32)(constants.size() * sizeof(VulkanConstantType)), constants.data());

@@ -35,8 +35,8 @@ namespace chaos
 	protected:
 		VkCommandBuffer command_buffer;
 		VkFence fence;
-		VkSemaphore semaphore;
-		VkDescriptorPool descriptor_pool;
+		//VkSemaphore semaphore;
+		//VkDescriptorPool descriptor_pool;
 
 		//std::vector<VkDescriptorSet> descriptor_sets;
 
