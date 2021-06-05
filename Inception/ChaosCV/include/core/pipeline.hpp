@@ -34,15 +34,17 @@ namespace chaos
 
 		void SetOptimalLocalSize(uint32 x, uint32 y, uint32 z);
 
+		VkDescriptorUpdateTemplate descriptor_update_template;
+
+		uint32 local_size_x = 1;
+		uint32 local_size_y = 1;
+		uint32 local_size_z = 1;
+	private:
 		void CreateDescriptorUpdateTemplate(size_t binding_count);
 
 		std::vector<DescriptorType> descriptor_types; // = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		std::vector<ShaderStageFlag> shader_stage_flags; // = VK_SHADER_STAGE_VERTEX_BIT;
 
-		uint32 local_size_x = 1;
-		uint32 local_size_y = 1;
-		uint32 local_size_z = 1;
 		VkShaderModule comp;
-		VkDescriptorUpdateTemplate descriptor_update_template;
 	};
 }

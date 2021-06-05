@@ -76,6 +76,93 @@ namespace chaos
 
 
 
+
+
+	static void InjectLocalSize(const uint32* code, size_t size, uint32 local_size_x, uint32 local_size_y, uint32 local_size_z, uint32* new_code, size_t* new_size)
+	{
+		uint32 local_size_x_id = -1;
+		uint32 local_size_y_id = -1;
+		uint32 local_size_z_id = -1;
+		uint32 gl_WorkGroupSize_id = -1;
+
+		const uint32* p = code;
+		uint32* dp = new_code;
+
+		// skip magic version generator bound schema
+		memcpy(dp, p, 5 * sizeof(uint32));
+		p += 5;
+		dp += 5;
+
+		// foreach op
+		while ((const uchar*)p < (const uchar*)code + size)
+		{
+			uint32 op_code = p[0];
+
+			uint16 word_count = op_code >> 16; // p[1] high
+			uint16 op = op_code & 0xFFFF; // p[1] low
+
+			if (op == 16) // OpExecutionMode
+			{
+				uint32 mode = p[2];
+				if (mode == 17) // LocalSize
+				{
+					memcpy(dp, p, word_count * sizeof(uint32));
+
+					// set local_size_xyz
+					dp[3] = local_size_x;
+					dp[4] = local_size_y;
+					dp[5] = local_size_z;
+
+					p += word_count;
+					dp += word_count;
+					continue;
+				}
+			}
+			else if (op == 50) // OpSpecConstant
+			{
+				uint32 id = p[2];
+				if (id == local_size_x_id || id == local_size_y_id || id == local_size_z_id)
+				{
+					p += word_count;
+					continue;
+				}
+			}
+			else if (op == 51) // OpSpecConstantComposite
+			{
+				uint32 id = p[2];
+				if (id == gl_WorkGroupSize_id)
+				{
+					if (word_count == 6 && (p[3] == local_size_x_id || p[4] == local_size_y_id || p[5] == local_size_z_id))
+					{
+						p += word_count;
+						continue;
+					}
+				}
+			}
+			else if (op == 71) // OpDecorate
+			{
+				uint32 id = p[1];
+				uint32 decoration = p[2];
+				// removed decoration == 1
+				if (decoration == 11) // BuiltIn
+				{
+					uint32 builtin = p[3];
+					if (builtin == 25) // WorkgroupSize
+					{
+						gl_WorkGroupSize_id = id;
+						p += word_count;
+						continue;
+					}
+				}
+			}
+
+			memcpy(dp, p, word_count * sizeof(uint32));
+			p += word_count;
+			dp += word_count;
+		}
+		*new_size = (uchar*)dp - (uchar*)new_code;
+	}
+
 	ComputePipeline::ComputePipeline(const VulkanDevice* vkdev) : Pipeline(vkdev) {}
 	ComputePipeline::~ComputePipeline()
 	{
@@ -88,7 +175,12 @@ namespace chaos
 		descriptor_types = std::vector<DescriptorType>(binding_count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 		shader_stage_flags = std::vector<ShaderStageFlag>(binding_count, VK_SHADER_STAGE_COMPUTE_BIT);
 
-		comp = CompileShaderModule(comp_data, comp_size);
+		uint32* comp_data_modefied = new uint32[comp_size]();
+		size_t comp_size_modefied = comp_size;
+		InjectLocalSize(comp_data, comp_size, local_size_x, local_size_y, local_size_z, comp_data_modefied, &comp_size_modefied);
+		comp = CompileShaderModule(comp_data_modefied, comp_size_modefied);
+
+		delete[] comp_data_modefied;
 
 		CreateDescriptorSetLayout(binding_count, shader_stage_flags.data(), descriptor_types.data());
 

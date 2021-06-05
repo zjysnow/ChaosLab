@@ -12,7 +12,7 @@ namespace chaos
 	{
 		std::vector<VulkanSpecializationType> specializations;
 		pipeline_abs = new ComputePipeline(vkdev);
-		//pipeline_abs->SetOptimalLocalSize(4, 4, 4);
+		pipeline_abs->SetOptimalLocalSize(std::min(64,1),1,1);
 		pipeline_abs->Create(abs_spv_data, sizeof(abs_spv_data), "abs", specializations, 1, 3);
 	}
 
@@ -33,5 +33,4 @@ namespace chaos
 
 		cmd.RecordPipeline(pipeline_abs, bottom_top_blobs, constants, dispatcher);
 	}
-	// glslangValidator -V -e abs --source-entrypoint main --vn abs_spv_data -x -o abs_spv_data.hex.hpp abs.comp
 }

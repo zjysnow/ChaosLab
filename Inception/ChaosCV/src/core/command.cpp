@@ -185,10 +185,10 @@ namespace chaos
 		// push constant
 		vkCmdPushConstants(command_buffer, pipeline->pipeline_layout, VK_SHADER_STAGE_COMPUTE_BIT, 0, (uint32)(constants.size() * sizeof(VulkanConstantType)), constants.data());
 		//
-		//uint32 group_count_x = dispatcher[2]; // (dispatcher[2] + pipeline->local_size_x - 1) / pipeline->local_size_x;
-		//uint32 group_count_y = dispatcher[1]; // (dispatcher[1] + pipeline->local_size_y - 1) / pipeline->local_size_y;
-		//uint32 group_count_z = dispatcher[0]; // (dispatcher[0] + pipeline->local_size_z - 1) / pipeline->local_size_z;
-		vkCmdDispatch(command_buffer, 3,1,1);
+		uint32 group_count_x = (dispatcher[2] + pipeline->local_size_x - 1) / pipeline->local_size_x;
+		uint32 group_count_y = (dispatcher[1] + pipeline->local_size_y - 1) / pipeline->local_size_y;
+		uint32 group_count_z = (dispatcher[0] + pipeline->local_size_z - 1) / pipeline->local_size_z;
+		vkCmdDispatch(command_buffer, group_count_x, group_count_y, group_count_z);
 	}
 
 	void ComputeCommand::SubmitAndWait()
