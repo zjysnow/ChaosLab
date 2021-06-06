@@ -17,6 +17,9 @@ namespace chaos
 	
 	using Flag = int32;
 
+	template<class Type>
+	using Ptr = std::shared_ptr<Type>;
+
 	enum class LogSeverity
 	{
 		INFO,

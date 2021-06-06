@@ -3,12 +3,12 @@
 
 namespace chaos
 {
-	AbsVulkan::AbsVulkan() : Abs() 
+	AbsVulkan::AbsVulkan() : Abs()
 	{
 		support_vulkan = true;
 	}
 
-	void AbsVulkan::CreatePipeline()
+	void AbsVulkan::CreatePipeline(const Option&)
 	{
 		std::vector<VulkanSpecializationType> specializations;
 		pipeline_abs = new ComputePipeline(vkdev);
@@ -16,12 +16,13 @@ namespace chaos
 		pipeline_abs->Create(abs_spv_data, sizeof(abs_spv_data), "abs", specializations, 1, 3);
 	}
 
-	void AbsVulkan::DestroyPipeline()
+	void AbsVulkan::DestroyPipeline(const Option&)
 	{
 		delete pipeline_abs;
+		pipeline_abs = nullptr;
 	}
 
-	void AbsVulkan::Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd) const
+	void AbsVulkan::Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option&) const
 	{
 		uint32 total = (uint32)bottom_top_blobs[0].total();
 		std::vector<VulkanConstantType> constants(3);

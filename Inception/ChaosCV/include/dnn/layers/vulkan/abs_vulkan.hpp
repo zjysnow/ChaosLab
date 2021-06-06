@@ -4,15 +4,15 @@
 
 namespace chaos
 {
-	class CHAOS_API AbsVulkan : public Abs
+	class CHAOS_API AbsVulkan : virtual public Abs
 	{
 	public:
 		AbsVulkan();
 
-		void CreatePipeline() override;
-		void DestroyPipeline() override;
+		void CreatePipeline(const Option&) override;
+		void DestroyPipeline(const Option&) override;
 
-		void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd) const;
+		void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt) const;
 
 		ComputePipeline* pipeline_abs;
 	};

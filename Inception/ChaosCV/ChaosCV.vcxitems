@@ -30,9 +30,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)dnn\dnn\layer_declaration.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp" />

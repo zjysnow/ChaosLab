@@ -10,6 +10,9 @@ namespace chaos
 	public:
 		Option() = default;
 
+		// enable vulkan compute
+		bool use_vulkan_compute = false;
+
 		Allocator* allocator = nullptr;
 
 		VulkanAllocator* vkallocator = nullptr;

@@ -1,4 +1,5 @@
 #include "dnn/layers/abs.hpp"
+#include "dnn/layer_factory.hpp"
 
 namespace chaos
 {
@@ -7,7 +8,7 @@ namespace chaos
 		support_inplace = true;
 	}
 
-	void Abs::Forward(std::vector<Tensor>& bottom_top_blobs) const
+	void Abs::Forward(std::vector<Tensor>& bottom_top_blobs, const Option&) const
 	{
 		CHECK_EQ(1, bottom_top_blobs.size()) << "layer Abs expect 1 input/output but got " << bottom_top_blobs.size();
 		Tensor& val = bottom_top_blobs[0];
