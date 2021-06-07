@@ -154,8 +154,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp">
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp">
       <Filter>src\dnn\layers\vulkan\shaders</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>

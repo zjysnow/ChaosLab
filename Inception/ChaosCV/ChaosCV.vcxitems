@@ -51,6 +51,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp" />
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp" />
   </ItemGroup>
 </Project>

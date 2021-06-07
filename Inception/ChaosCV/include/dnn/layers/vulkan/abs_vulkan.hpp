@@ -9,8 +9,8 @@ namespace chaos
 	public:
 		AbsVulkan();
 
-		void CreatePipeline(const Option&) override;
-		void DestroyPipeline(const Option&) override;
+		void CreatePipeline(const Option& opt) override;
+		void DestroyPipeline(const Option& opt) override;
 
 		void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt) const;
 

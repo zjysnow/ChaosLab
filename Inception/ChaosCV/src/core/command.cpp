@@ -74,6 +74,7 @@ namespace chaos
 	}
 	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt)
 	{
+		if (dst.empty()) dst.CreateLike(src, opt.blob_allocator);
 		if (src.allocator->mappable)
 		{
 			memcpy(dst.data, src.mapped_data(), src.total() * src.depth * src.packing);
