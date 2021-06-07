@@ -34,7 +34,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)dnn\dnn\layer_declaration.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\allocator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\command.cpp" />
@@ -49,6 +48,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp" />

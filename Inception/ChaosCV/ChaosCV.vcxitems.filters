@@ -149,7 +149,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp">
       <Filter>src\dnn</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)dnn\dnn\layer_declaration.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp">
       <Filter>src\dnn</Filter>
     </ClCompile>
   </ItemGroup>

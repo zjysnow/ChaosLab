@@ -9,9 +9,6 @@
 
 namespace chaos
 {
-	CHAOS_API std::ostream& operator<<(std::ostream& stream, const GPUInfo& info);
-
-
 	template<class Type = float>
 	void PrintTensor(std::ostream& stream, const Tensor& tensor)
 	{
@@ -32,7 +29,7 @@ namespace chaos
 					stream << std::format(", {0}" + 2 * !i, data[i]);
 					break;
 				case Packing::C2HW2:
-					stream << std::format(", {0} {1}" + 2 * !i, data[i], data[i+1]);
+					stream << std::format(", {0} {1}" + 2 * !i, data[i], data[i + 1]);
 					break;
 				case Packing::C3HW3:
 					stream << std::format(", {0} {1} {2}" + 2 * !i,
@@ -62,9 +59,10 @@ namespace chaos
 			size_t dims = shape.size();
 			uint32 h = shape[dims - 2];
 			uint32 w = shape[dims - 1];
+			size_t csize = h * w;
 			uint32 rstep = steps[dims - 2];
 			uint32 total = shape.total();
-			for (size_t i = 0; i < total; i += h * w)
+			for (size_t i = 0; i < total; i += csize)
 			{
 				size_t offset = 0;
 				size_t idx = i;
@@ -75,10 +73,16 @@ namespace chaos
 					idx /= shape[dims - d - 1];
 				}
 				PrintTensor<Type>(stream, Tensor(Shape(h, w), depth, packing, data + offset * packing, Steps(rstep, 1)));
-				if (i < total - h * w) stream << ";" << std::endl;
+				if (i < total - csize) stream << ";" << std::endl;
 			}
 			break;
 		}
 		stream << "]";
 	}
+
+	//CHAOS_API std::ostream& operator<<(std::ostream& stream, const GPUInfo& info);
+	//CHAOS_API std::ostream& operator<<(std::ostream& stream, const Depth& depth);
+	//CHAOS_API std::ostream& operator<<(std::ostream& stream, const Packing& packing);
+	// just for float or uchar
+	CHAOS_API std::ostream& operator<<(std::ostream& stream, const Tensor& tensor);
 }
