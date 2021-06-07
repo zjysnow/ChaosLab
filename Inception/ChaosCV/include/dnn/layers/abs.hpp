@@ -10,6 +10,5 @@ namespace chaos
 		Abs();
 
 		void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt) const override;
-		//void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd) const override;
 	};
 }

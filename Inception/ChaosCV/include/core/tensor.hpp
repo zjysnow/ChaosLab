@@ -54,6 +54,12 @@ namespace chaos
 		/// <summary> ref_cnt++ </summary>
 		void AddRef() noexcept { if (ref_cnt) CHAOS_XADD(ref_cnt, 1); }
 
+		void CopyTo(Tensor& tensor) const;
+		Tensor Clone(Allocator* allocator = nullptr) const;
+
+		uint32 total() const noexcept { return shape[0] * steps[0]; }
+		bool empty() const noexcept { return shape.size() == 0 || data == nullptr; }
+
 		float& operator[](size_t idx) noexcept { return ((float*)data)[idx]; }
 		const float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
 
@@ -84,8 +90,6 @@ namespace chaos
 			}
 			return ((Type*)data)[offset];
 		}
-
-		uint32 total() const noexcept { return shape[0] * steps[0]; }
 
 		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
 
@@ -121,6 +125,7 @@ namespace chaos
 
 		uint32 total() const noexcept { return shape[0] * steps[0]; }
 
+		bool empty() const noexcept { return data == nullptr || shape.size() == 0; }
 		// low-level reference
 		void* mapped_data() const noexcept { CHECK(allocator->mappable);  return (uchar*)data->mapped_data + data->offset; }
 		VkBuffer buffer() const noexcept { return data->buffer; }

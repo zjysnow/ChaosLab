@@ -21,16 +21,11 @@ namespace chaos
 	{
 	public:
 		ComputeCommand(const VulkanDevice* vkdev);
-		virtual ~ComputeCommand();
+		~ComputeCommand();
 
-		void RecordUpload(const Tensor& src, VulkanTensor& dst);
-		void RecordDownload(const VulkanTensor& src, Tensor& dst);
-
-		//void RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt);
-		//void RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt);
-
-		void RecordClone(const VulkanTensor& src, VulkanTensor& dst);
-		//void RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt);
+		void RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt);
+		void RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt);
+		void RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt);
 
 		void RecordPipeline(const ComputePipeline* pipeline, const std::vector<VulkanTensor>& buffer_bindings, const std::vector<VulkanConstantType>& constants, const Shape& dispatcher);
 
@@ -69,7 +64,18 @@ namespace chaos
 		std::vector<VulkanTensor> staging_buffers;
 		
 		std::function<void(VkCommandBuffer, VkDescriptorUpdateTemplate, VkPipelineLayout, uint32, const void*)> vkCmdPushDescriptorSetWithTemplate;
+	};
 
-		VulkanAllocator* staging_vkallocator;
+	class CHAOS_API TransferCommand : public Command
+	{
+	public:
+		TransferCommand(const VulkanDevice* vkdev);
+		~TransferCommand();
+
+		void RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt);
+		
+	private:
+		VkCommandBuffer command_buffer;
+		VkFence fence;
 	};
 }

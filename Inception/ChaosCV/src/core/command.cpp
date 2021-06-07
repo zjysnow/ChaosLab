@@ -44,18 +44,16 @@ namespace chaos
 		{
 			vkCmdPushDescriptorSetWithTemplate = (PFN_vkCmdPushDescriptorSetWithTemplateKHR)vkGetDeviceProcAddr(vkdev->GetDevice(), "vkCmdPushDescriptorSetWithTemplateKHR");
 		}
-
-		staging_vkallocator = new VulkanStagingAllocator(vkdev);
 	}
 	ComputeCommand::~ComputeCommand()
 	{
-		delete staging_vkallocator;
 		vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
 		vkDestroyCommandPool(vkdev->GetDevice(), command_pool, nullptr);
 	}
 
-	void ComputeCommand::RecordUpload(const Tensor& src, VulkanTensor& dst)
+	void ComputeCommand::RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt)
 	{
+		if (dst.empty()) dst.CreateLike(src, opt.blob_vkallocator);
 		if (dst.allocator->mappable)
 		{
 			memcpy(dst.mapped_data(), src.data, src.total() * src.depth * src.packing);
@@ -63,18 +61,18 @@ namespace chaos
 		else
 		{
 			VulkanTensor staging;
-			staging.CreateLike(src, staging_vkallocator);
+			staging.CreateLike(src, opt.staging_vkallocator);
 			memcpy(staging.mapped_data(), src.data, src.total() * src.depth * src.packing);
 
 			staging.data->access_flag = VK_ACCESS_HOST_WRITE_BIT;
 			staging.data->stage_flag = VK_PIPELINE_STAGE_HOST_BIT;
 
-			RecordClone(staging, dst);
+			RecordClone(staging, dst, opt);
 
 			staging_buffers.push_back(staging);
 		}
 	}
-	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst)
+	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt)
 	{
 		if (src.allocator->mappable)
 		{
@@ -83,9 +81,9 @@ namespace chaos
 		else
 		{
 			VulkanTensor staging;
-			staging.CreateLike(src, staging_vkallocator);
+			staging.CreateLike(src, opt.staging_vkallocator);
 
-			RecordClone(src, staging);
+			RecordClone(src, staging, opt);
 
 			staging_buffers.push_back(staging);
 			download_post.push_back(dst);
@@ -98,8 +96,9 @@ namespace chaos
 		}
 	}
 
-	void ComputeCommand::RecordClone(const VulkanTensor& src, VulkanTensor& dst)
+	void ComputeCommand::RecordClone(const VulkanTensor& src, VulkanTensor& dst, const Option& opt)
 	{
+		if (dst.empty()) dst.CreateLike(src, opt.blob_vkallocator);
 		if (src.data->access_flag & VK_ACCESS_TRANSFER_WRITE_BIT || src.data->stage_flag != VK_PIPELINE_STAGE_TRANSFER_BIT)
 		{
 			// barrier device any @ compute to transfer-read @ compute
@@ -256,4 +255,79 @@ namespace chaos
 		CHECK_EQ(VK_SUCCESS, ret);
 	}
 
+
+	TransferCommand::TransferCommand(const VulkanDevice* vkdev) : Command(vkdev)
+	{
+		VkResult ret;
+		VkCommandPoolCreateInfo pool_info{};
+		pool_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		pool_info.queueFamilyIndex = vkdev->info.transfer_queue_family_index;
+		pool_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+		ret = vkCreateCommandPool(vkdev->GetDevice(), &pool_info, nullptr, &command_pool);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkCreateCommandPool failed " << ret;
+
+		VkCommandBufferAllocateInfo command_buffer_allocate_info{};
+		command_buffer_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		command_buffer_allocate_info.commandPool = command_pool;
+		command_buffer_allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		command_buffer_allocate_info.commandBufferCount = 1;
+		ret = vkAllocateCommandBuffers(vkdev->GetDevice(), &command_buffer_allocate_info, &command_buffer);
+		CHECK_EQ(VK_SUCCESS, ret);
+
+		VkFenceCreateInfo fence_create_info{};
+		fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		ret = vkCreateFence(vkdev->GetDevice(), &fence_create_info, 0, &fence);
+		CHECK_EQ(VK_SUCCESS, ret);
+	}
+
+	TransferCommand::~TransferCommand()
+	{
+		vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
+		vkDestroyCommandPool(vkdev->GetDevice(), command_pool, nullptr);
+	}
+
+	void TransferCommand::RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt)
+	{
+		if (dst.empty()) dst.CreateLike(src, opt.blob_vkallocator);
+		if (dst.allocator->mappable)
+		{
+			memcpy(dst.mapped_data(), src.data, src.total() * src.depth * src.packing);
+		}
+		else
+		{
+			VulkanTensor staging;
+			staging.CreateLike(src, opt.staging_vkallocator);
+
+			memcpy(staging.mapped_data(), src.data, src.total() * src.depth * src.packing);
+
+			VkCommandBufferBeginInfo begin_info{};
+			begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			vkBeginCommandBuffer(command_buffer, &begin_info);
+
+			dst.data->access_flag = VK_ACCESS_TRANSFER_WRITE_BIT;
+			dst.data->stage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
+			
+			VkBufferCopy copy_region{};
+			copy_region.size = staging.data->capacity;
+			copy_region.dstOffset = dst.data->offset;
+			copy_region.srcOffset = staging.data->offset;
+			vkCmdCopyBuffer(command_buffer, staging.data->buffer, dst.data->buffer, 1, &copy_region);
+
+			vkEndCommandBuffer(command_buffer);
+
+			VkSubmitInfo submit_info{};
+			submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			submit_info.commandBufferCount = 1;
+			submit_info.pCommandBuffers = &command_buffer;
+
+			VkQueue transfer_queue = vkdev->AcquireQueue(vkdev->info.transfer_queue_family_index);
+
+			vkQueueSubmit(transfer_queue, 1, &submit_info, VK_NULL_HANDLE);
+			vkQueueWaitIdle(transfer_queue);
+
+			vkdev->ReclaimQueue(vkdev->info.transfer_queue_family_index, transfer_queue);
+		}
+	}
 }

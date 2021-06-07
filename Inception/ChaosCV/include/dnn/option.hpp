@@ -13,9 +13,9 @@ namespace chaos
 		// enable vulkan compute
 		bool use_vulkan_compute = false;
 
-		Allocator* allocator = nullptr;
+		Allocator* blob_allocator = nullptr;
 
-		VulkanAllocator* vkallocator = nullptr;
+		VulkanAllocator* blob_vkallocator = nullptr;
 		VulkanAllocator* staging_vkallocator = nullptr;
 	};
 }

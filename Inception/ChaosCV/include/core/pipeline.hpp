@@ -47,4 +47,13 @@ namespace chaos
 
 		VkShaderModule comp;
 	};
+
+	class CHAOS_API GraphicsPipeline : public Pipeline
+	{
+	public:
+		GraphicsPipeline(const VulkanDevice* vkdev);
+
+	private:
+
+	};
 }

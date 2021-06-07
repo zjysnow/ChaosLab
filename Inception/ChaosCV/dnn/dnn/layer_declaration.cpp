@@ -6,7 +6,7 @@
 #include "dnn/layers/vulkan/abs_vulkan.hpp"
 namespace chaos
 {
-	class AbsFinal : virtual public Abs, virtual public AbsVulkan
+	class AbsFinal : virtual public AbsVulkan
 	{
 	public:
 		void CreatePipeline(const Option& opt) final
