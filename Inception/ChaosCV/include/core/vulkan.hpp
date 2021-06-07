@@ -37,6 +37,7 @@ DEFINE_VULKAN_HANDLE(VkDebugUtilsMessengerEXT)
 struct VkAllocationCallbacks;
 struct VkDescriptorUpdateTemplateCreateInfo;
 enum VkResult;
+enum VkDescriptorType;
 
 namespace chaos
 {
@@ -46,6 +47,7 @@ namespace chaos
 	using DescriptorType = Flag;
 	using AccessFlag = Flag;
 	using PipelineStageFlag = Flag;
+	using ShaderStageFlag = Flag;
 
 	union VulkanSpecializationType
 	{

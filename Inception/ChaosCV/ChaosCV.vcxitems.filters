@@ -103,7 +103,13 @@
       <Filter>include\dnn\layers\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp">
       <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\utils\op.hpp">
+      <Filter>include\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +157,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp">
       <Filter>src\dnn</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\utils\op.cpp">
+      <Filter>src\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

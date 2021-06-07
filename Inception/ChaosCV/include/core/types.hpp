@@ -20,6 +20,8 @@ namespace chaos
 	template<class Type>
 	using Ptr = std::shared_ptr<Type>;
 
+	
+
 	enum class LogSeverity
 	{
 		INFO,
@@ -50,35 +52,12 @@ namespace chaos
 	{
 		return static_cast<Type>(depth) * val;
 	}
-	//static inline std::ostream& operator<<(std::ostream& stream, const Depth& depth)
-	//{
-	//	switch (depth)
-	//	{
-	//	case Depth::D1: return stream << "D1";
-	//	case Depth::D2: return stream << "D2";
-	//	case Depth::D4: return stream << "D4";
-	//	case Depth::D8: return stream << "D8";
-	//	default: return stream << "invalid depth";
-	//	}
-	//}
 
 	template<class Type>
 	Type operator*(const Type& val, const Packing& packing)
 	{
 		return static_cast<Type>(packing) * val;
 	}
-	//static inline std::ostream& operator<<(std::ostream& stream, const Packing& packing)
-	//{
-	//	switch (packing)
-	//	{
-	//	case Packing::CHW: return stream << "CHW";
-	//	case Packing::C2HW2: return stream << "C2HW2";
-	//	case Packing::C3HW3: return stream << "C3HW3";
-	//	case Packing::C4HW4: return stream << "C4HW4";
-	//	case Packing::C8HW8: return stream << "C8HW8";
-	//	default: return stream << "invalid packing";
-	//	}
-	//}
 
 
 	class CHAOS_API Point

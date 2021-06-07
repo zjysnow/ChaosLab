@@ -5,6 +5,8 @@
 #include "core/command.hpp"
 #include "core/pipeline.hpp"
 
+#include "dnn/option.hpp"
+
 #include <cmath>
 #include <algorithm>
 
@@ -18,11 +20,11 @@ namespace chaos
 		virtual void CreatePipeline(const Option& opt);
 		virtual void DestroyPipeline(const Option& opt);
 
-		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt) const;
-		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const;
+		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const;
+		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const;
 
-		virtual void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt) const;
-		virtual void Forward(const std::vector<VulkanTensor>& bottom_blobs, std::vector<VulkanTensor>& top_blobs, ComputeCommand& cmd, const Option& opt) const;
+		virtual void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt = Option()) const;
+		virtual void Forward(const std::vector<VulkanTensor>& bottom_blobs, std::vector<VulkanTensor>& top_blobs, ComputeCommand& cmd, const Option& opt = Option()) const;
 
 		const std::string& type;
 

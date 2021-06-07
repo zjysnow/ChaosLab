@@ -8,9 +8,6 @@
 
 namespace chaos
 {
-	// arithmetic
-	// integral
-	//template<class Type> std::integral<Type>;
 	template<class Type>
 	concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
 
@@ -175,6 +172,7 @@ namespace chaos
 
 		~Steps() = default;
 
+		void Expand(size_t axis, int dims, uint32 step);
 		bool operator==(const Steps& rhs);
 	};
 
@@ -195,7 +193,10 @@ namespace chaos
 			}
 		}
 
+		Shape(const Array<uint32>& arr) : Array<uint32>(arr) {}
 		~Shape() = default;
+
+		void Expand(size_t axis, int dims = 1);
 
 		uint32 total() const;
 		Steps steps() const;

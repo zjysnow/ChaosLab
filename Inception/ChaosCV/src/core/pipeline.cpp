@@ -12,14 +12,14 @@ namespace chaos
 		vkDestroyPipelineLayout(vkdev->GetDevice(), pipeline_layout, nullptr);
 	}
 
-	void Pipeline::CreateDescriptorSetLayout(const size_t& binding_count, const ShaderStageFlag* flags, const DescriptorType* types)
+	void Pipeline::CreateDescriptorSetLayout(const size_t& binding_count, const ShaderStageFlag* flags, const VkDescriptorType* types)
 	{
 		std::vector<VkDescriptorSetLayoutBinding> bingdings(binding_count);
 		for (uint32 i = 0; i < binding_count; i++)
 		{
 			bingdings[i].binding = i;
 			bingdings[i].descriptorCount = 1;
-			bingdings[i].descriptorType = static_cast<VkDescriptorType>(types[i]); //VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			bingdings[i].descriptorType = types[i]; //VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			bingdings[i].pImmutableSamplers = nullptr; // immutable texelfetch sampler
 			bingdings[i].stageFlags = flags[i]; //VK_SHADER_STAGE_VERTEX_BIT;
 		}
@@ -172,9 +172,6 @@ namespace chaos
 
 	void ComputePipeline::Create(const uint32* comp_data, size_t comp_size, const char* entry_name, const std::vector<VulkanSpecializationType>& specializations, size_t binding_count, size_t push_constant_count)
 	{
-		descriptor_types = std::vector<DescriptorType>(binding_count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-		shader_stage_flags = std::vector<ShaderStageFlag>(binding_count, VK_SHADER_STAGE_COMPUTE_BIT);
-
 		uint32* comp_data_modefied = new uint32[comp_size]();
 		size_t comp_size_modefied = comp_size;
 		InjectLocalSize(comp_data, comp_size, local_size_x, local_size_y, local_size_z, comp_data_modefied, &comp_size_modefied);
@@ -182,6 +179,8 @@ namespace chaos
 
 		delete[] comp_data_modefied;
 
+		std::vector<VkDescriptorType> descriptor_types(binding_count, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+		std::vector<ShaderStageFlag> shader_stage_flags(binding_count, VK_SHADER_STAGE_COMPUTE_BIT);
 		CreateDescriptorSetLayout(binding_count, shader_stage_flags.data(), descriptor_types.data());
 
 		CreatePipelineLayout(push_constant_count);

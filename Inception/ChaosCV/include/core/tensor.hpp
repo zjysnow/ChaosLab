@@ -18,9 +18,9 @@ namespace chaos
 		template<class Type>
 		Tensor(const Array<Type>& arr, Allocator* allocator = nullptr)
 		{
-			if constexpr (std::is_same_v<Complex, Type>)
+			if constexpr (std::same_as<Complex, Type>)
 			{
-				Create(Shape(arr.size()), Steps(1), Depth::D4, Packing::C2HW2, allocator);
+				Create(Shape((int)arr.size()), Steps(1), Depth::D4, Packing::C2HW2, allocator);
 				float* data_ = static_cast<float*>(data);
 				for (size_t i = 0; const auto& val : arr)
 				{
@@ -30,9 +30,33 @@ namespace chaos
 			}
 			else
 			{
-				Create(Shape(arr.size()), Steps(1), static_cast<Depth>(sizeof(Type)), Packing::CHW, allocator);
+				Create(Shape((int)arr.size()), Steps(1), static_cast<Depth>(sizeof(Type)), Packing::CHW, allocator);
 				Type* data_ = static_cast<Type*>(data);
 				for (size_t i = 0; const auto & val : arr)
+				{
+					data_[i++] = val;
+				}
+			}
+		}
+
+		template<Arithmetic Type>
+		Tensor(const std::initializer_list<Type> list, Allocator* allocator = nullptr)
+		{
+			if constexpr (std::same_as<Complex, Type>)
+			{
+				Create(Shape((int)list.size()), Steps(1), Depth::D4, Packing::C2HW2, allocator);
+				float* data_ = static_cast<float*>(data);
+				for (size_t i = 0; const auto & val : list)
+				{
+					data_[i++] = val.re;
+					data_[i++] = val.im;
+				}
+			}
+			else
+			{
+				Create(Shape((int)list.size()), Steps(1), static_cast<Depth>(sizeof(Type)), Packing::CHW, allocator);
+				Type* data_ = static_cast<Type*>(data);
+				for (size_t i = 0; const auto & val : list)
 				{
 					data_[i++] = val;
 				}
