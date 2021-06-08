@@ -182,13 +182,17 @@ namespace chaos::inline dnn
 
 	SVD::SVD() : Layer("SVD") {}
 
-    void SVD::CreatePipeline(const Option&)
+    void SVD::CreatePipeline(const Option& opt)
     {
         transpose = LayerRegistry::CreateLayer("Permute");
+        transpose->CreatePipeline(opt);
         transpose->Set("orders", Array<uint32>{1, 0});
     }
 
-    void SVD::DestroyPipeline(const Option&) {}
+    void SVD::DestroyPipeline(const Option& opt) 
+    {
+        transpose->DestroyPipeline(opt);
+    }
 
 	void SVD::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
