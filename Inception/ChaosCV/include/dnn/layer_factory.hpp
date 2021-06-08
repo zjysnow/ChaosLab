@@ -7,6 +7,7 @@
 
 namespace chaos
 {
+	class Layer;
 	class CHAOS_API LayerRegistry
 	{
 	public:

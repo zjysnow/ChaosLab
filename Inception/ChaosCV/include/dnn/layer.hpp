@@ -6,6 +6,7 @@
 #include "core/pipeline.hpp"
 
 #include "dnn/option.hpp"
+#include "dnn/layer_factory.hpp"
 
 #include <any>
 #include <cmath>
@@ -18,8 +19,8 @@ namespace chaos
 	public:
 		Layer(const std::string& type);
 
-		virtual void CreatePipeline(const Option& opt);
-		virtual void DestroyPipeline(const Option& opt);
+		virtual void CreatePipeline(const Option& opt = Option());
+		virtual void DestroyPipeline(const Option& opt = Option());
 
 		virtual void Forward(std::vector<Tensor>& bottom_top_blobs, const Option& opt = Option()) const;
 		virtual void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const;
@@ -30,7 +31,7 @@ namespace chaos
 		virtual void Set(const std::string& pname, const std::any& param);
 
 		const std::string& type;
-
+		 
 		// support inplace inference
 		bool support_inplace;
 		bool support_vulkan;

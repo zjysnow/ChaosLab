@@ -1,6 +1,6 @@
 #include "dnn/layers/svd.hpp"
 
-#include "utils/op.hpp"
+//#include "utils/op.hpp"
 
 namespace chaos::inline dnn
 {
@@ -181,6 +181,15 @@ namespace chaos::inline dnn
     }
 
 	SVD::SVD() : Layer("SVD") {}
+
+    void SVD::CreatePipeline(const Option&)
+    {
+        transpose = LayerRegistry::CreateLayer("Permute");
+        transpose->Set("orders", Array<uint32>{1, 0});
+    }
+
+    void SVD::DestroyPipeline(const Option&) {}
+
 	void SVD::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
 	{
         CHECK_EQ(1, bottom_blobs.size()) << "expect 1 but got " << bottom_blobs.size() << " bottom blobs";
@@ -226,7 +235,9 @@ namespace chaos::inline dnn
 
         if (not at)
         {
-            transpose(A, temp_a);
+            //transpose(A, temp_a);
+            std::vector<Tensor> tops{temp_a};
+            transpose->Forward({A}, tops, opt);
         }
         else
         {
@@ -247,7 +258,9 @@ namespace chaos::inline dnn
                 CHECK_EQ(Shape(m, urows), U.shape);
                 if (Vt.empty()) Vt.Create(Shape(n, n), Steps(n,1), Depth::D4, Packing::CHW, opt.blob_allocator);
                 CHECK_EQ(Shape(n, n), Vt.shape);
-                transpose(temp_u, U);
+                std::vector<Tensor> tops{U};
+                transpose->Forward({ temp_u }, tops);
+                //transpose(temp_u, U);
                 temp_v.CopyTo(Vt);
             }
             else
@@ -256,7 +269,9 @@ namespace chaos::inline dnn
                 CHECK_EQ(Shape(n, n), U.shape);
                 if (Vt.empty()) Vt.Create(Shape(urows, m), Steps(m,1), Depth::D4, Packing::CHW, opt.blob_allocator);
                 CHECK_EQ(Shape(urows, m), Vt.shape);
-                transpose(temp_v, U);
+                std::vector<Tensor> tops{U};
+                transpose->Forward({temp_v}, tops);
+                //transpose(temp_v, U);
                 temp_u.CopyTo(Vt);
             }
         }
@@ -266,4 +281,6 @@ namespace chaos::inline dnn
     {
         if ("uv" == pname) uv = std::any_cast<UV>(param);
     }
+
+    REGISTER_LAYER("SVD", SVD);
 }

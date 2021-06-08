@@ -22,8 +22,13 @@ namespace chaos::inline dnn
 		SVD();
 		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const override;
 
-		void Set(const std::string& pname, const std::any& param);
+		void CreatePipeline(const Option&) override;
+		void DestroyPipeline(const Option&) override;
+
+		void Set(const std::string& pname, const std::any& param) override;
 
 		int uv = SIMPLE_UV;
+
+		Ptr<Layer> transpose;
 	};
 }

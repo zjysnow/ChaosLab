@@ -34,19 +34,20 @@ namespace chaos::inline op
 		Operator& operator=(const Operator&) = delete;
 	protected:
 		Operator() = default;
+		virtual ~Operator() { layer->DestroyPipeline(); }
 		Ptr<Layer> layer;
 	};
 
 	class Add : public Operator<op::Add>
 	{
 	public:
-		Add() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::ADD); }
+		Add() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::ADD); layer->CreatePipeline(); }
 	};
 
 	class Div : public Operator<op::Div>
 	{
 	public:
-		Div() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::DIV); }
+		Div() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::DIV); layer->CreatePipeline(); }
 	};
 
 	class GEMM : public Operator<op::GEMM>
@@ -58,18 +59,18 @@ namespace chaos::inline op
 	class Mul : public Operator<op::Mul>
 	{
 	public:
-		Mul() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::MUL); }
+		Mul() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::MUL); layer->CreatePipeline(); }
 	};
 
 	class Sub : public Operator<op::Sub>
 	{
 	public:
-		Sub() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::SUB); }
+		Sub() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::SUB); layer->CreatePipeline(); }
 	};
 	class SVD : public Operator<op::SVD>
 	{
 	public:
-		SVD() { layer = std::make_shared<dnn::SVD>(); }
+		SVD() { layer = std::make_shared<dnn::SVD>(); layer->CreatePipeline(); }
 
 		void operator()(const Tensor& a, Tensor& w) const
 		{
@@ -91,7 +92,7 @@ namespace chaos::inline op
 	class Permute : public Operator<op::Permute>
 	{
 	public:
-		Permute() { layer = std::make_shared<dnn::Permute>(); }
+		Permute() { layer = std::make_shared<dnn::Permute>(); layer->CreatePipeline(); }
 
 		void operator()(const Tensor& a, const Array<uint32>& orders, Tensor& b)
 		{

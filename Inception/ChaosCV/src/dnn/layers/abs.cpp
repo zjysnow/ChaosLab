@@ -1,7 +1,7 @@
 #include "dnn/layers/abs.hpp"
 #include "dnn/layer_factory.hpp"
 
-namespace chaos
+namespace chaos::inline dnn
 {
 	Abs::Abs() : Layer("Abs") 
 	{ 

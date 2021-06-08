@@ -2,7 +2,7 @@
 
 #include "dnn/layer.hpp"
 
-namespace chaos
+namespace chaos::inline dnn
 {
 	class CHAOS_API Abs : public Layer
 	{
