@@ -2,8 +2,10 @@
 
 #include "dnn/layer.hpp"
 #include "dnn/layers/binary_op.hpp"
+#include "dnn/layers/permute.hpp"
+#include "dnn/layers/svd.hpp"
 
-namespace chaos
+namespace chaos::inline op
 {
 	template<class Op>
 	class Operator
@@ -18,47 +20,93 @@ namespace chaos
 		Tensor operator()(const Tensor& a, const Tensor& b) const
 		{
 			std::vector<Tensor> tops(1);
-			layer->Forward({a, b}, tops);
+			layer->Forward({a,b}, tops);
 			return tops[0];
 		}
+
 		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const
 		{
-			std::vector<Tensor> tops = { c };
-			layer->Forward({ a,b }, tops);
+			std::vector<Tensor> tops{c};
+			layer->Forward({a,b}, tops);
 		}
 
 		Operator(const Operator&) = delete;
 		Operator& operator=(const Operator&) = delete;
 	protected:
 		Operator() = default;
-		virtual ~Operator() = default;
 		Ptr<Layer> layer;
 	};
 
-	class Add : public Operator<Add>
+	class Add : public Operator<op::Add>
 	{
 	public:
-		Add() { layer = std::make_shared<BinaryOp>(BinaryOp::ADD); }
+		Add() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::ADD); }
 	};
 
-	class Div : public Operator<Div>
+	class Div : public Operator<op::Div>
 	{
 	public:
-		Div() { layer = std::make_shared<BinaryOp>(BinaryOp::DIV); }
+		Div() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::DIV); }
 	};
 
-	class Mul : public Operator<Mul>
+	class GEMM : public Operator<op::GEMM>
 	{
 	public:
-		Mul() { layer = std::make_shared<BinaryOp>(BinaryOp::MUL); }
+		GEMM() {}
 	};
 
-	class Sub : public Operator<Sub>
+	class Mul : public Operator<op::Mul>
 	{
 	public:
-		Sub() { layer = std::make_shared<BinaryOp>(BinaryOp::SUB); }
+		Mul() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::MUL); }
 	};
 
+	class Sub : public Operator<op::Sub>
+	{
+	public:
+		Sub() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::SUB); }
+	};
+	class SVD : public Operator<op::SVD>
+	{
+	public:
+		SVD() { layer = std::make_shared<dnn::SVD>(); }
+
+		void operator()(const Tensor& a, Tensor& w) const
+		{
+			layer->Set("uv", dnn::SVD::NO_UV);
+			std::vector<Tensor> tops{ w };
+			layer->Forward({a}, tops);
+		}
+
+		void operator()(const Tensor& a, Tensor& w, Tensor& u, Tensor& vt, bool full_uv) const
+		{
+			layer->Set("uv", full_uv ? dnn::SVD::FULL_UV : dnn::SVD::SIMPLE_UV);
+			std::vector<Tensor> tops{ w, u, vt };
+			layer->Forward({a}, tops);
+		}
+
+		//Tensor operator()(const Tensor&, const Tensor&) = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
+	};
+	class Permute : public Operator<op::Permute>
+	{
+	public:
+		Permute() { layer = std::make_shared<dnn::Permute>(); }
+
+		void operator()(const Tensor& a, const Array<uint32>& orders, Tensor& b)
+		{
+			layer->Set("orders", orders);
+			std::vector<Tensor> tops{b};
+			layer->Forward({ a }, tops);
+		}
+
+		Tensor operator()(const Tensor&, const Tensor&) = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
+	};
+}
+
+namespace chaos
+{
 	Tensor operator+(const Tensor& a, const Tensor& b)
 	{
 		auto& op = Add::Get();
@@ -113,25 +161,116 @@ namespace chaos
 		return op(a, { b });
 	}
 
-
 	void add(const Tensor& a, const Tensor& b, Tensor& c)
 	{
+		if (c.empty())
+		{
+			Shape c_shape = a.shape & b.shape;
+			c.Create(c_shape, c_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
 		auto& op = Add::Get();
 		op(a, b, c);
 	}
 	void div(const Tensor& a, const Tensor& b, Tensor& c)
 	{
+		if (c.empty())
+		{
+			Shape c_shape = a.shape & b.shape;
+			c.Create(c_shape, c_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
 		auto& op = Div::Get();
 		op(a, b, c);
 	}
 	void mul(const Tensor& a, const Tensor& b, Tensor& c)
 	{
+		if (c.empty())
+		{
+			Shape c_shape = a.shape & b.shape;
+			c.Create(c_shape, c_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
 		auto& op = Mul::Get();
 		op(a, b, c);
 	}
 	void sub(const Tensor& a, const Tensor& b, Tensor& c)
 	{
+		if (c.empty())
+		{
+			Shape c_shape = a.shape & b.shape;
+			c.Create(c_shape, c_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
 		auto& op = Sub::Get();
 		op(a, b, c);
+	}
+	void svd(const Tensor& a, Tensor& w)
+	{
+		auto& op = op::SVD::Get();
+		if (w.empty())
+		{
+			w.Create(Shape(std::min(a.shape[0], a.shape[1])), Steps(1), Depth::D4, Packing::CHW, nullptr);
+		}
+		op(a, w);
+	}
+	void svd(const Tensor& a, Tensor& w, Tensor& u, Tensor& vt, bool full_uv)
+	{
+		auto& op = op::SVD::Get();
+		uint32 m = a.shape[0], n = a.shape[1];
+		bool at = false;
+		if (m < n) 
+		{
+			std::swap(m, n); 
+			at = true;
+		}
+		uint32 urows = full_uv ? m : n;
+		Shape u_shape;
+		Shape vt_shape;
+		if (!at)
+		{
+			u_shape = { m, urows };
+			vt_shape = { n, n };
+		}
+		else
+		{
+			u_shape = { n, n };
+			vt_shape = { urows, m };
+		}
+
+		if (w.empty())
+		{
+			w.Create(Shape(n), Steps(1), Depth::D4, Packing::CHW, nullptr);
+		}
+		if (u.empty())
+		{
+			u.Create(u_shape, u_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
+		if (vt.empty())
+		{
+			vt.Create(vt_shape, vt_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
+		op(a, w, u, vt, full_uv);
+	}
+	
+	void transpose(const Tensor& a, Tensor& b)
+	{
+		auto& op = op::Permute::Get();
+		Array<uint32> orders = {1, 0};
+		if (b.empty())
+		{
+			CHECK_EQ(2, a.shape.size());
+			Shape b_shape = { a.shape[1], a.shape[0] };
+			b.Create(b_shape, b_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
+		op(a, orders, b);
+	}
+	void permute(const Tensor& a, const Array<uint32>& orders, Tensor& b)
+	{
+		auto& op = op::Permute::Get();
+		if (b.empty())
+		{
+			CHECK_EQ(a.shape.size(), orders.size());
+			Shape b_shape = a.shape;
+			for (size_t i = 0; i < a.shape.size(); i++) b_shape[i] = a.shape[orders[i]];
+			b.Create(b_shape, b_shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
+		op(a, orders, b);
 	}
 }

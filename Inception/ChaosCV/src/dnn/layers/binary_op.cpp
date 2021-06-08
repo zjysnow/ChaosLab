@@ -1,6 +1,6 @@
 #include "dnn/layers/binary_op.hpp"
 
-namespace chaos
+namespace chaos::inline dnn
 {
     struct BinaryAdd
     {

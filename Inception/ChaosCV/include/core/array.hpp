@@ -202,6 +202,7 @@ namespace chaos
 		Steps steps() const;
 
 		bool operator==(const Shape& rhs);
+		CHAOS_API friend Shape operator&(const Shape& lhs, const Shape& rhs); // broadcast shape
 		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const Shape& shape);
 	};
 }

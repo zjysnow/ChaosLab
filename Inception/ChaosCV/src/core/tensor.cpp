@@ -133,7 +133,7 @@ namespace chaos
 				size_t dofst = 0;
 				size_t sofst = 0;
 				size_t idx = i;
-				for (size_t d = 0; i < dims; d++)
+				for (size_t d = 0; d < dims; d++)
 				{
 					size_t k = idx % shape[dims - d - 1];
 					dofst += k * tensor.steps[dims - d - 1];

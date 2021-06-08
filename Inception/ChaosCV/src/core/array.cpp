@@ -42,6 +42,8 @@ namespace chaos
 	}
 	void Shape::Expand(size_t axis, int dims)
 	{
+		if (dims == 0) return;
+
 		Shape old_shape = *this; // copy old data
 		Resize(size_ + dims, 1);
 		for (size_t i = 0; i < old_shape.size(); i++)
@@ -73,6 +75,26 @@ namespace chaos
 			if (data_[i] != rhs[i]) return false;
 		}
 		return true;
+	}
+	Shape operator&(const Shape& lhs, const Shape& rhs)
+	{
+		Shape a = lhs, b = rhs;
+		int a_size = (int)a.size(), b_size = (int)b.size();
+		a.Expand(0, std::max(0, b_size - a_size));
+		b.Expand(0, std::max(0, a_size - b_size));
+
+		for (size_t i = 0; i < a.size(); i++)
+		{
+			if (a[i] == 1)
+			{
+				a[i] = b[i];
+			}
+			else
+			{
+				CHECK(a[i] == b[i] || b[i] == 1) << "can not broadcast";
+			}
+		}
+		return a;
 	}
 	std::ostream& operator<<(std::ostream& stream, const Shape& shape)
 	{

@@ -4,22 +4,13 @@
 
 namespace chaos::inline dnn
 {
-	class CHAOS_API BinaryOp : public Layer
+	class CHAOS_API Permute : public Layer
 	{
 	public:
-		enum OpType
-		{
-			ADD,
-			SUB,
-			MUL,
-			DIV,
-		};
-
-		BinaryOp();
-		BinaryOp(int op_type);
-
+		Permute();
 		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
 
-		int op_type = ADD;
+		void Set(const std::string& pname, const std::any& param) override;
+		Array<uint32> orders;
 	};
 }

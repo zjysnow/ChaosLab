@@ -7,6 +7,7 @@
 
 #include "dnn/option.hpp"
 
+#include <any>
 #include <cmath>
 #include <algorithm>
 
@@ -26,11 +27,12 @@ namespace chaos
 		virtual void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt = Option()) const;
 		virtual void Forward(const std::vector<VulkanTensor>& bottom_blobs, std::vector<VulkanTensor>& top_blobs, ComputeCommand& cmd, const Option& opt = Option()) const;
 
+		virtual void Set(const std::string& pname, const std::any& param);
+
 		const std::string& type;
 
 		// support inplace inference
 		bool support_inplace;
-
 		bool support_vulkan;
 
 		const VulkanDevice* vkdev;

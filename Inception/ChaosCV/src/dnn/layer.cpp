@@ -41,4 +41,6 @@ namespace chaos
 		}
 		Forward(top_blobs, cmd, opt);
 	}
+
+	void Layer::Set(const std::string&, const std::any&) {}
 }
