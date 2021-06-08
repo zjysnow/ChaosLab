@@ -55,47 +55,6 @@ namespace chaos::inline dnn
         }
     }
 
-    //template<class...Args>
-    //requires (std::same_as<Shape, Args>&&...)
-    //Shape Broadcast(const Shape& first, Args... others)
-    //{
-    //    std::vector<Shape> others_ = { static_cast<Shape>(others)... };
-    //    Shape result = first;
-    //    for (const auto& shape : others_)
-    //    {
-    //        CHECK_EQ(result.size(), shape.size());
-    //        for (size_t i = 0; i < result.size(); i++)
-    //        {
-    //            if (result[i] == 1)
-    //            {
-    //                result[i] = shape[i];
-    //            }
-    //            else
-    //            {
-    //                CHECK(result[i] == shape[i] || shape[i] == 1) << "can not broadcast";
-    //            }
-    //        }
-    //    }
-    //    return result;
-    //}
-    Shape Broadcast(const Shape& lhs, const Shape& rhs)
-    {
-        CHECK_EQ(lhs.size(),  rhs.size());
-        Shape result = lhs;
-        for (size_t i = 0; i < result.size(); i++)
-        {
-            if (result[i] == 1)
-            {
-                result[i] = rhs[i];
-            }
-            else
-            {
-                CHECK(result[i] == rhs[i] || rhs[i] == 1) << "can not broadcast";
-            }
-        }
-        return result;
-    }
-
 	BinaryOp::BinaryOp() : Layer("BinaryOp") {}
     BinaryOp::BinaryOp(int type) : Layer("BinaryOp") { op_type = type; }
 
@@ -117,7 +76,7 @@ namespace chaos::inline dnn
 
         CHECK_EQ(1, top_blobs.size()) << "layer 'BinaryOp' expcet 1 output but got " << top_blobs.size();
         Tensor& c = top_blobs[0];
-        Shape c_shape = Broadcast(a.shape, b.shape);
+        Shape c_shape = a.shape & b.shape; //Broadcast(a.shape, b.shape);
         if (c.empty()) c.Create(c_shape, c_shape.steps(), Depth::D4, Packing::CHW, opt.blob_allocator);
         CHECK_EQ(c_shape, c.shape) << "expect " << c_shape << " but got " << c.shape;
 

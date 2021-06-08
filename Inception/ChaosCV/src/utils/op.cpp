@@ -2,6 +2,7 @@
 
 #include "dnn/layer.hpp"
 #include "dnn/layers/binary_op.hpp"
+#include "dnn/layers/gemm.hpp"
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/svd.hpp"
 
@@ -53,7 +54,29 @@ namespace chaos::inline op
 	class GEMM : public Operator<op::GEMM>
 	{
 	public:
-		GEMM() {}
+		GEMM() { layer = std::make_shared<dnn::GEMM>(); layer->CreatePipeline(); }
+		Tensor operator()(const Tensor& a, const Tensor& b) const
+		{
+			layer->Set("transA", false);
+			layer->Set("transB", false);
+			layer->Set("alpha", 1.f);
+			layer->Set("beta", 0.f);
+
+			std::vector<Tensor> tops(1);
+			layer->Forward({a, b}, tops);
+			return tops[0];
+		}
+		void operator()(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta) const
+		{
+			layer->Set("transA", transA);
+			layer->Set("transB", transB);
+			layer->Set("alpha", alpha);
+			layer->Set("beta", beta);
+
+			std::vector<Tensor> tops{ c };
+			layer->Forward({ a, b, c }, tops);
+		}
+		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const = delete;
 	};
 
 	class Mul : public Operator<op::Mul>
@@ -87,7 +110,7 @@ namespace chaos::inline op
 		}
 
 		//Tensor operator()(const Tensor&, const Tensor&) = delete;
-		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) const = delete;
 	};
 	class Permute : public Operator<op::Permute>
 	{
@@ -101,8 +124,8 @@ namespace chaos::inline op
 			layer->Forward({ a }, tops);
 		}
 
-		Tensor operator()(const Tensor&, const Tensor&) = delete;
-		void operator()(const Tensor&, const Tensor&, Tensor&) = delete;
+		Tensor operator()(const Tensor&, const Tensor&) const = delete;
+		void operator()(const Tensor&, const Tensor&, Tensor&) const = delete;
 	};
 }
 
@@ -140,6 +163,11 @@ namespace chaos
 		return op(a, { b });
 	}
 
+	Tensor operator*(const Tensor& a, const Tensor& b)
+	{
+		auto& op = op::GEMM::Get();
+		return op(a, b);
+	}
 	Tensor operator*(float a, const Tensor& b)
 	{
 		auto& op = Mul::Get();
@@ -181,6 +209,23 @@ namespace chaos
 		}
 		auto& op = Div::Get();
 		op(a, b, c);
+	}
+	void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta)
+	{
+		auto& op = op::GEMM::Get();
+		if (c.empty())
+		{
+			uint32 m = a.shape[0];
+			uint32 n = a.shape[1];
+			uint32 p = b.shape[0];
+			uint32 k = b.shape[1];
+
+			if (transA) std::swap(m, n);
+			if (transB) std::swap(p, k);
+
+			c.Create(Shape(m, k), Steps(k, 1), Depth::D4, Packing::CHW, nullptr);
+		}
+		op(transA, transB, a, b, alpha, c, beta);
 	}
 	void mul(const Tensor& a, const Tensor& b, Tensor& c)
 	{

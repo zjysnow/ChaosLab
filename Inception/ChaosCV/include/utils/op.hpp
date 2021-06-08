@@ -13,6 +13,7 @@ namespace chaos
 	CHAOS_API Tensor operator-(float a, const Tensor& b);
 	CHAOS_API Tensor operator-(const Tensor& a, float b);
 
+	CHAOS_API Tensor operator*(const Tensor& a, const Tensor& b);
 	CHAOS_API Tensor operator*(float a, const Tensor& b);
 	CHAOS_API Tensor operator*(const Tensor& a, float b);
 
@@ -21,6 +22,7 @@ namespace chaos
 
 	CHAOS_API void add(const Tensor& a, const Tensor& b, Tensor& c);
 	CHAOS_API void div(const Tensor& a, const Tensor& b, Tensor& c);
+	CHAOS_API void gemm(bool transA, bool transB, const Tensor& a, const Tensor& b, float alpha, Tensor& c, float beta);
 	CHAOS_API void mul(const Tensor& a, const Tensor& b, Tensor& c);
 	CHAOS_API void permute(const Tensor& a, const Array<uint32>& orders, Tensor& b);
 	CHAOS_API void sub(const Tensor& a, const Tensor& b, Tensor& c);
@@ -30,5 +32,5 @@ namespace chaos
 	
 	
 	
-	void invert(const Tensor& a, Tensor& b);
+	//void invert(const Tensor& a, Tensor& b);
 }
