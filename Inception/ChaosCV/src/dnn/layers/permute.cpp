@@ -58,6 +58,4 @@ namespace chaos::inline dnn
     {
         if ("orders" == pname) orders = std::any_cast<Array<uint32>>(param);
     }
-
-    REGISTER_LAYER("Permute", Permute);
 }

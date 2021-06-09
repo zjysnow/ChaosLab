@@ -120,6 +120,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\back_subst.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\invert.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -180,6 +189,15 @@
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\back_subst.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\invert.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
   </ItemGroup>

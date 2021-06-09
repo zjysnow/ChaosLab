@@ -285,6 +285,4 @@ namespace chaos::inline dnn
     {
         if ("uv" == pname) uv = std::any_cast<UV>(param);
     }
-
-    REGISTER_LAYER("SVD", SVD);
 }

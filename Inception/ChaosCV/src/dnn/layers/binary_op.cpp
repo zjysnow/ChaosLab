@@ -99,6 +99,4 @@ namespace chaos::inline dnn
             break;
         }
 	}
-
-    REGISTER_LAYER("BinaryOp", BinaryOp);
 }

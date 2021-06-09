@@ -1,5 +1,4 @@
 #include "dnn/layers/abs.hpp"
-#include "dnn/layer_factory.hpp"
 
 namespace chaos::inline dnn
 {

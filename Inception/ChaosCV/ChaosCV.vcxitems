@@ -29,8 +29,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\back_subst.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\invert.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\noop.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
@@ -52,8 +55,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\back_subst.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\invert.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\noop.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\permute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp" />

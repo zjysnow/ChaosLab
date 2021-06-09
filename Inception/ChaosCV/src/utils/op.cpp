@@ -3,6 +3,7 @@
 #include "dnn/layer.hpp"
 #include "dnn/layers/binary_op.hpp"
 #include "dnn/layers/gemm.hpp"
+#include "dnn/layers/invert.hpp"
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/svd.hpp"
 
@@ -78,7 +79,19 @@ namespace chaos::inline op
 		}
 		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const = delete;
 	};
+	class Invert : public Operator<op::Invert>
+	{
+	public:
+		Invert() { layer = std::make_shared<dnn::Invert>(); layer->CreatePipeline(); }
+		void operator()(const Tensor& a, Tensor& b) const
+		{
+			std::vector<Tensor> tops{ b };
+			layer->Forward({ a }, tops);
+		}
 
+		Tensor operator()(const Tensor& a, const Tensor& b) const = delete;
+		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const = delete;
+	};
 	class Mul : public Operator<op::Mul>
 	{
 	public:
@@ -226,6 +239,15 @@ namespace chaos
 			c.Create(Shape(m, k), Steps(k, 1), Depth::D4, Packing::CHW, nullptr);
 		}
 		op(transA, transB, a, b, alpha, c, beta);
+	}
+	void invert(const Tensor& a, Tensor& b)
+	{
+		if (b.empty())
+		{
+			b.Create(Shape(a.shape[1], a.shape[0]), Steps(a.shape[0], 1), Depth::D4, Packing::CHW, nullptr);
+		}
+		auto& op = op::Invert::Get();
+		op(a, b);
 	}
 	void mul(const Tensor& a, const Tensor& b, Tensor& c)
 	{
