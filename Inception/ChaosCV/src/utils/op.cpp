@@ -83,8 +83,9 @@ namespace chaos::inline op
 	{
 	public:
 		Invert() { layer = std::make_shared<dnn::Invert>(); layer->CreatePipeline(); }
-		void operator()(const Tensor& a, Tensor& b) const
+		void operator()(const Tensor& a, Tensor& b, int method) const
 		{
+			layer->Set("method", (dnn::Invert::Method)method);
 			std::vector<Tensor> tops{ b };
 			layer->Forward({ a }, tops);
 		}
@@ -122,7 +123,7 @@ namespace chaos::inline op
 			layer->Forward({a}, tops);
 		}
 
-		//Tensor operator()(const Tensor&, const Tensor&) = delete;
+		Tensor operator()(const Tensor&, const Tensor&) const = delete;
 		void operator()(const Tensor&, const Tensor&, Tensor&) const = delete;
 	};
 	class Permute : public Operator<op::Permute>
@@ -192,6 +193,13 @@ namespace chaos
 		return op(a, { b });
 	}
 
+	Tensor operator/(const Tensor& a, const Tensor& b)
+	{
+		auto& op = op::Invert::Get();
+		Tensor bt;
+		op(b, bt, dnn::Invert::DECOMP_SVD);
+		return a * bt;
+	}
 	Tensor operator/(float a, const Tensor& b)
 	{
 		auto& op = Div::Get();
@@ -240,14 +248,14 @@ namespace chaos
 		}
 		op(transA, transB, a, b, alpha, c, beta);
 	}
-	void invert(const Tensor& a, Tensor& b)
+	void invert(const Tensor& a, Tensor& b, int method)
 	{
 		if (b.empty())
 		{
 			b.Create(Shape(a.shape[1], a.shape[0]), Steps(a.shape[0], 1), Depth::D4, Packing::CHW, nullptr);
 		}
 		auto& op = op::Invert::Get();
-		op(a, b);
+		op(a, b, method);
 	}
 	void mul(const Tensor& a, const Tensor& b, Tensor& c)
 	{

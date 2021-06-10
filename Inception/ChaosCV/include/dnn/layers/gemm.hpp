@@ -2,20 +2,23 @@
 
 #include "dnn/layer.hpp"
 
-namespace chaos::inline dnn
+namespace chaos
 {
-	class CHAOS_API GEMM : public Layer
+	inline namespace dnn
 	{
-	public:
-		GEMM();
+		class CHAOS_API GEMM : public Layer
+		{
+		public:
+			GEMM();
 
-		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
-		void Set(const std::string& pname, const std::any& param) override;
+			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
+			void Set(const std::string& pname, const std::any& param) override;
 
-		float alpha = 1.f;
-		float beta = 0.f;
+			float alpha = 1.f;
+			float beta = 0.f;
 
-		bool transA = false;
-		bool transB = false;
-	};
+			bool transA = false;
+			bool transB = false;
+		};
+	}
 }

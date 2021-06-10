@@ -30,12 +30,15 @@ namespace chaos
 
 		virtual void Set(const std::string& pname, const std::any& param);
 
-		const std::string& type;
-		 
+		const std::string type;
+		
 		// support inplace inference
 		bool support_inplace;
 		bool support_vulkan;
 
 		const VulkanDevice* vkdev;
+
+		std::vector<int> bottoms_index;
+		std::vector<int> tops_index;
 	};
 }

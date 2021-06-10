@@ -2,33 +2,36 @@
 
 #include "dnn/layer.hpp"
 
-namespace chaos::inline dnn
+namespace chaos
 {
-	class CHAOS_API SVD : public Layer
+	inline namespace dnn
 	{
-	public:
-		enum UV
+		class CHAOS_API SVD : public Layer
 		{
-			SIMPLE_UV = 1,
-			/** indicates that only a vector of singular values `w` is to be processed, while u and vt
-			will be set to empty matrices */
-			NO_UV = 2,
-			/** when the matrix is not square, by default the algorithm produces u and vt matrices of
-			sufficiently large size for the further A reconstruction; if, however, FULL_UV flag is
-			specified, u and vt will be full-size square orthogonal matrices.*/
-			FULL_UV = 4
+		public:
+			enum UV
+			{
+				SIMPLE_UV = 1,
+				/** indicates that only a vector of singular values `w` is to be processed, while u and vt
+				will be set to empty matrices */
+				NO_UV = 2,
+				/** when the matrix is not square, by default the algorithm produces u and vt matrices of
+				sufficiently large size for the further A reconstruction; if, however, FULL_UV flag is
+				specified, u and vt will be full-size square orthogonal matrices.*/
+				FULL_UV = 4
+			};
+
+			SVD();
+			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const override;
+
+			void CreatePipeline(const Option&) override;
+			void DestroyPipeline(const Option&) override;
+
+			void Set(const std::string& pname, const std::any& param) override;
+
+			int uv = SIMPLE_UV;
+
+			Ptr<Layer> transpose;
 		};
-
-		SVD();
-		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt = Option()) const override;
-
-		void CreatePipeline(const Option&) override;
-		void DestroyPipeline(const Option&) override;
-
-		void Set(const std::string& pname, const std::any& param) override;
-
-		int uv = SIMPLE_UV;
-
-		Ptr<Layer> transpose;
-	};
+	}
 }

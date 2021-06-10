@@ -30,6 +30,7 @@ namespace chaos
 		FATAL,
 	};
 
+
 	enum class Depth
 	{
 		D1 = 1,

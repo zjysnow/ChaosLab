@@ -2,18 +2,31 @@
 
 #include "dnn/layer.hpp"
 
-namespace chaos::inline dnn
+namespace chaos
 {
-	class CHAOS_API Invert : public Layer
+	inline namespace dnn
 	{
-	public:
-		Invert();
-		void CreatePipeline(const Option&) override;
-		void DestroyPipeline(const Option&) override;
+		class CHAOS_API Invert : public Layer
+		{
+		public:
+			enum Method
+			{
+				DECOMP_LU,
+				DECOMP_SVD,
+			};
 
-		void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
+			Invert();
+			void CreatePipeline(const Option&) override;
+			void DestroyPipeline(const Option&) override;
 
-		Ptr<Layer> svd;
-		Ptr<Layer> backsubst;
-	};
+			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
+
+			void Set(const std::string& pname, const std::any& param) override;
+
+			Ptr<Layer> svd;
+			Ptr<Layer> backsubst;
+
+			int method = DECOMP_SVD;
+		};
+	}
 }

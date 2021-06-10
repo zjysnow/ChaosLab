@@ -1,20 +1,23 @@
 #include "dnn/layers/abs.hpp"
 
-namespace chaos::inline dnn
+namespace chaos
 {
-	Abs::Abs() : Layer("Abs") 
-	{ 
-		support_inplace = true;
-	}
-
-	void Abs::Forward(std::vector<Tensor>& bottom_top_blobs, const Option&) const
+	inline namespace dnn
 	{
-		CHECK_EQ(1, bottom_top_blobs.size()) << "layer Abs expect 1 input/output but got " << bottom_top_blobs.size();
-		Tensor& val = bottom_top_blobs[0];
-
-		for (size_t i = 0; i < val.total(); i++)
+		Abs::Abs() : Layer("Abs")
 		{
-			val[i] = std::abs(val[i]);
+			support_inplace = true;
+		}
+
+		void Abs::Forward(std::vector<Tensor>& bottom_top_blobs, const Option&) const
+		{
+			CHECK_EQ(1, bottom_top_blobs.size()) << "layer Abs expect 1 input/output but got " << bottom_top_blobs.size();
+			Tensor& val = bottom_top_blobs[0];
+
+			for (size_t i = 0; i < val.total(); i++)
+			{
+				val[i] = std::abs(val[i]);
+			}
 		}
 	}
 }

@@ -47,12 +47,6 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Invert", Invert);
 }
 
-#include "dnn/layers/noop.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("Noop", Noop);
-}
-
 #include "dnn/layers/permute.hpp"
 namespace chaos::inline dnn
 {
