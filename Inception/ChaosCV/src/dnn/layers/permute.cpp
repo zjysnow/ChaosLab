@@ -8,13 +8,13 @@ namespace chaos
 
         void Permute::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
         {
-            CHECK_EQ(1, bottom_blobs.size()) << "layer '" << type << "' expect 1 input but got " << bottom_blobs.size();
+            CHECK_EQ(1, bottom_blobs.size()) << "layer 'Permute' expect 1 input but got " << bottom_blobs.size();
             const Tensor& A = bottom_blobs[0];
-            size_t dims = A.shape.size();
+            int dims = (int)A.shape.size();
             CHECK_EQ(orders.size(), dims) << "num axes expect " << orders.size() << " but got " << dims; // Format("num axes expect %d, but got %d", orders.size(), dims);
 
             bool need_permute = false;
-            for (size_t i = 0; i < dims; i++)
+            for (int i = 0; i < dims; i++)
             {
                 if (i != orders[i])
                 {
@@ -23,7 +23,7 @@ namespace chaos
                 }
             }
 
-            CHECK_EQ(1, top_blobs.size()) << "layer '" << type << "' expect 1 output but got " << top_blobs.size();
+            CHECK_EQ(1, top_blobs.size()) << "layer 'Permute' expect 1 output but got " << top_blobs.size();
             Tensor& P = top_blobs[0];
             Shape shape = A.shape;
             if (not need_permute)
@@ -34,7 +34,7 @@ namespace chaos
             }
             else
             {
-                for (size_t i = 0; i < dims; i++) shape[i] = A.shape[orders[i]];
+                for (int i = 0; i < dims; i++) shape[i] = A.shape[orders[i]];
                 if (P.empty()) P.Create(shape, shape.steps(), Depth::D4, Packing::CHW, opt.blob_allocator);
                 CHECK_EQ(shape, P.shape) << "expect " << shape << " but got " << P.shape;
 
@@ -43,13 +43,14 @@ namespace chaos
                     size_t a_idx = 0;
                     size_t p_idx = 0;
                     size_t idx = i;
-                    for (size_t d = 0; d < dims; d++)
+                    //for (size_t d = 0; d < dims; d++)
+                    for (int d = dims - 1; d >= 0; d--)
                     {
-                        uint32 order = orders[dims - d - 1];
-                        size_t k = idx % shape[dims - d - 1];
-                        p_idx += k * top_blobs[0].steps[dims - d - 1];
+                        uint32 order = orders[d];
+                        size_t k = idx % shape[d];
+                        p_idx += k * top_blobs[0].steps[d];
                         a_idx += k * bottom_blobs[0].steps[order];
-                        idx /= shape[dims - d - 1];
+                        idx /= shape[d];
                     }
                     P[p_idx] = A[a_idx];
                 }

@@ -53,6 +53,12 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Permute", Permute);
 }
 
+#include "dnn/layers/sum.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Sum", Sum);
+}
+
 #include "dnn/layers/svd.hpp"
 namespace chaos::inline dnn
 {

@@ -126,6 +126,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\invert.hpp">
       <Filter>include\dnn\layers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\permute_vulkan.hpp">
+      <Filter>include\dnn\layers\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -194,9 +200,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\invert.cpp">
       <Filter>src\dnn\layers</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp">
+      <Filter>src\dnn\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\permute_vulkan.cpp">
+      <Filter>src\dnn\layers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\option.cpp">
+      <Filter>src\dnn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\abs.comp">
+      <Filter>src\dnn\layers\vulkan\shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\permute.comp">
       <Filter>src\dnn\layers\vulkan\shaders</Filter>
     </CustomBuild>
   </ItemGroup>

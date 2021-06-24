@@ -10,6 +10,8 @@ namespace chaos
 	public:
 		Option() = default;
 
+		//~Option();
+
 		// enable vulkan compute
 		bool use_vulkan_compute = false;
 

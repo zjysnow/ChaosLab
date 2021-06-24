@@ -8,9 +8,11 @@
 namespace chaos
 {
 	Command::Command(const VulkanDevice* vkdev) : vkdev(vkdev) {}
+	//Command::Command(int device_idx) : vkdev(GetGPUDevice(device_idx)) {}
 	Command::~Command() {}
 
 	ComputeCommand::ComputeCommand(const VulkanDevice* vkdev) : Command(vkdev)
+	//ComputeCommand::ComputeCommand(int device_idx) : Command(device_idx)
 	{
 		VkResult ret;
 		VkCommandPoolCreateInfo pool_info{};
@@ -69,7 +71,7 @@ namespace chaos
 
 			RecordClone(staging, dst, opt);
 
-			staging_buffers.push_back(staging);
+			buffers.push_back(staging);
 		}
 	}
 	void ComputeCommand::RecordDownload(const VulkanTensor& src, Tensor& dst, const Option& opt)
@@ -86,12 +88,12 @@ namespace chaos
 
 			RecordClone(src, staging, opt);
 
-			staging_buffers.push_back(staging);
+			buffers.push_back(staging);
 			download_post.push_back(dst);
 
 			Record r;
 			r.type = Record::TYPE_DOWNLOAD;
-			r.post_download.src = (uint32)staging_buffers.size() - 1;
+			r.post_download.src = (uint32)buffers.size() - 1;
 			r.post_download.dst = (uint32)download_post.size() - 1;
 			delayed_records.push_back(r);
 		}
@@ -160,6 +162,8 @@ namespace chaos
 
 				binding.data->access_flag = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
 				binding.data->stage_flag = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+				buffers.push_back(binding);
 			}
 		}
 
@@ -221,7 +225,7 @@ namespace chaos
 			{
 			case Record::TYPE_DOWNLOAD:
 			{
-				VulkanTensor& src = staging_buffers[record.post_download.src];
+				VulkanTensor& src = buffers[record.post_download.src];
 				Tensor& dst = download_post[record.post_download.dst];
 				memcpy(dst.data, src.mapped_data(), src.total() * src.depth * src.packing);
 				break;
@@ -239,7 +243,7 @@ namespace chaos
 	{
 		delayed_records.clear();
 
-		staging_buffers.clear();
+		buffers.clear();
 		download_post.clear();
 
 		VkResult ret;
@@ -258,6 +262,7 @@ namespace chaos
 
 
 	TransferCommand::TransferCommand(const VulkanDevice* vkdev) : Command(vkdev)
+	//TransferCommand::TransferCommand(int device_idx) : Command(device_idx)
 	{
 		VkResult ret;
 		VkCommandPoolCreateInfo pool_info{};

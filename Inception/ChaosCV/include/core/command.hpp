@@ -61,7 +61,7 @@ namespace chaos
 		std::vector<Record> delayed_records;
 
 		std::vector<Tensor> download_post;
-		std::vector<VulkanTensor> staging_buffers;
+		std::vector<VulkanTensor> buffers; // to buffers and record pipeline bindings buffer too
 		
 		std::function<void(VkCommandBuffer, VkDescriptorUpdateTemplate, VkPipelineLayout, uint32, const void*)> vkCmdPushDescriptorSetWithTemplate;
 	};

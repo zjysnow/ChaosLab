@@ -4,16 +4,19 @@
 
 namespace chaos
 {
-	class CHAOS_API AbsVulkan : virtual public Abs
+	inline namespace dnn
 	{
-	public:
-		AbsVulkan();
+		class CHAOS_API AbsVulkan : virtual public Abs
+		{
+		public:
+			AbsVulkan();
 
-		void CreatePipeline(const Option& opt) override;
-		void DestroyPipeline(const Option& opt) override;
+			void CreatePipeline(const Option& opt) override;
+			void DestroyPipeline(const Option& opt) override;
 
-		void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt) const;
+			void Forward(std::vector<VulkanTensor>& bottom_top_blobs, ComputeCommand& cmd, const Option& opt) const;
 
-		ComputePipeline* pipeline_abs;
-	};
+			ComputePipeline* abs_pipeline;
+		};
+	}
 }

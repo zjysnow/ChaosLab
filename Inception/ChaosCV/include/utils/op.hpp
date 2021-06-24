@@ -13,11 +13,11 @@ namespace chaos
 	CHAOS_API Tensor operator-(float a, const Tensor& b);
 	CHAOS_API Tensor operator-(const Tensor& a, float b);
 
-	CHAOS_API Tensor operator*(const Tensor& a, const Tensor& b); // a * b
+	CHAOS_API Tensor operator*(const Tensor& a, const Tensor& b); // just for matrix a * b
 	CHAOS_API Tensor operator*(float a, const Tensor& b);
 	CHAOS_API Tensor operator*(const Tensor& a, float b);
 
-	CHAOS_API Tensor operator/(const Tensor& a, const Tensor& b); // a * inv(b)
+	CHAOS_API Tensor operator/(const Tensor& a, const Tensor& b); // just for matrix a * inv(b)
 	CHAOS_API Tensor operator/(float a, const Tensor& b);
 	CHAOS_API Tensor operator/(const Tensor& a, float b);
 
@@ -28,6 +28,7 @@ namespace chaos
 	CHAOS_API void mul(const Tensor& a, const Tensor& b, Tensor& c); // broadcast mul
 	CHAOS_API void permute(const Tensor& a, const Array<uint32>& orders, Tensor& b);
 	CHAOS_API void sub(const Tensor& a, const Tensor& b, Tensor& c);
+	CHAOS_API void sum(const Tensor& a, Tensor& b, bool all = false, const Array<uint32>& vecdim = { 0 });
 	CHAOS_API void svd(const Tensor& a, Tensor& w); // NO_UV
 	CHAOS_API void svd(const Tensor& a, Tensor& w, Tensor& u, Tensor& vt, bool full_uv = false);
 	CHAOS_API void transpose(const Tensor& a, Tensor& b);

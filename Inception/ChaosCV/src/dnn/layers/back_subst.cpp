@@ -83,6 +83,17 @@ namespace chaos
 
         BackSubst::BackSubst() : Layer("BackSubst") {}
 
+        void BackSubst::CreatePipeline(const Option& opt)
+        {
+            gemm = LayerRegistry::CreateLayer("GEMM");
+            permute = LayerRegistry::CreateLayer("Permute");
+        }
+        void BackSubst::DestroyPipeline(const Option& opt)
+        {
+            gemm->DestroyPipeline(opt);
+            permute->DestroyPipeline(opt);
+        }
+
         void BackSubst::Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const
         {
             CHECK_LE(3, bottom_blobs.size()) << "layer backsubst expect at least 3 inputs but got " << bottom_blobs.size();

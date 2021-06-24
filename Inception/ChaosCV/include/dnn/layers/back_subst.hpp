@@ -11,7 +11,13 @@ namespace chaos
 		{
 		public:
 			BackSubst();
+			void CreatePipeline(const Option& opt) override;
+			void DestroyPipeline(const Option& opt) override;
+
 			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
+
+			Ptr<Layer> gemm;
+			Ptr<Layer> permute;
 		};
 	}
 }

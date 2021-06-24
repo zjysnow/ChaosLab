@@ -100,6 +100,8 @@ namespace chaos
 
 		data->capacity = capacity;
 		data->offset = 0;
+		data->access_flag = 0;
+		data->stage_flag = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
 		if (mappable)
 		{
@@ -142,6 +144,8 @@ namespace chaos
 		vkBindBufferMemory(vkdev->GetDevice(), data->buffer, data->memory, 0);
 		data->capacity = capacity;
 		data->offset = 0;
+		data->access_flag = 0;
+		data->stage_flag = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
 		VkResult ret = vkMapMemory(vkdev->GetDevice(), data->memory, 0, capacity, 0, &data->mapped_data);
 		CHECK_EQ(VK_SUCCESS, ret) << "vkMapMemory failed " << ret;

@@ -5,6 +5,7 @@
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/invert.hpp"
 #include "dnn/layers/permute.hpp"
+#include "dnn/layers/sum.hpp"
 #include "dnn/layers/svd.hpp"
 
 namespace chaos::inline op
@@ -89,7 +90,13 @@ namespace chaos::inline op
 			std::vector<Tensor> tops{ b };
 			layer->Forward({ a }, tops);
 		}
-
+		Tensor operator()(const Tensor& a) const
+		{
+			layer->Set("method", dnn::Invert::DECOMP_SVD);
+			std::vector<Tensor> tops(1);
+			layer->Forward({ a }, tops);
+			return tops[0];
+		}
 		Tensor operator()(const Tensor& a, const Tensor& b) const = delete;
 		void operator()(const Tensor& a, const Tensor& b, Tensor& c) const = delete;
 	};
@@ -103,6 +110,19 @@ namespace chaos::inline op
 	{
 	public:
 		Sub() { layer = std::make_shared<dnn::BinaryOp>(dnn::BinaryOp::SUB); layer->CreatePipeline(); }
+	};
+	class Sum : public Operator<op::Sum>
+	{
+	public:
+		Sum() { layer = std::make_shared<dnn::Sum>(); layer->CreatePipeline(); }
+
+		void operator()(const Tensor& a, Tensor& b, bool all, const Array<uint32>& vecdim)
+		{
+			layer->Set("all", all);
+			layer->Set("vecdim", vecdim);
+			std::vector<Tensor> tops{ b };
+			layer->Forward({a}, tops);
+		}
 	};
 	class SVD : public Operator<op::SVD>
 	{
@@ -196,9 +216,7 @@ namespace chaos
 	Tensor operator/(const Tensor& a, const Tensor& b)
 	{
 		auto& op = op::Invert::Get();
-		Tensor bt;
-		op(b, bt, dnn::Invert::DECOMP_SVD);
-		return a * bt;
+		return a * op(b);
 	}
 	Tensor operator/(float a, const Tensor& b)
 	{
@@ -285,6 +303,21 @@ namespace chaos
 			w.Create(Shape(std::min(a.shape[0], a.shape[1])), Steps(1), Depth::D4, Packing::CHW, nullptr);
 		}
 		op(a, w);
+	}
+	void sum(const Tensor& a, Tensor& b, bool all, const Array<uint32>& vecdim)
+	{
+		if (b.empty())
+		{
+			Shape shape = a.shape;
+			for (const auto& i : vecdim)
+			{
+				CHECK_LE(i, shape.size()) << "out of range";
+				shape[i] = 1;
+			}
+			b.Create(shape, shape.steps(), Depth::D4, Packing::CHW, nullptr);
+		}
+		auto& op = op::Sum::Get();
+		op(a, b, all, vecdim);
 	}
 	void svd(const Tensor& a, Tensor& w, Tensor& u, Tensor& vt, bool full_uv)
 	{

@@ -1,0 +1,32 @@
+#version 450
+
+layout (binding = 0) buffer bottom_buffer { float bottom[]; };
+layout (binding = 1) buffer bottom_steps { int asteps[]; };
+
+layout (binding = 2) buffer top_buffer { float top[]; };
+layout (binding = 3) buffer top_steps { int psteps[]; };
+
+layout (binding = 4) buffer orders_buffer { int orders[]; };
+
+layout (push_constant) uniform parameter
+{
+  int dims;
+  int total;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+
+  if (gx >= p.total) return;
+
+  int index = 0;
+  int i = gx;
+  for (int d = 0; d < p.dims; d++)
+  {
+    int o = orders[d];
+    index += (i / psteps[d]) * asteps[o];
+    i %= psteps[d];
+  }
+  top[gx] = bottom[index];
+}

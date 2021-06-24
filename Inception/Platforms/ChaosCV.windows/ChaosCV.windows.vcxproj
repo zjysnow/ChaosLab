@@ -198,6 +198,12 @@
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\abs.comp">
       <FileType>Document</FileType>
     </CustomBuild>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\permute.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\sum.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\abs.comp">
