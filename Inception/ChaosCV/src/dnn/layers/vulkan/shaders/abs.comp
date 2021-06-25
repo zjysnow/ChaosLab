@@ -4,18 +4,13 @@ layout (binding = 0) buffer bottom_top { float blob[]; };
 
 layout (push_constant) uniform parameter
 {
-  int c;
-  int h;
-  int w;
+  int total;
 } p;
 
 void main()
 {
   int gx = int(gl_GlobalInvocationID.x);
-  int gy = int(gl_GlobalInvocationID.y);
-  int gz = int(gl_GlobalInvocationID.z);
 
-  if (gx >= p.w || gy >= p.h || gz >= p.c) return;
-  const int i = gz * p.h * p.w + gy * p.w + gx;
-  blob[i] = abs(blob[i]);
+  if (gx >= p.total) return;
+  blob[gx] = abs(blob[gx]);
 }

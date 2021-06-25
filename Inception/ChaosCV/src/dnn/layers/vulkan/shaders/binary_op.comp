@@ -1,0 +1,48 @@
+#version 450
+
+layout (binding = 0) buffer a_blob { float a[]; };
+layout (binding = 1) buffer a_shape { int a_shape_data[]; };
+layout (binding = 2) buffer a_steps { int a_steps_data[]; };
+
+layout (binding = 3) buffer b_blob { float b[]; };
+layout (binding = 4) buffer b_shape { int b_shape_data[]; };
+layout (binding = 5) buffer b_steps { int b_steps_data[]; };
+
+layout (binding = 6) buffer c_blob { float c[]; };
+layout (binding = 7) buffer c_shape { int c_shape_data[]; };
+layout (binding = 8) buffer c_steps { int c_steps_data[]; };
+
+
+layout (push_constant) uniform parameter
+{
+  int total;
+  int dims;
+  int type;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+
+  if (gx >= p.total) return;
+
+  int a_idx = 0;
+  int b_idx = 0;
+  int c_idx = 0;
+  int idx = gx;
+  for (int d = p.dims - 1; d >=0; d--)
+  {
+      int k = idx % c_shape_data[d];
+      a_idx += (k >= a_shape_data[d] ? 0 : k) * a_steps_data[d];
+      b_idx += (k >= b_shape_data[d] ? 0 : k) * b_steps_data[d];
+      c_idx += k * c_steps_data[d];
+      idx /= c_shape_data[d];
+  }
+
+  float ret = 0;
+  if (p.type == 0) ret = a[a_idx] + b[b_idx];
+  if (p.type == 1) ret = a[a_idx] - b[b_idx];
+  if (p.type == 2) ret = a[a_idx] * b[b_idx];
+  if (p.type == 3) ret = a[a_idx] / b[b_idx];
+  c[c_idx] = ret;
+}

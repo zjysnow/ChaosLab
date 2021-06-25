@@ -1,5 +1,7 @@
 #include "core/array.hpp"
 #include "core/log.hpp"
+#include "core/tensor.hpp"
+#include "dnn/option.hpp"
 
 #include <format>
 #include <numeric>
@@ -26,6 +28,13 @@ namespace chaos
 			if (data_[i] != rhs[i]) return false;
 		}
 		return true;
+	}
+	VulkanTensor Steps::Upload(const Option& opt) const
+	{
+		VulkanTensor up = VulkanTensor((int)size_, Depth::D4, Packing::CHW, opt.staging_vkallocator);
+		CHECK(up.allocator->mappable);
+		memcpy(up.mapped_data(), data_, sizeof(int) * size_);
+		return up;
 	}
 
 	Shape::Shape(int d0) : Array<uint32>(1) { data_[0] = d0; }
@@ -76,6 +85,15 @@ namespace chaos
 		}
 		return true;
 	}
+
+	VulkanTensor Shape::Upload(const Option& opt) const
+	{
+		VulkanTensor up = VulkanTensor((int)size_, Depth::D4, Packing::CHW, opt.staging_vkallocator);
+		CHECK(up.allocator->mappable);
+		memcpy(up.mapped_data(), data_, sizeof(int) * size_);
+		return up;
+	}
+
 	Shape operator&(const Shape& lhs, const Shape& rhs)
 	{
 		Shape a = lhs, b = rhs;
@@ -105,5 +123,7 @@ namespace chaos
 		}
 		return stream << ")";
 	}
+
+
 
 }

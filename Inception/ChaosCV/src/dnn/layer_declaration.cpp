@@ -23,44 +23,59 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Abs", AbsFinal);
 }
 
-#include "dnn/layers/back_subst.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("BackSubst", BackSubst);
-}
-
+//#include "dnn/layers/back_subst.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("BackSubst", BackSubst);
+//}
+//
 #include "dnn/layers/binary_op.hpp"
+#include "dnn/layers/vulkan/binary_op_vulkan.hpp"
 namespace chaos::inline dnn
 {
-	REGISTER_LAYER("BinaryOp", BinaryOp);
+	class BinaryOpFinal : virtual public BinaryOpVulkan
+	{
+	public:
+		void CreatePipeline(const Option& opt) final
+		{
+			BinaryOp::CreatePipeline(opt);
+			if (opt.use_vulkan_compute) BinaryOpVulkan::CreatePipeline(opt);
+		}
+		void DestroyPipeline(const Option& opt) final
+		{
+			if (opt.use_vulkan_compute) BinaryOpVulkan::DestroyPipeline(opt);
+			BinaryOp::DestroyPipeline(opt);
+		}
+	};
+	REGISTER_LAYER("BinaryOp", BinaryOpFinal);
 }
-
-#include "dnn/layers/gemm.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("GEMM", GEMM);
-}
-
-#include "dnn/layers/invert.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("Invert", Invert);
-}
-
-#include "dnn/layers/permute.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("Permute", Permute);
-}
-
-#include "dnn/layers/sum.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("Sum", Sum);
-}
-
-#include "dnn/layers/svd.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("SVD", SVD);
-}
+//
+//#include "dnn/layers/gemm.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("GEMM", GEMM);
+//}
+//
+//#include "dnn/layers/invert.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("Invert", Invert);
+//}
+//
+//#include "dnn/layers/permute.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("Permute", Permute);
+//}
+//
+//#include "dnn/layers/sum.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("Sum", Sum);
+//}
+//
+//#include "dnn/layers/svd.hpp"
+//namespace chaos::inline dnn
+//{
+//	REGISTER_LAYER("SVD", SVD);
+//}

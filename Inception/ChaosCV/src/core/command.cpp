@@ -49,10 +49,21 @@ namespace chaos
 	}
 	ComputeCommand::~ComputeCommand()
 	{
-		vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
-		vkDestroyCommandPool(vkdev->GetDevice(), command_pool, nullptr);
+		Release();
 	}
-
+	void ComputeCommand::Release()
+	{
+		if (fence)
+		{
+			vkDestroyFence(vkdev->GetDevice(), fence, nullptr);
+			fence = nullptr;
+		}
+		if (command_pool)
+		{
+			vkDestroyCommandPool(vkdev->GetDevice(), command_pool, nullptr);
+			command_pool = nullptr;
+		}
+	}
 	void ComputeCommand::RecordUpload(const Tensor& src, VulkanTensor& dst, const Option& opt)
 	{
 		if (dst.empty()) dst.CreateLike(src, opt.blob_vkallocator);

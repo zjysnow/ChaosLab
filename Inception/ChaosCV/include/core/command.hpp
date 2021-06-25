@@ -31,6 +31,8 @@ namespace chaos
 
 		void SubmitAndWait();
 		void Reset();
+
+		void Release();
 	protected:
 		VkCommandBuffer command_buffer;
 		VkFence fence;

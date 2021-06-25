@@ -8,6 +8,9 @@
 
 namespace chaos
 {
+	class VulkanTensor;
+	class Option;
+
 	template<class Type>
 	concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
 
@@ -174,6 +177,8 @@ namespace chaos
 
 		void Expand(size_t axis, int dims, uint32 step);
 		bool operator==(const Steps& rhs);
+
+		VulkanTensor Upload(const Option& opt) const;
 	};
 
 	class CHAOS_API Shape : public Array<uint32>
@@ -204,5 +209,7 @@ namespace chaos
 		bool operator==(const Shape& rhs);
 		CHAOS_API friend Shape operator&(const Shape& lhs, const Shape& rhs); // broadcast shape
 		CHAOS_API friend std::ostream& operator<<(std::ostream& stream, const Shape& shape);
+
+		VulkanTensor Upload(const Option& opt) const;
 	};
 }
