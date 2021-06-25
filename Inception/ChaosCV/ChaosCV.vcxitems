@@ -30,8 +30,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\binary_op_vulkan.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\sum_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
   </ItemGroup>
@@ -50,8 +52,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\binary_op_vulkan.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\sum_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\option.cpp" />
   </ItemGroup>
@@ -60,5 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\binary_op.comp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\sum.comp" />
   </ItemGroup>
 </Project>

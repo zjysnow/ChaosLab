@@ -17,16 +17,16 @@ static constexpr float eps = 1E-5;
 namespace chaos
 {
 
-	class GPU
+	class Env final
 	{
 	public:
-		GPU() : vkdev(GetGPUDevice()), cmd(vkdev) 
+		Env() : vkdev(GetGPUDevice()), cmd(vkdev)
 		{
 			opt.use_vulkan_compute = true;
 			opt.blob_vkallocator = new VulkanLocalAllocator(vkdev);
 			opt.staging_vkallocator = new VulkanStagingAllocator(vkdev);
 		}
-		~GPU() 
+		~Env()
 		{ 
 			cmd.Release();
 			delete opt.staging_vkallocator;
@@ -39,5 +39,5 @@ namespace chaos
 		ComputeCommand cmd;
 	};
 
-	static GPU g_gpu;
+	static Env g_env;
 }

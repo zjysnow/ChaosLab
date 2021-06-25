@@ -8,6 +8,15 @@
 
 namespace chaos
 {
+	template<Arithmetic Type>
+	VulkanTensor Array<Type>::Upload(const Option& opt) const
+	{
+		VulkanTensor up = VulkanTensor((int)size_, Depth::D4, Packing::CHW, opt.staging_vkallocator);
+		CHECK(up.allocator->mappable);
+		memcpy(up.mapped_data(), data_, sizeof(Type) * size_);
+		return up;
+	}
+
 	Steps::Steps(int s0) : Array<uint32>(1) { data_[0] = s0; }
 	Steps::Steps(int s0, int s1) : Array<uint32>(2) { data_[0] = s0; data_[1] = s1; }
 	void Steps::Expand(size_t axis, int dims, uint32 step)
@@ -28,13 +37,6 @@ namespace chaos
 			if (data_[i] != rhs[i]) return false;
 		}
 		return true;
-	}
-	VulkanTensor Steps::Upload(const Option& opt) const
-	{
-		VulkanTensor up = VulkanTensor((int)size_, Depth::D4, Packing::CHW, opt.staging_vkallocator);
-		CHECK(up.allocator->mappable);
-		memcpy(up.mapped_data(), data_, sizeof(int) * size_);
-		return up;
 	}
 
 	Shape::Shape(int d0) : Array<uint32>(1) { data_[0] = d0; }
@@ -84,14 +86,6 @@ namespace chaos
 			if (data_[i] != rhs[i]) return false;
 		}
 		return true;
-	}
-
-	VulkanTensor Shape::Upload(const Option& opt) const
-	{
-		VulkanTensor up = VulkanTensor((int)size_, Depth::D4, Packing::CHW, opt.staging_vkallocator);
-		CHECK(up.allocator->mappable);
-		memcpy(up.mapped_data(), data_, sizeof(int) * size_);
-		return up;
 	}
 
 	Shape operator&(const Shape& lhs, const Shape& rhs)

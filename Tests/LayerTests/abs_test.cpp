@@ -10,13 +10,13 @@ namespace chaos
 		AbsTest()
 		{
 			abs = LayerRegistry::CreateLayer("Abs");
-			abs->vkdev = g_gpu.vkdev;
-			abs->CreatePipeline(g_gpu.opt);
+			abs->vkdev = g_env.vkdev;
+			abs->CreatePipeline(g_env.opt);
 		}
 
 		~AbsTest()
 		{
-			abs->DestroyPipeline(g_gpu.opt);
+			abs->DestroyPipeline(g_env.opt);
 		}
 		
 		TEST_METHOD(GpuAbs)
@@ -25,13 +25,13 @@ namespace chaos
 			std::vector<Tensor> expected(1);
 
 			std::vector<VulkanTensor> bottom_top_blobs(1);
-			g_gpu.cmd.RecordUpload(a, bottom_top_blobs[0], g_gpu.opt);
-			abs->Forward(bottom_top_blobs, g_gpu.cmd, g_gpu.opt);
-			g_gpu.cmd.RecordDownload(bottom_top_blobs[0], b, g_gpu.opt);
-			g_gpu.cmd.SubmitAndWait();
-			g_gpu.cmd.Reset();
+			g_env.cmd.RecordUpload(a, bottom_top_blobs[0], g_env.opt);
+			abs->Forward(bottom_top_blobs, g_env.cmd, g_env.opt);
+			g_env.cmd.RecordDownload(bottom_top_blobs[0], b, g_env.opt);
+			g_env.cmd.SubmitAndWait();
+			g_env.cmd.Reset();
 
-			abs->Forward({ a }, expected, g_gpu.opt);
+			abs->Forward({ a }, expected, g_env.opt);
 
 			for (int i = 0; i < 4; i++)
 			{

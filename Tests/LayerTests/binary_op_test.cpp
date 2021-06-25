@@ -8,12 +8,12 @@ namespace chaos
 		BinaryOpTest()
 		{
 			binary_op = LayerRegistry::CreateLayer("BinaryOp");
-			binary_op->vkdev = g_gpu.vkdev;
-			binary_op->CreatePipeline(g_gpu.opt);
+			binary_op->vkdev = g_env.vkdev;
+			binary_op->CreatePipeline(g_env.opt);
 		}
 		~BinaryOpTest()
 		{
-			binary_op->DestroyPipeline(g_gpu.opt);
+			binary_op->DestroyPipeline(g_env.opt);
 		}
 
 		TEST_METHOD(GpuBinaryOp)
@@ -28,16 +28,16 @@ namespace chaos
 				std::vector<VulkanTensor> bottoms(2);
 				std::vector<VulkanTensor> tops(1);
 
-				g_gpu.cmd.RecordUpload(a, bottoms[0], g_gpu.opt);
-				g_gpu.cmd.RecordUpload(b, bottoms[1], g_gpu.opt);
+				g_env.cmd.RecordUpload(a, bottoms[0], g_env.opt);
+				g_env.cmd.RecordUpload(b, bottoms[1], g_env.opt);
 
-				binary_op->Forward(bottoms, tops, g_gpu.cmd, g_gpu.opt);
+				binary_op->Forward(bottoms, tops, g_env.cmd, g_env.opt);
 
-				g_gpu.cmd.RecordDownload(tops[0], c, g_gpu.opt);
-				g_gpu.cmd.SubmitAndWait();
-				g_gpu.cmd.Reset();
+				g_env.cmd.RecordDownload(tops[0], c, g_env.opt);
+				g_env.cmd.SubmitAndWait();
+				g_env.cmd.Reset();
 
-				binary_op->Forward({ a,b }, expected, g_gpu.opt);
+				binary_op->Forward({ a,b }, expected, g_env.opt);
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -61,16 +61,16 @@ namespace chaos
 				std::vector<VulkanTensor> bottoms(2);
 				std::vector<VulkanTensor> tops(1);
 
-				g_gpu.cmd.RecordUpload(a, bottoms[0], g_gpu.opt);
-				g_gpu.cmd.RecordUpload(b, bottoms[1], g_gpu.opt);
+				g_env.cmd.RecordUpload(a, bottoms[0], g_env.opt);
+				g_env.cmd.RecordUpload(b, bottoms[1], g_env.opt);
 
-				binary_op->Forward(bottoms, tops, g_gpu.cmd, g_gpu.opt);
+				binary_op->Forward(bottoms, tops, g_env.cmd, g_env.opt);
 
-				g_gpu.cmd.RecordDownload(tops[0], c, g_gpu.opt);
-				g_gpu.cmd.SubmitAndWait();
-				g_gpu.cmd.Reset();
+				g_env.cmd.RecordDownload(tops[0], c, g_env.opt);
+				g_env.cmd.SubmitAndWait();
+				g_env.cmd.Reset();
 
-				binary_op->Forward({ a,b }, expected, g_gpu.opt);
+				binary_op->Forward({ a,b }, expected, g_env.opt);
 
 				for (int i = 0; i < 2; i++)
 				{

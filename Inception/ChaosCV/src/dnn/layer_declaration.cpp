@@ -68,12 +68,27 @@ namespace chaos::inline dnn
 //	REGISTER_LAYER("Permute", Permute);
 //}
 //
-//#include "dnn/layers/sum.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("Sum", Sum);
-//}
-//
+#include "dnn/layers/sum.hpp"
+#include "dnn/layers/vulkan/sum_vulkan.hpp"
+namespace chaos::inline dnn
+{
+	class SumFinal : public SumVulkan
+	{
+	public:
+		void CreatePipeline(const Option& opt) final
+		{
+			Sum::CreatePipeline(opt);
+			if (opt.use_vulkan_compute) SumVulkan::CreatePipeline(opt);
+		}
+		void DestroyPipeline(const Option& opt) final
+		{
+			if (opt.use_vulkan_compute) SumVulkan::DestroyPipeline(opt);
+			Sum::DestroyPipeline(opt);
+		}
+	};
+	REGISTER_LAYER("Sum", SumFinal);
+}
+
 //#include "dnn/layers/svd.hpp"
 //namespace chaos::inline dnn
 //{

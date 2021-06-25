@@ -1,0 +1,51 @@
+#version 450
+
+layout (binding = 0) buffer a_blob { float a[]; };
+layout (binding = 1) buffer a_shape { int a_shape_data[]; };
+layout (binding = 2) buffer a_steps { int a_steps_data[]; };
+
+layout (binding = 3) buffer s_blob { float s[]; };
+layout (binding = 4) buffer s_shape { int s_shape_data[]; };
+layout (binding = 5) buffer s_steps { int s_steps_data[]; };
+
+layout (binding = 6) buffer v_shape { int v_shape_data[]; };
+
+layout (push_constant) uniform parameter
+{
+  int total;
+  int dims;
+  int res;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+
+  if (gx >= p.total) return;
+
+  int s_idx = 0;
+  int a_idx = 0;
+  int idx = gx;
+  for (int d = p.dims - 1; d >= 0; d--)
+  {
+  	int k = idx % s_shape_data[d];
+  	s_idx += k * s_steps_data[d];
+  	a_idx += k * a_steps_data[d];
+  	idx /= s_shape_data[d];
+  }
+
+  float ret = 0;
+  for (int j = 0; j < p.res; j++)
+  {
+  	int idx = j;
+  	int offset = 0;
+  	for (int d = p.dims - 1; d >= 0; d--)
+  	{
+  	  int k = idx % v_shape_data[d];
+  	  offset += k * a_steps_data[d];
+  	  idx /= v_shape_data[d];
+  	}
+    ret += a[a_idx+offset];
+  }
+  s[s_idx] = ret;
+}
