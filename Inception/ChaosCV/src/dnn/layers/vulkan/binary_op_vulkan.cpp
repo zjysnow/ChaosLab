@@ -58,7 +58,7 @@ namespace chaos
 			bindings[8] = c.steps.Upload(opt);
 
 			int total = c_shape.total();
-			int dims = c_shape.size();
+			int dims = (int)c_shape.size();
 			std::vector<VulkanConstantType> constants(3);
 			constants[0].i = total;
 			constants[1].i = dims;

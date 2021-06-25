@@ -61,13 +61,28 @@ namespace chaos::inline dnn
 //{
 //	REGISTER_LAYER("Invert", Invert);
 //}
-//
-//#include "dnn/layers/permute.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("Permute", Permute);
-//}
-//
+
+#include "dnn/layers/permute.hpp"
+#include "dnn/layers/vulkan/permute_vulkan.hpp"
+namespace chaos::inline dnn
+{
+	class PermuteFinal : public PermuteVulkan
+	{
+	public:
+		void CreatePipeline(const Option& opt) final
+		{
+			Permute::CreatePipeline(opt);
+			if (opt.use_vulkan_compute) PermuteVulkan::CreatePipeline(opt);
+		}
+		void DestroyPipeline(const Option& opt) final
+		{
+			if (opt.use_vulkan_compute) PermuteVulkan::DestroyPipeline(opt);
+			Permute::DestroyPipeline(opt);
+		}
+	};
+	REGISTER_LAYER("Permute", PermuteFinal);
+}
+
 #include "dnn/layers/sum.hpp"
 #include "dnn/layers/vulkan/sum_vulkan.hpp"
 namespace chaos::inline dnn

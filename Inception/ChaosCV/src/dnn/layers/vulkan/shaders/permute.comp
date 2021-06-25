@@ -1,0 +1,36 @@
+#version 450
+
+layout (binding = 0) buffer a_blob { float a[]; };
+layout (binding = 1) buffer a_shape { int a_shape_data[]; };
+layout (binding = 2) buffer a_steps { int a_steps_data[]; };
+
+layout (binding = 3) buffer p_blob { float p_data[]; };
+layout (binding = 4) buffer p_shape { int p_shape_data[]; };
+layout (binding = 5) buffer p_steps { int p_steps_data[]; };
+
+layout (binding = 6) buffer orders { int orders_data[]; };
+
+layout (push_constant) uniform parameter
+{
+  int total;
+  int dims;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+  if (gx >= p.total) return;
+
+  int a_idx = 0;
+  int p_idx = 0;
+  int idx = gx;
+  for (int d = p.dims - 1; d >= 0; d--)
+  {
+    int order = orders_data[d];
+    int k = idx % p_shape_data[d];
+    p_idx += k * p_steps_data[d];
+    a_idx += k * a_steps_data[order];
+    idx /= p_shape_data[d];
+  }
+  p_data[p_idx] = a[a_idx];
+}
