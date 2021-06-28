@@ -30,4 +30,8 @@ namespace chaos
 	{
 		return Hash(data);
 	}
+	inline static constexpr uint64 operator ""h(const char* data, size_t)
+	{
+		return Hash(data);
+	}
 }

@@ -6,7 +6,7 @@ namespace chaos
 {
 	inline namespace dnn
 	{
-		class BinaryOpVulkan : public BinaryOp
+		class CHAOS_API BinaryOpVulkan : public BinaryOp
 		{
 		public:
 			BinaryOpVulkan();

@@ -129,6 +129,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\gemm_vulkan.hpp">
       <Filter>include\dnn\layers\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\flow.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -202,6 +208,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\gemm_vulkan.cpp">
       <Filter>src\dnn\layers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\net.cpp">
+      <Filter>src\dnn</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\flow.cpp">
+      <Filter>src\dnn</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

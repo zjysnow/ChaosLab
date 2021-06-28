@@ -27,6 +27,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\vulkan.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\flow.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\permute_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\sum_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +55,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\pipeline.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\types.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\flow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
@@ -65,6 +68,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\permute_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\sum_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\net.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\option.cpp" />
   </ItemGroup>
   <ItemGroup>
