@@ -6,7 +6,7 @@ namespace chaos
 {
 	inline namespace dnn
 	{
-		class PermuteVulkan : public Permute
+		class PermuteVulkan : virtual public Permute
 		{
 		public:
 			PermuteVulkan();

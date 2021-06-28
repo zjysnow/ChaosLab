@@ -6,7 +6,7 @@ namespace chaos
 {
 	inline namespace dnn
 	{
-		class SumVulkan : public Sum
+		class SumVulkan : virtual public Sum
 		{
 		public:
 			SumVulkan();

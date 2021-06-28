@@ -34,6 +34,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\binary_op_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\gemm_vulkan.hpp" />

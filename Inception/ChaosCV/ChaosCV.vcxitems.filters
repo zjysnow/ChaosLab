@@ -135,6 +135,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\flow.hpp">
       <Filter>include\dnn</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp">
+      <Filter>include\dnn\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">

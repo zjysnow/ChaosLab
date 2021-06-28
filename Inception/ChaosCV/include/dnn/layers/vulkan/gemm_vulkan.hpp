@@ -6,7 +6,7 @@ namespace chaos
 {
 	inline namespace dnn
 	{
-		class GEMMVulkan : public GEMM 
+		class GEMMVulkan : virtual public GEMM 
 		{
 		public:
 			GEMMVulkan();
