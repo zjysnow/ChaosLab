@@ -1,0 +1,39 @@
+#version 450
+
+layout (binding = 0) buffer a_blob { float a[]; };
+
+layout (binding = 1) buffer b_blob { float b[]; };
+
+layout (binding = 2) buffer c_blob { float c[]; };
+
+layout (push_constant) uniform parameter
+{
+  int m;
+  int n;
+  int k;
+  int astep;
+  int bstep;
+  int cstep;
+  int transA;
+  int transB;
+  float alpha;
+  float beta;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+  int gy = int(gl_GlobalInvocationID.y);
+
+  if (gx >= p.k || gy >= p.m) return;
+
+  float sum = c[gy * p.cstep + gx] * p.beta;
+  for (int i = 0; i < p.n; i++)
+  {
+    float av = p.transA == 1 ? a[gy + i * p.astep] : a[i + gy * p.astep];
+	float bv = p.transB == 1 ? b[i + gx * p.bstep] : b[gx + i * p.bstep];
+	sum += p.alpha * av * bv;
+  }
+
+  c[gy * p.cstep + gx] = sum;
+}

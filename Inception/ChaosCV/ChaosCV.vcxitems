@@ -30,10 +30,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\binary_op_vulkan.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\gemm_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\permute_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\sum_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
@@ -54,10 +56,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\permute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\binary_op_vulkan.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\gemm_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\permute_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\sum_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
@@ -74,5 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\permute.comp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\gemm.comp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\shaders\transpose.comp" />
   </ItemGroup>
 </Project>

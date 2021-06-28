@@ -32,5 +32,8 @@
     <ClCompile Include="permute_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gemm_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

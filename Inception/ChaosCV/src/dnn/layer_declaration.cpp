@@ -50,11 +50,26 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("BinaryOp", BinaryOpFinal);
 }
 //
-//#include "dnn/layers/gemm.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("GEMM", GEMM);
-//}
+#include "dnn/layers/gemm.hpp"
+#include "dnn/layers/vulkan/gemm_vulkan.hpp"
+namespace chaos::inline dnn
+{
+	class GEMMFinal : public GEMMVulkan
+	{
+	public:
+		void CreatePipeline(const Option& opt) final
+		{
+			GEMM::CreatePipeline(opt);
+			if (opt.use_vulkan_compute) GEMMVulkan::CreatePipeline(opt);
+		}
+		void DestroyPipeline(const Option& opt) final
+		{
+			if (opt.use_vulkan_compute) GEMMVulkan::DestroyPipeline(opt);
+			GEMM::DestroyPipeline(opt);
+		}
+	};
+	REGISTER_LAYER("GEMM", GEMMFinal);
+}
 //
 //#include "dnn/layers/invert.hpp"
 //namespace chaos::inline dnn

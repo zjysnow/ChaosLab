@@ -1,23 +1,22 @@
 #pragma once
 
-#include "dnn/layers/permute.hpp"
+#include "dnn/layers/gemm.hpp"
 
 namespace chaos
 {
 	inline namespace dnn
 	{
-		class PermuteVulkan : public Permute
+		class GEMMVulkan : public GEMM 
 		{
 		public:
-			PermuteVulkan();
+			GEMMVulkan();
 
 			void CreatePipeline(const Option& opt) override;
 			void DestroyPipeline(const Option& opt) override;
 
 			void Forward(const std::vector<VulkanTensor>& bottom_blobs, std::vector<VulkanTensor>& top_blobs, ComputeCommand& cmd, const Option& opt) const override;
 
-			ComputePipeline* permute_pipeline;
-			ComputePipeline* transpose_pipeline;
+			ComputePipeline* gemm_pipeline;
 		};
 	}
 }

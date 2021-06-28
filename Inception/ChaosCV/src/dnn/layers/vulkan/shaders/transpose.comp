@@ -1,0 +1,22 @@
+#version 450
+
+layout (binding = 0) buffer a_blob { float a[]; };
+layout (binding = 1) buffer b_blob { float b[]; };
+
+layout (push_constant) uniform parameter
+{
+  int w;
+  int h;
+  int astep;
+  int bstep;
+} p;
+
+void main()
+{
+  int gx = int(gl_GlobalInvocationID.x);
+  int gy = int(gl_GlobalInvocationID.y);
+
+  if (gx >= p.w || gy >= p.h) return;
+
+  b[gx + p.bstep * gy] = a[gy + p.astep * gx];
+}

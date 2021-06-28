@@ -201,10 +201,16 @@
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\binary_op.comp">
       <FileType>Document</FileType>
     </CustomBuild>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\gemm.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\permute.comp">
       <FileType>Document</FileType>
     </CustomBuild>
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\sum.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\transpose.comp">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
