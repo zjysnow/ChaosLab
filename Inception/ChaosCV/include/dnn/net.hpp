@@ -67,10 +67,8 @@ namespace chaos
 	public:
 		void SetBlobData(const std::string& name, const Tensor& data);
 		void GetBlobData(const std::string& name, Tensor& data);
-		//void Forward();
 
 		void SetVulkanCompute(bool enable);
-
 	protected:
 		friend Extractor Net::CreateExtractor() const;
 		Extractor(const Net* net);

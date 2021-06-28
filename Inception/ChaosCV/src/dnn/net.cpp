@@ -139,12 +139,13 @@ namespace chaos
 				if (blobs[index].empty())
 				{
 					cmd.RecordDownload(gpu_blobs[index], blobs[index], opt);
-					cmd.SubmitAndWait();
-					cmd.Reset();
 				}
 
 				bottom_blobs[i++] = blobs[index];
 			}
+
+			cmd.SubmitAndWait();
+			cmd.Reset();
 
 			if (layer->support_inplace)
 			{
