@@ -170,6 +170,18 @@ namespace chaos
 		op["diagonal"] = d;
 		return op(a);
 	}
+	Tensor div(const Tensor& a, const Tensor& b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::DIV;
+		return op(a, b);
+	}
+	Tensor mul(const Tensor& a, const Tensor& b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::MUL;
+		return op(a, b);
+	}
 	Tensor sum(const Tensor& a, bool all, const Array<int>& vecdim)
 	{
 		auto op = op::Sum::Create();

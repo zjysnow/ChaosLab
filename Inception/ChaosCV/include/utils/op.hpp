@@ -36,6 +36,8 @@ namespace chaos
 	CHAOS_API Tensor operator/(const Tensor& a, float b);
 
 	CHAOS_API Tensor diag(const Tensor& a, int d = 0);
+	CHAOS_API Tensor div(const Tensor& a, const Tensor& b);
+	CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);
 	CHAOS_API Tensor sum(const Tensor& a, bool all = false, const Array<int>& vecdim = { 0 });
 	CHAOS_API std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a);
 
