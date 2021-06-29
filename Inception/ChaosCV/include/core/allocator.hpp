@@ -6,7 +6,7 @@
 #define ALIGNMENT 16
 
 // exchange-add operation for atomic operations on reference counters
-// Just for windows, reference to NCNN
+// Just for windows, reference to ncnn
 #ifdef _WIN32
 #define CHAOS_XADD(addr, delta) (int)_InterlockedExchangeAdd((long volatile*)addr, delta)
 #else

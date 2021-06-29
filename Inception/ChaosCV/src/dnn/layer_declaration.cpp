@@ -23,12 +23,12 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Abs", AbsFinal);
 }
 
-//#include "dnn/layers/back_subst.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("BackSubst", BackSubst);
-//}
-//
+#include "dnn/layers/backsubst.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Backsubst", Backsubst);
+}
+
 #include "dnn/layers/binary_op.hpp"
 #include "dnn/layers/vulkan/binary_op_vulkan.hpp"
 namespace chaos::inline dnn
@@ -70,12 +70,12 @@ namespace chaos::inline dnn
 	};
 	REGISTER_LAYER("GEMM", GEMMFinal);
 }
-//
-//#include "dnn/layers/invert.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("Invert", Invert);
-//}
+
+#include "dnn/layers/invert.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Invert", Invert);
+}
 
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/vulkan/permute_vulkan.hpp"
@@ -119,8 +119,8 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Sum", SumFinal);
 }
 
-//#include "dnn/layers/svd.hpp"
-//namespace chaos::inline dnn
-//{
-//	REGISTER_LAYER("SVD", SVD);
-//}
+#include "dnn/layers/svd.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("SVD", SVD);
+}

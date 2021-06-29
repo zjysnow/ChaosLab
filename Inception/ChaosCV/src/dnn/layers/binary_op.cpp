@@ -101,5 +101,10 @@ namespace chaos
                 break;
             }
         }
+
+        void BinaryOp::Set(const std::string& pname, const std::any& param)
+        {
+            if ("op_type" == pname) op_type = std::any_cast<OpType>(param);
+        }
     }
 }
