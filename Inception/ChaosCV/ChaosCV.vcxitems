@@ -32,6 +32,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\abs.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\backsubst.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\binary_op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\diag.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\gemm.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\invert.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\permute.hpp" />
@@ -65,6 +66,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\abs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\backsubst.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\binary_op.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\diag.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\gemm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\invert.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\permute.cpp" />

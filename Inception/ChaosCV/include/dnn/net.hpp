@@ -32,6 +32,7 @@ namespace chaos
 		template<int idx, class...Args>
 		int layer(const Args&...args)
 		{
+			CHECK_LT(idx, layers.size()) << std::format("out of range ({} vs {})", idx, layers.size());
 			std::vector<std::string> names = { args... };
 			for (const auto& name : names)
 			{

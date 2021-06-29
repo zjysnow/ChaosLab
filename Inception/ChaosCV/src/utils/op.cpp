@@ -2,95 +2,172 @@
 
 #include "dnn/layer.hpp"
 #include "dnn/layers/binary_op.hpp"
+#include "dnn/layers/diag.hpp"
 #include "dnn/layers/gemm.hpp"
+#include "dnn/layers/invert.hpp"
+#include "dnn/layers/permute.hpp"
+#include "dnn/layers/sum.hpp"
+#include "dnn/layers/svd.hpp"
 
 namespace chaos
 {
-	class Operator
+	inline namespace op
 	{
-	public:
-		template<class Type>
-		static Operator& Create() 
+		template<class Op>
+		class Operator
 		{
-			static Operator op;
-			op.layer = std::make_shared<Type>();
-			return op;
-		}
+		public:
+			static Op& Create()
+			{
+				static Op op;
+				return op;
+			}
 
-		Tensor operator()(const Tensor& a, const Tensor& b) const
+			template<class...Blobs>
+			Tensor operator()(const Blobs&...blobs) const
+			{
+				std::vector<Tensor> bottoms = { {blobs}... };
+				std::vector<Tensor> tops(1);
+				layer->Forward(bottoms, tops);
+				return tops[0];
+			}
+
+			Operator& operator[](const std::string& name) { pname = name; return *this; }
+			void operator=(const std::any& param) { layer->Set(pname, param); }
+
+		protected:
+			Operator() = default;
+			Ptr<Layer> layer;
+			std::string pname;
+		};
+
+		class BinaryOp : public Operator<BinaryOp>
 		{
-			std::vector<Tensor> tops(1);
-			layer->Forward({a, b}, tops);
-			return tops[0];
-		}
+		public:
+			BinaryOp() { layer = std::make_shared<dnn::BinaryOp>(); }
+		};
 
-		void Set(const std::string& pname, const std::any& param)
+		class Diag : public Operator<op::Diag>
 		{
-			layer->Set(pname, param);
-		}
-	private:
-		Operator() = default;
-		Ptr<Layer> layer;
-	};
+		public:
+			Diag() { layer = std::make_shared<dnn::Diag>(); }
+		};
 
+		class GEMM : public Operator<GEMM>
+		{
+		public:
+			GEMM() { layer = std::make_shared<dnn::GEMM>(); }
+		};
+
+		class Invert : public Operator<Invert>
+		{
+		public:
+			Invert() { layer = std::make_shared<dnn::Invert>(); }
+		};
+
+		class SVD : public Operator<SVD>
+		{
+		public:
+			SVD() { layer = std::make_shared<dnn::SVD>(); }
+
+			auto operator()(const Tensor& a) const
+			{
+				std::vector<Tensor> bottoms = { a };
+				std::vector<Tensor> tops(3);
+				layer->Forward(bottoms, tops);
+				return std::make_tuple(tops[0], tops[1], tops[2]);
+			}
+		};
+	}
 
 	Tensor operator+(const Tensor& a, const Tensor& b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::ADD);
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::ADD;
 		return op(a, b);
 	}
 	Tensor operator+(float a, const Tensor& b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::ADD);
-		return op({ a }, b);
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::ADD;
+		return op(a, b);
 	}
 	Tensor operator+(const Tensor& a, float b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::ADD);
-		return op(a, { b });
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::ADD;
+		return op(a, b);
 	}
 
 	Tensor operator-(const Tensor& a, const Tensor& b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::SUB);
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::SUB;
 		return op(a, b);
 	}
 	Tensor operator-(float a, const Tensor& b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::SUB);
-		return op({ a }, b);
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::SUB;
+		return op(a, b);
 	}
 	Tensor operator-(const Tensor& a, float b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::SUB);
-		return op(a, { b });
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::SUB;
+		return op(a, b);
 	}
 
 	Tensor operator*(const Tensor& a, const Tensor& b)
 	{
-		auto op = Operator::Create<GEMM>();
-		op.Set("alpha", 1.f);
-		op.Set("beta", 0.f);
-		op.Set("transA", false);
-		op.Set("transB", false);
+		auto op = op::GEMM::Create();
+		op["alpha"] = 1.f;
+		op["beta"] = 0.f;
+		op["transA"] = false;
+		op["transB"] = false;
 		return op(a, b);
 	}
 	Tensor operator*(float a, const Tensor& b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::MUL);
-		return op({ a }, b);
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::MUL;
+		return op(a, b);
 	}
 	Tensor operator*(const Tensor& a, float b)
 	{
-		auto op = Operator::Create<BinaryOp>();
-		op.Set("op_type", BinaryOp::MUL);
-		return op(a, { b });
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::MUL;
+		return op(a, b);
+	}
+
+	Tensor operator/(const Tensor& a, const Tensor& b) // xB = A; x = A * B^{-1}
+	{
+		auto op = op::Invert::Create();
+		return a * op(b);
+	}
+	Tensor operator/(float a, const Tensor& b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::DIV;
+		return op(a, b);
+	}
+	Tensor operator/(const Tensor& a, float b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::DIV;
+		return op(a, b);
+	}
+
+	Tensor diag(const Tensor& a, int d = 0)
+	{
+		auto op = op::Diag::Create();
+		op["diagonal"] = d;
+		return op(a);
+	}
+
+	std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a)
+	{
+		auto op = op::SVD::Create();
+		return op(a);
 	}
 }

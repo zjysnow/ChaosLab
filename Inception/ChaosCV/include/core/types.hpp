@@ -90,16 +90,7 @@ namespace chaos
 
 	static inline constexpr Complex operator ""i(long double im) { return Complex(0, static_cast<float>(im)); }
 	static inline constexpr Complex operator ""i(unsigned long long im) { return Complex(0, static_cast<float>(im)); }
-	static inline Complex operator+(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re + rhs.re, lhs.im + rhs.im); }
-	static inline Complex operator-(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re - rhs.re, lhs.im - rhs.im); }
-	static inline Complex operator*(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re * rhs.re - lhs.im * rhs.im, lhs.re * rhs.im + lhs.im * rhs.re); }
-	static inline Complex operator/(const Complex& lhs, const Complex& rhs)
-	{
-		float base = rhs.re * rhs.re + rhs.im * rhs.im;
-		float re = (lhs.re * rhs.re + lhs.im * rhs.im) / base;
-		float im = (lhs.im * rhs.re - lhs.re * rhs.im) / base;
-		return Complex(re, im);
-	}
+	
 	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
 	{
 		return stream << std::format("{0:}{1:+}i", complex.re, complex.im);

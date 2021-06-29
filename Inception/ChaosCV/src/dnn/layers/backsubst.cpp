@@ -4,6 +4,8 @@ namespace chaos
 {
 	inline namespace dnn
 	{
+        // from opencv
+
         void SVBkSb(int m, int n, const float* w, int incw,
             const float* u, int ldu, bool uT,
             const float* v, int ldv, bool vT,
