@@ -65,6 +65,12 @@ namespace chaos
 			Invert() { layer = std::make_shared<dnn::Invert>(); }
 		};
 
+		class Sum : public Operator<Sum>
+		{
+		public:
+			Sum() { layer = std::make_shared<dnn::Sum>(); }
+		};
+
 		class SVD : public Operator<SVD>
 		{
 		public:
@@ -158,13 +164,19 @@ namespace chaos
 		return op(a, b);
 	}
 
-	Tensor diag(const Tensor& a, int d = 0)
+	Tensor diag(const Tensor& a, int d)
 	{
 		auto op = op::Diag::Create();
 		op["diagonal"] = d;
 		return op(a);
 	}
-
+	Tensor sum(const Tensor& a, bool all, const Array<int>& vecdim)
+	{
+		auto op = op::Sum::Create();
+		op["all"] = all;
+		op["vecdim"] = vecdim;
+		return op(a);
+	}
 	std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a)
 	{
 		auto op = op::SVD::Create();
