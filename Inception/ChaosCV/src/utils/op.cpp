@@ -5,6 +5,7 @@
 #include "dnn/layers/diag.hpp"
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/invert.hpp"
+#include "dnn/layers/mean.hpp"
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/sum.hpp"
 #include "dnn/layers/svd.hpp"
@@ -63,6 +64,12 @@ namespace chaos
 		{
 		public:
 			Invert() { layer = std::make_shared<dnn::Invert>(); }
+		};
+
+		class Mean : public Operator<Mean>
+		{
+		public:
+			Mean() { layer = std::make_shared<dnn::Mean>(); }
 		};
 
 		class Sum : public Operator<Sum>
@@ -175,6 +182,13 @@ namespace chaos
 		auto op = op::BinaryOp::Create();
 		op["op_type"] = dnn::BinaryOp::DIV;
 		return op(a, b);
+	}
+	Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
+	{
+		auto op = op::Mean::Create();
+		op["all"] = all;
+		op["vecdim"] = vecdim;
+		return op(a);
 	}
 	Tensor mul(const Tensor& a, const Tensor& b)
 	{

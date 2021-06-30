@@ -49,7 +49,13 @@ namespace chaos::inline dnn
 	};
 	REGISTER_LAYER("BinaryOp", BinaryOpFinal);
 }
-//
+
+#include "dnn/layers/diag.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Diag", Diag);
+}
+
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/vulkan/gemm_vulkan.hpp"
 namespace chaos::inline dnn
@@ -75,6 +81,12 @@ namespace chaos::inline dnn
 namespace chaos::inline dnn
 {
 	REGISTER_LAYER("Invert", Invert);
+}
+
+#include "dnn/layers/mean.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Mean", Mean);
 }
 
 #include "dnn/layers/permute.hpp"

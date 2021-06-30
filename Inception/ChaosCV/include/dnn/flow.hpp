@@ -36,18 +36,4 @@ namespace chaos
 	private:
 		std::vector<Node> nodes;
 	};
-
-	
-	//template <class Type>
-	//Type* begin(Array<Type>& arr)
-	//{
-	//	return &arr[0];
-	//}
-
-	//template <class Type>
-	//const Type* begin(const Array<Type>& arr)
-	//{
-	//	return &arr[0];
-	//}
-
 }

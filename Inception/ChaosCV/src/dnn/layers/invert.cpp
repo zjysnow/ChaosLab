@@ -98,9 +98,10 @@ namespace chaos
                         }
                     }
                 }
-                //else // use LUP etc
-                //{
-                //}
+                else // use LUP etc
+                {
+                    LOG(FATAL) << "not now";
+                }
             }
 		}
 
