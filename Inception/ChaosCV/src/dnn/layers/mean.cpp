@@ -42,6 +42,7 @@ namespace chaos
 					N *= shape[i];
 				}
 			}
+			if (unbias) N = N - 1;
 			
 			sum->Forward(bottom_blobs, top_blobs, opt);
 			div->Forward({ top_blobs[0], {N} }, top_blobs, opt);
@@ -50,6 +51,8 @@ namespace chaos
 		void Mean::Set(const std::string& pname, const std::any& param)
 		{
 			if ("vecdim" == pname) vecdim = std::any_cast<Array<int>>(param);
+			if ("all" == pname) all = std::any_cast<bool>(param);
+			if ("unbias" == pname) unbias = std::any_cast<bool>(param);
 		}
 	}
 }

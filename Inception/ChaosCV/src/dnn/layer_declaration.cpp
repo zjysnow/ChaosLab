@@ -136,3 +136,9 @@ namespace chaos::inline dnn
 {
 	REGISTER_LAYER("SVD", SVD);
 }
+
+#include "dnn/layers/var.hpp"
+namespace chaos::inline dnn
+{
+	REGISTER_LAYER("Var", Var);
+}

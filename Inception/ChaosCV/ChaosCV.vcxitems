@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\relu.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\sum.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\svd.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\var.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\abs_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\binary_op_vulkan.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\gemm_vulkan.hpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\permute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\sum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\svd.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\var.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\abs_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\binary_op_vulkan.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\gemm_vulkan.cpp" />

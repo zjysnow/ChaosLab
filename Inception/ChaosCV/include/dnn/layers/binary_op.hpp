@@ -15,6 +15,10 @@ namespace chaos
 				SUB,
 				MUL,
 				DIV,
+				MIN,
+				MAX,
+				POW,
+				SUB2, // (a-b)^2
 			};
 
 			BinaryOp();

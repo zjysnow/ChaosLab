@@ -6,21 +6,21 @@ namespace chaos
 {
 	inline namespace dnn
 	{
-		class CHAOS_API Mean : public Layer
+		class CHAOS_API Var : public Layer
 		{
 		public:
-			Mean();
+			Var();
 
 			void Forward(const std::vector<Tensor>& bottom_blobs, std::vector<Tensor>& top_blobs, const Option& opt) const override;
 
 			void Set(const std::string& pname, const std::any& param) override;
 
-			bool all = false;
+			bool all;
 			Array<int> vecdim = { 0 };
-			bool unbias = false;
+			bool unbias = true;
 
-			Ptr<Layer> sum;
-			Ptr<Layer> div;
+			Ptr<Layer> mean;
+			Ptr<Layer> sub2;
 		};
 	}
 }

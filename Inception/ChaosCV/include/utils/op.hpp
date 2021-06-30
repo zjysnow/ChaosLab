@@ -41,5 +41,6 @@ namespace chaos
 	CHAOS_API Tensor mul(const Tensor& a, const Tensor& b);
 	CHAOS_API Tensor sum(const Tensor& a, bool all = false, const Array<int>& vecdim = { 0 });
 	CHAOS_API std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a);
+	CHAOS_API Tensor var(const Tensor& a, bool all = false, const Array<int>& vecdim = { 0 }, bool unbias = true);
 
 }

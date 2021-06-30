@@ -9,6 +9,7 @@
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/sum.hpp"
 #include "dnn/layers/svd.hpp"
+#include "dnn/layers/var.hpp"
 
 namespace chaos
 {
@@ -90,6 +91,12 @@ namespace chaos
 				layer->Forward(bottoms, tops);
 				return std::make_tuple(tops[0], tops[1], tops[2]);
 			}
+		};
+
+		class Var : public Operator<Var>
+		{
+		public:
+			Var() { layer = std::make_shared<dnn::Var>(); }
 		};
 	}
 
@@ -206,6 +213,14 @@ namespace chaos
 	std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a)
 	{
 		auto op = op::SVD::Create();
+		return op(a);
+	}
+	Tensor var(const Tensor& a, bool all, const Array<int>& vecdim, bool unbias)
+	{
+		auto op = op::Var::Create();
+		op["unbias"] = unbias;
+		op["all"] = all;
+		op["vecdim"] = vecdim;
 		return op(a);
 	}
 }

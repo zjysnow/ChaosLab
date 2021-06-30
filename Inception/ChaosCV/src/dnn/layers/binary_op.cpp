@@ -34,6 +34,16 @@ namespace chaos
             inline float operator()(const float& x, const float& y) const { return std::min(x, y); }
         };
 
+        struct BinaryPow
+        {
+            inline float operator()(const float& x, const float& y) const { return std::powf(x, y); }
+        };
+
+        struct BinarySub2
+        {
+            inline float operator()(const float& x, const float& y) const { return (x - y) * (x - y); }
+        };
+        
         template<class Op>
         static inline void Operator(const Tensor& a, const Tensor& b, Tensor& c)
         {
@@ -95,6 +105,18 @@ namespace chaos
                 break;
             case DIV:
                 Operator<BinaryDiv>(a, b, c);
+                break;
+            case MIN:
+                Operator<BinaryMin>(a, b, c);
+                break;
+            case MAX:
+                Operator<BinaryMax>(a, b, c);
+                break;
+            case POW:
+                Operator<BinaryPow>(a, b, c);
+                break;
+            case SUB2:
+                Operator<BinarySub2>(a, b, c);
                 break;
             default:
                 LOG(FATAL) << "unsupport binary method";
