@@ -183,13 +183,14 @@ namespace chaos
 		op["op_type"] = dnn::BinaryOp::DIV;
 		return op(a, b);
 	}
-	//Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
-	//{
-	//	auto op = op::Mean::Create();
-	//	op["all"] = all;
-	//	op["vecdim"] = vecdim;
-	//	return op(a);
-	//}
+	Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
+	{
+		auto op = op::Reduce::Create();
+		op["all"] = all;
+		op["vecdim"] = vecdim;
+		op["op_type"] = dnn::Reduce::AVG;
+		return op(a);
+	}
 	Tensor mul(const Tensor& a, const Tensor& b)
 	{
 		auto op = op::BinaryOp::Create();
