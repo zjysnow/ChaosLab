@@ -15,6 +15,8 @@ layout (push_constant) uniform parameter
   int total;
   int dims;
   int res;
+  int type;
+  float alpha;
 } p;
 
 void main()
@@ -45,7 +47,9 @@ void main()
   	  offset += k * a_steps_data[d];
   	  idx /= v_shape_data[d];
   	}
-    ret += a[a_idx+offset];
+    if (p.type == 0 || p.type == 1) ret += a[a_idx+offset];
+    if (p.type == 2) ret = max(ret, a[a_idx+offset]);
+    if (p.type == 3) ret = min(ret, a[a_idx+offset]);
   }
-  s[s_idx] = ret;
+  s[s_idx] = ret * p.alpha;
 }

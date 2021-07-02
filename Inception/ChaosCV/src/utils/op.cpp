@@ -5,9 +5,8 @@
 #include "dnn/layers/diag.hpp"
 #include "dnn/layers/gemm.hpp"
 #include "dnn/layers/invert.hpp"
-#include "dnn/layers/mean.hpp"
 #include "dnn/layers/permute.hpp"
-#include "dnn/layers/sum.hpp"
+#include "dnn/layers/reduce.hpp"
 #include "dnn/layers/svd.hpp"
 #include "dnn/layers/var.hpp"
 
@@ -67,16 +66,10 @@ namespace chaos
 			Invert() { layer = std::make_shared<dnn::Invert>(); }
 		};
 
-		class Mean : public Operator<Mean>
+		class Reduce : public Operator<Reduce>
 		{
 		public:
-			Mean() { layer = std::make_shared<dnn::Mean>(); }
-		};
-
-		class Sum : public Operator<Sum>
-		{
-		public:
-			Sum() { layer = std::make_shared<dnn::Sum>(); }
+			Reduce() { layer = std::make_shared<dnn::Reduce>(); }
 		};
 
 		class SVD : public Operator<SVD>
@@ -190,13 +183,13 @@ namespace chaos
 		op["op_type"] = dnn::BinaryOp::DIV;
 		return op(a, b);
 	}
-	Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
-	{
-		auto op = op::Mean::Create();
-		op["all"] = all;
-		op["vecdim"] = vecdim;
-		return op(a);
-	}
+	//Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
+	//{
+	//	auto op = op::Mean::Create();
+	//	op["all"] = all;
+	//	op["vecdim"] = vecdim;
+	//	return op(a);
+	//}
 	Tensor mul(const Tensor& a, const Tensor& b)
 	{
 		auto op = op::BinaryOp::Create();
@@ -205,7 +198,8 @@ namespace chaos
 	}
 	Tensor sum(const Tensor& a, bool all, const Array<int>& vecdim)
 	{
-		auto op = op::Sum::Create();
+		auto op = op::Reduce::Create();
+		op["op_type"] = dnn::Reduce::SUM;
 		op["all"] = all;
 		op["vecdim"] = vecdim;
 		return op(a);

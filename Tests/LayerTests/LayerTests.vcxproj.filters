@@ -26,13 +26,13 @@
     <ClCompile Include="binary_op_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sum_test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="permute_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gemm_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="reduce_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

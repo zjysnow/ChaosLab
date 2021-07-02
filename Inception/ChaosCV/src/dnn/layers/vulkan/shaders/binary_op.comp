@@ -44,5 +44,9 @@ void main()
   if (p.type == 1) ret = a[a_idx] - b[b_idx];
   if (p.type == 2) ret = a[a_idx] * b[b_idx];
   if (p.type == 3) ret = a[a_idx] / b[b_idx];
+  if (p.type == 4) ret = max(a[a_idx], b[b_idx]);
+  if (p.type == 5) ret = min(a[a_idx], b[b_idx]);
+  if (p.type == 6) ret = pow(a[a_idx], b[b_idx]);
+  if (p.type == 7) ret = (a[a_idx] - b[b_idx]) * (a[a_idx] - b[b_idx]); 
   c[c_idx] = ret;
 }

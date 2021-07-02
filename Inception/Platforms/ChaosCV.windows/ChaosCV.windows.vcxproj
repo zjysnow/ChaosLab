@@ -207,6 +207,9 @@
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\permute.comp">
       <FileType>Document</FileType>
     </CustomBuild>
+    <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\reduce.comp">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <CustomBuild Update="D:\Workspace\Projects\ChaosLab\Inception\ChaosCV\src\dnn\layers\vulkan\shaders\sum.comp">
       <FileType>Document</FileType>
     </CustomBuild>

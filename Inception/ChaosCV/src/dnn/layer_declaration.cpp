@@ -83,12 +83,6 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Invert", Invert);
 }
 
-#include "dnn/layers/mean.hpp"
-namespace chaos::inline dnn
-{
-	REGISTER_LAYER("Mean", Mean);
-}
-
 #include "dnn/layers/permute.hpp"
 #include "dnn/layers/vulkan/permute_vulkan.hpp"
 namespace chaos::inline dnn
@@ -110,25 +104,25 @@ namespace chaos::inline dnn
 	REGISTER_LAYER("Permute", PermuteFinal);
 }
 
-#include "dnn/layers/sum.hpp"
-#include "dnn/layers/vulkan/sum_vulkan.hpp"
+#include "dnn/layers/reduce.hpp"
+#include "dnn/layers/vulkan/reduce_vulkan.hpp"
 namespace chaos::inline dnn
 {
-	class SumFinal : public SumVulkan
+	class ReduceFinal : public ReduceVulkan
 	{
 	public:
 		void CreatePipeline(const Option& opt) final
 		{
-			Sum::CreatePipeline(opt);
-			if (opt.use_vulkan_compute) SumVulkan::CreatePipeline(opt);
+			Reduce::CreatePipeline(opt);
+			if (opt.use_vulkan_compute) ReduceVulkan::CreatePipeline(opt);
 		}
 		void DestroyPipeline(const Option& opt) final
 		{
-			if (opt.use_vulkan_compute) SumVulkan::DestroyPipeline(opt);
-			Sum::DestroyPipeline(opt);
+			if (opt.use_vulkan_compute) ReduceVulkan::DestroyPipeline(opt);
+			Reduce::DestroyPipeline(opt);
 		}
 	};
-	REGISTER_LAYER("Sum", SumFinal);
+	REGISTER_LAYER("Reduce", ReduceFinal);
 }
 
 #include "dnn/layers/svd.hpp"

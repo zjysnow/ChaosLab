@@ -174,7 +174,7 @@
     <ClCompile Include="binary_op_test.cpp" />
     <ClCompile Include="gemm_test.cpp" />
     <ClCompile Include="permute_test.cpp" />
-    <ClCompile Include="sum_test.cpp" />
+    <ClCompile Include="reduce_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
