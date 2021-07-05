@@ -3,6 +3,7 @@
 #include "core/def.hpp"
 
 #include <string>
+#include <vector>
 #include <format>
 
 namespace chaos
@@ -25,6 +26,9 @@ namespace chaos
 		size_t ppos = -1; // last point pose
 		size_t spos = -1; // last slash pose
 	};
+
+	using FileList = std::vector<File>;
+	CHAOS_API void GetFileList(const std::string& folder, FileList& list, const std::string& = "*");
 
 	template<class CharT>
 	struct std::formatter<chaos::File, CharT> : std::formatter<const char*, CharT>

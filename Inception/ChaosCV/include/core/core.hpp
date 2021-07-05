@@ -14,6 +14,8 @@
 
 namespace chaos
 {
+	std::vector<std::string> Split(const std::string& data, const std::string& delimiter);
+
 	CHAOS_API std::ostream& operator<<(std::ostream& stream, const std::vector<std::string>& list);
 
 	constexpr uint64 prime = 0x100000001B3ULL;

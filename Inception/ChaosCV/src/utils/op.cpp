@@ -66,6 +66,12 @@ namespace chaos
 			Invert() { layer = std::make_shared<dnn::Invert>(); }
 		};
 
+		class Permute : public Operator<Permute>
+		{
+		public:
+			Permute() { layer = std::make_shared<dnn::Permute>(); }
+		};
+
 		class Reduce : public Operator<Reduce>
 		{
 		public:
@@ -183,6 +189,20 @@ namespace chaos
 		op["op_type"] = dnn::BinaryOp::DIV;
 		return op(a, b);
 	}
+	Tensor max(const Tensor& a, bool all, const Array<int>& vecdim)
+	{
+		auto op = op::Reduce::Create();
+		op["op_type"] = dnn::Reduce::MAX;
+		op["all"] = all;
+		op["vecdim"] = vecdim;
+		return op(a);
+	}
+	Tensor max(const Tensor& a, const Tensor& b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::MAX;
+		return op(a, b);
+	}
 	Tensor mean(const Tensor& a, bool all, const Array<int>& vecdim)
 	{
 		auto op = op::Reduce::Create();
@@ -191,11 +211,31 @@ namespace chaos
 		op["op_type"] = dnn::Reduce::AVG;
 		return op(a);
 	}
+	Tensor min(const Tensor& a, bool all, const Array<int>& vecdim)
+	{
+		auto op = op::Reduce::Create();
+		op["op_type"] = dnn::Reduce::MIN;
+		op["all"] = all;
+		op["vecdim"] = vecdim;
+		return op(a);
+	}
+	Tensor min(const Tensor& a, const Tensor& b)
+	{
+		auto op = op::BinaryOp::Create();
+		op["op_type"] = dnn::BinaryOp::MIN;
+		return op(a, b);
+	}
 	Tensor mul(const Tensor& a, const Tensor& b)
 	{
 		auto op = op::BinaryOp::Create();
 		op["op_type"] = dnn::BinaryOp::MUL;
 		return op(a, b);
+	}
+	Tensor permute(const Tensor& a, const Array<int> orders)
+	{
+		auto op = op::Permute::Create();
+		op["orders"] = orders;
+		return op(a);
 	}
 	Tensor sum(const Tensor& a, bool all, const Array<int>& vecdim)
 	{
@@ -208,6 +248,12 @@ namespace chaos
 	std::tuple<Tensor, Tensor, Tensor> svd(const Tensor& a)
 	{
 		auto op = op::SVD::Create();
+		return op(a);
+	}
+	Tensor transpose(const Tensor& a)
+	{
+		auto op = op::Permute::Create();
+		op["orders"] = Array<int>{1,0};
 		return op(a);
 	}
 	Tensor var(const Tensor& a, bool all, const Array<int>& vecdim, bool unbias)

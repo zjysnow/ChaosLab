@@ -1,8 +1,8 @@
-#include "core/file.hpp"
-#include "core/log.hpp"
-#include "core/types.hpp"
+#include "core/core.hpp"
 
 #include <regex>
+
+#include <Windows.h>
 
 namespace chaos
 {
@@ -48,5 +48,45 @@ namespace chaos
 	std::ostream& operator<<(std::ostream& stream, const File& file)
 	{
 		return stream << file.buf;
+	}
+
+	void GetFileList(const std::string& folder, FileList& list, const std::string& types)
+	{
+		HANDLE handle;
+		WIN32_FIND_DATAA find_data;
+
+		std::string root = folder;
+		if (root.back() != '\\' || root.back() != '/') root.append("\\");
+
+		std::vector<std::string> type_list = Split(types, "\\|");
+
+		handle = FindFirstFileA((root + "*.*").c_str(), &find_data);
+		if (handle != INVALID_HANDLE_VALUE)
+		{
+			do
+			{
+				if ('.' == find_data.cFileName[0])
+				{
+					continue;
+				}
+				else if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				{
+					GetFileList(root + find_data.cFileName, list, types);
+				}
+				else
+				{
+					std::string file_name = find_data.cFileName;
+
+					size_t pos = file_name.find_last_of('.') + 1;
+					std::string type = file_name.substr(pos);
+					if ("*" == types || std::find(type_list.begin(), type_list.end(), type) != type_list.end())
+					{
+						list.push_back(root + file_name);
+					}
+				}
+			} while (FindNextFileA(handle, &find_data));
+		}
+
+		FindClose(handle);
 	}
 }

@@ -165,6 +165,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layers\vulkan\reduce_vulkan.hpp">
       <Filter>include\dnn\layers\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\ml\sfa.hpp">
+      <Filter>include\ml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">

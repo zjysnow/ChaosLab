@@ -3,20 +3,26 @@
 #include "core/core.hpp"
 #include "core/tensor.hpp"
 
-#include "dnn/layer.hpp"
-#include "dnn/layer_factory.hpp"
-
 namespace chaos
 {
 	class CHAOS_API PCA
 	{
 	public:
+		enum
+		{
+			ROW_MAJOR,
+			COL_MAJOR,
+		};
+
 		PCA();
 
-		Tensor mean;
-		Tensor u;
+		PCA& operator()(const Tensor& data, int flags);
 
-		Ptr<Layer> svd;
-		Ptr<Layer> gemm;
+		Tensor Project(const Tensor& data);
+		Tensor BackProject(const Tensor data);
+
+	private:
+		Tensor M;
+		Tensor P;
 	};
 }

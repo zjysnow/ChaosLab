@@ -17,6 +17,7 @@ namespace chaos
 		return up;
 	}
 
+
 	Steps::Steps(int s0) : Array<uint32>(1) { data_[0] = s0; }
 	Steps::Steps(int s0, int s1) : Array<uint32>(2) { data_[0] = s0; data_[1] = s1; }
 	void Steps::Expand(size_t axis, int dims, uint32 step)
