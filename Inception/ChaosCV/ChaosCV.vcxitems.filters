@@ -168,6 +168,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ml\sfa.hpp">
       <Filter>include\ml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp">
+      <Filter>include\highgui</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp">
+      <Filter>include\highgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -268,6 +274,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layers\vulkan\reduce_vulkan.cpp">
       <Filter>src\dnn\layers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp">
+      <Filter>src\highgui</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp">
+      <Filter>src\highgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

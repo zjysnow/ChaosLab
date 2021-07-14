@@ -93,6 +93,8 @@ namespace chaos
 		}
 
 		VulkanTensor Upload(const Option& opt) const;
+
+		static Array<float> Range(float a, float b, int count = 0);
 	protected:
 		Type* data_ = nullptr;
 		size_t size_ = 0;

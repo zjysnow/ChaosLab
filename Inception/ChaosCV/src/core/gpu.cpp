@@ -231,6 +231,14 @@ namespace chaos
 		CHECK_EQ(VK_SUCCESS, ret) << "vkEnumerateInstanceExtensionProperties failed " << ret;
 		for (const auto& exp : instance_extension_properties)
 		{
+			if (0 == std::strcmp(exp.extensionName, "VK_KHR_surface"))
+			{
+				g_instance.support_VK_KHR_surface = exp.specVersion;
+			}
+			if (0 == std::strcmp(exp.extensionName, "VK_KHR_win32_surface"))
+			{
+				g_instance.support_VK_KHR_win32_surface = exp.specVersion;
+			}
 			if (0 == std::strcmp(exp.extensionName, "VK_EXT_debug_utils"))
 			{
 				g_instance.support_VK_EXT_debug_utils = exp.specVersion;
@@ -242,6 +250,8 @@ namespace chaos
 		}
 		if (g_instance.support_VK_EXT_debug_utils) enabled_extensions.push_back("VK_EXT_debug_utils");
 		if (g_instance.support_VK_KHR_get_physical_device_properties2) enabled_extensions.push_back("VK_KHR_get_physical_device_properties2");
+		if (g_instance.support_VK_KHR_surface) enabled_extensions.push_back("VK_KHR_surface");
+		if (g_instance.support_VK_KHR_win32_surface) enabled_extensions.push_back("VK_KHR_win32_surface");
 
 		uint32 instance_api_version = VK_MAKE_VERSION(MAJOR, MINOR, PATCH);
 
@@ -350,6 +360,10 @@ namespace chaos
 			for (uint32 j = 0; j < device_extension_property_count; j++)
 			{
 				const VkExtensionProperties& exp = device_extension_properties[j];
+				if (strcmp(exp.extensionName, "VK_KHR_swapchain") == 0)
+				{
+					gpu_info.support_VK_KHR_swapchain = exp.specVersion;
+				}
 				if (strcmp(exp.extensionName, "VK_KHR_descriptor_update_template") == 0)
 				{
 					gpu_info.support_VK_KHR_descriptor_update_template = exp.specVersion;
@@ -421,6 +435,7 @@ namespace chaos
 	VulkanDevice::VulkanDevice(int device_index) : info(g_gpu_infos[device_index])
 	{
 		std::vector<const char*> enabled_extensions;
+		if (info.support_VK_KHR_swapchain) enabled_extensions.push_back("VK_KHR_swapchain");
 		if (info.support_VK_KHR_descriptor_update_template) enabled_extensions.push_back("VK_KHR_descriptor_update_template");
 		if (info.support_VK_KHR_push_descriptor) enabled_extensions.push_back("VK_KHR_push_descriptor");
 
@@ -509,6 +524,66 @@ namespace chaos
 	VulkanDevice::~VulkanDevice()
 	{
 		vkDestroyDevice(device, nullptr);
+	}
+
+	uint32 VulkanDevice::FindPresentQueueFamilyIndex(const VkSurfaceKHR& surface) const
+	{
+		// to check the gpu if support present
+		VkBool32 support_present = false;
+		// try graphics queue family first
+		vkGetPhysicalDeviceSurfaceSupportKHR(info.physical_device, info.graphics_queue_family_index, surface, &support_present);
+		if (not support_present)
+		{
+			// transfer dose not support present, so just check compute queue family
+			vkGetPhysicalDeviceSurfaceSupportKHR(info.physical_device, info.compute_queue_family_index, surface, &support_present);
+			CHECK(support_present) << "physical device do not support present";
+			return info.compute_queue_family_index;
+		}
+		return info.graphics_queue_family_index;
+	}
+	void VulkanDevice::GetSurfaceCapabilities(const VkSurfaceKHR& surface, VkSurfaceCapabilitiesKHR& capabilities) const
+	{
+		VkResult ret = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(info.physical_device, surface, &capabilities);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed " << ret;
+	}
+
+	VkSurfaceFormatKHR VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface) const
+	{
+		VkResult ret;
+		uint32_t count;
+		ret = vkGetPhysicalDeviceSurfaceFormatsKHR(info.physical_device, surface, &count, nullptr);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceFormatsKHR failed " << ret;
+		std::vector<VkSurfaceFormatKHR> surface_formats(count);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(info.physical_device, surface, &count, surface_formats.data());
+		CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfaceFormatsKHR failed " << ret;
+
+		for (const auto& format : surface_formats)
+		{
+			if (format.format == VK_FORMAT_B8G8R8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			{
+				return format;
+			}
+		}
+		return surface_formats[0]; // return for default if can not find VK_FORMAT_B8G8R8A8_SRGB and VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
+	}
+	VkPresentModeKHR VulkanDevice::GetSurfacePresentMode(const VkSurfaceKHR& surface) const
+	{
+		VkResult ret;
+		uint32 count;
+		ret = vkGetPhysicalDeviceSurfacePresentModesKHR(info.physical_device, surface, &count, nullptr);
+		CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfacePresentModesKHR failed " << ret;
+		std::vector<VkPresentModeKHR> present_modes(count);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(info.physical_device, surface, &count, present_modes.data());
+		CHECK_EQ(VK_SUCCESS, ret) << "vkGetPhysicalDeviceSurfacePresentModesKHR failed " << ret;
+
+		for (const auto& mode : present_modes)
+		{
+			if (mode == VK_PRESENT_MODE_MAILBOX_KHR)
+			{
+				return mode;
+			}
+		}
+		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
 	uint32 VulkanDevice::FindMemoryTypeIndex(uint32 memory_type_bits, int required, int preferred, int preferred_not) const

@@ -116,6 +116,8 @@ namespace chaos
 		}
 
 		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
+		static Tensor zeros(const Shape& shape, Allocator* allocator = nullptr);
+		static Tensor eye(int h, int w, Allocator* allocator = nullptr);
 
 		void* data = nullptr;
 		Allocator* allocator = nullptr;

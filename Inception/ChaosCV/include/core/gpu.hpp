@@ -20,6 +20,8 @@ namespace chaos
 
 		int support_VK_EXT_debug_utils = 0;
 		int support_VK_KHR_get_physical_device_properties2 = 0;
+		int support_VK_KHR_surface = 0;
+		int support_VK_KHR_win32_surface = 0;
 	protected:
 		VulkanInstance();
 		~VulkanInstance();
@@ -69,6 +71,7 @@ namespace chaos
 
 		int support_VK_KHR_push_descriptor;
 		int support_VK_KHR_descriptor_update_template;
+		int support_VK_KHR_swapchain;
 	};
 	CHAOS_API const GPUInfo& GetGPUInfo(int device_index);
 
@@ -81,6 +84,11 @@ namespace chaos
 		const GPUInfo& info;
 
 		VkDevice GetDevice() const noexcept { return device; }
+
+		uint32 FindPresentQueueFamilyIndex(const VkSurfaceKHR& surface) const;
+		void GetSurfaceCapabilities(const VkSurfaceKHR& surface, VkSurfaceCapabilitiesKHR& capabilities) const;
+		VkSurfaceFormatKHR GetSurfaceFormat(const VkSurfaceKHR& surface) const;
+		VkPresentModeKHR GetSurfacePresentMode(const VkSurfaceKHR& surface) const;
 
 		uint32 FindMemoryTypeIndex(uint32 memory_type_bits, int required, int preferred, int preferred_not) const;
 		bool IsMemoryMappable(uint32 memory_type_index) const;

@@ -36,10 +36,6 @@ namespace chaos
 	protected:
 		VkCommandBuffer command_buffer;
 		VkFence fence;
-		//VkSemaphore semaphore;
-		//VkDescriptorPool descriptor_pool;
-
-		//std::vector<VkDescriptorSet> descriptor_sets;
 
 		class Record
 		{
@@ -79,5 +75,35 @@ namespace chaos
 	private:
 		VkCommandBuffer command_buffer;
 		VkFence fence;
+	};
+
+	class GraphicsPipeline;
+	class CHAOS_API GraphicsCommand : public Command
+	{
+	public:
+		GraphicsCommand(const VulkanDevice* vkdev);
+		~GraphicsCommand();
+
+		void RecordUpload(const Tensor& src, VulkanTensor& dst, VulkanAllocator* allocator, VulkanAllocator* staging_allocator);
+
+		void Create(size_t buffers_count);
+
+		void RecordPipeline(const GraphicsPipeline* pipeline, uint32 buffers_count, VkFramebuffer* frame_buffers,
+			VkExtent2D extent, const VulkanTensor& vertex, const VulkanTensor& indices, const std::vector<VulkanTensor>& uniform);
+
+		void Present(VkSwapchainKHR swap_chain, uint32 present_queue_family_index, const std::function<void(uint32)>& UpdateUniformBuffer);
+
+	protected:
+		std::vector<VkCommandBuffer> command_buffers;
+
+		std::vector<VkSemaphore> image_available_semaphores;
+		std::vector<VkSemaphore> render_finished_semaphores;
+		std::vector<VkFence> in_flight_fences;
+		std::vector<VkFence> images_in_flight;
+
+		VkDescriptorPool descriptor_pool;
+		std::vector<VkDescriptorSet> descriptorsets;
+
+		size_t current_frame = 0;
 	};
 }

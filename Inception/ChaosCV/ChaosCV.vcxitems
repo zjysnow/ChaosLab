@@ -48,6 +48,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer_factory.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\net.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\painter.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\highgui\window.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ml\pca.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\ml\sfa.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\utils\op.hpp" />
@@ -84,6 +86,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer_declaration.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\net.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\option.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\painter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\highgui\window.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\ml\pca.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\utils\op.cpp" />
   </ItemGroup>

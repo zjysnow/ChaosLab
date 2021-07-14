@@ -40,7 +40,7 @@ namespace chaos
 
 		Tensor lambda = Tensor(Shape(m,m), Depth::D4, Packing::CHW);
 		memset(lambda.data, 0, m * m * sizeof(float));
-		for (int i = 0; i < W.shape[0]; i++)
+		for (uint32 i = 0; i < W.shape[0]; i++)
 		{
 			lambda[i+i*m] = 1.f / sqrt(W[i]);
 		}

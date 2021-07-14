@@ -17,6 +17,21 @@ namespace chaos
 		return up;
 	}
 
+	Array<float> Array<float>::Range(float a, float b, int count)
+	{
+		CHECK_GT(b, a) << "b should greater than a";
+		if (count == 0) count = int(b - a) + 1;
+		Array<float> arr;
+		arr.Create(count);
+
+		float step = (b - a) / (count - 1);
+		for (int i = 0; i < count; i++)
+		{
+			arr[i] = a + i * step;
+		}
+		return arr;
+	}
+
 
 	Steps::Steps(int s0) : Array<uint32>(1) { data_[0] = s0; }
 	Steps::Steps(int s0, int s1) : Array<uint32>(2) { data_[0] = s0; data_[1] = s1; }

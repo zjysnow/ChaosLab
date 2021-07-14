@@ -6,7 +6,7 @@
 
 namespace chaos
 {
-	static std::default_random_engine engine;
+	
 
 	Tensor::Tensor(const Shape& shape, const Depth& depth, const Packing& packing, Allocator* allocator)
 	{
@@ -151,6 +151,7 @@ namespace chaos
 		return tensor;
 	}
 
+	static std::default_random_engine engine;
 	Tensor Tensor::randn(const Shape& shape, float mu, float sigma, Allocator* allocator)
 	{
 		std::normal_distribution<float> normal(mu, sigma);
@@ -161,7 +162,22 @@ namespace chaos
 		}
 		return r;
 	}
-
+	Tensor Tensor::zeros(const Shape& shape, Allocator* allocator)
+	{
+		Tensor z = Tensor(shape, Depth::D4, Packing::CHW, allocator);
+		memset(z.data, 0, z.total() * sizeof(float));
+		return z;
+	}
+	Tensor Tensor::eye(int h, int w, Allocator* allocator)
+	{
+		Tensor e = Tensor(Shape(h, w), Depth::D4, Packing::CHW, allocator);
+		memset(e.data, 0, h * w * sizeof(float));
+		for (int i = 0; i < std::min(h, w); i++)
+		{
+			e[i + i * w] = 1;
+		}
+		return e;
+	}
 
 
 

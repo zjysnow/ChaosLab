@@ -19,7 +19,7 @@ namespace chaos
 	protected:
 		Pipeline(const VulkanDevice* vkdev);
 
-		void CreateDescriptorSetLayout(const size_t& binding_count, const ShaderStageFlag* flags, const VkDescriptorType* types);
+		void CreateDescriptorSetLayout(const size_t& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types);
 		void CreatePipelineLayout(size_t push_constant_count = 0);
 		VkShaderModule CompileShaderModule(const uint32* spv_data, size_t spv_data_size);
 	};
@@ -42,9 +42,6 @@ namespace chaos
 	private:
 		void CreateDescriptorUpdateTemplate(size_t binding_count);
 
-		//std::vector<DescriptorType> descriptor_types; // = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		//std::vector<ShaderStageFlag> shader_stage_flags; // = VK_SHADER_STAGE_VERTEX_BIT;
-
 		VkShaderModule comp;
 	};
 
@@ -52,8 +49,16 @@ namespace chaos
 	{
 	public:
 		GraphicsPipeline(const VulkanDevice* vkdev);
+		~GraphicsPipeline();
 
-	private:
+		void Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size,
+			VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty, VkCullModeFlagBits cull_mode);
 
+		void CreateRenderPass(VkFormat format);
+
+		VkRenderPass render_pass;
+
+		VkShaderModule vert;
+		VkShaderModule frag;
 	};
 }

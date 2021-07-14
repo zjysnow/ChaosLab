@@ -32,23 +32,79 @@ DEFINE_VULKAN_HANDLE(VkFence)
 DEFINE_VULKAN_HANDLE(VkSemaphore)
 DEFINE_VULKAN_HANDLE(VkDescriptorPool)
 
+DEFINE_VULKAN_HANDLE(VkSurfaceKHR)
+DEFINE_VULKAN_HANDLE(VkSwapchainKHR)
+DEFINE_VULKAN_HANDLE(VkFramebuffer)
+DEFINE_VULKAN_HANDLE(VkRenderPass)
+
 DEFINE_VULKAN_HANDLE(VkDebugUtilsMessengerEXT)
 
 struct VkAllocationCallbacks;
 struct VkDescriptorUpdateTemplateCreateInfo;
+
+
+struct VkSurfaceFormatKHR;
+struct VkSurfaceCapabilitiesKHR;
+struct VkExtent2D;
+
 enum VkResult;
 enum VkDescriptorType;
+enum VkFormat;
+enum VkPolygonMode;
+enum VkFrontFace;
+enum VkPrimitiveTopology;
+enum VkCullModeFlagBits;
+enum VkShaderStageFlagBits;
+enum VkPresentModeKHR;
+enum VkPipelineStageFlagBits;
+enum VkAccessFlagBits;
 
 namespace chaos
 {
 	using MemoryPropertyFlag = Flag;
 	using BufferUsageFlag = Flag;
-	using ShaderStageFlag = Flag;
-	using DescriptorType = Flag;
-	using AccessFlag = Flag;
-	using PipelineStageFlag = Flag;
-	using ShaderStageFlag = Flag;
+	
+	enum FrontFace
+	{
+		FRONT_FACE_COUNTER_CLOCKWISE = 0,
+		FRONT_FACE_CLOCKWISE = 1,
+		FRONT_FACE_MAX_ENUM = 0x7FFFFFFF
+	};
 
+	enum CullModeFlag
+	{
+		CULL_MODE_NONE = 0,
+		CULL_MODE_FRONT_BIT = 0x00000001,
+		CULL_MODE_BACK_BIT = 0x00000002,
+		CULL_MODE_FRONT_AND_BACK = 0x00000003,
+		CULL_MODE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF
+	};
+
+	enum PolygonMode
+	{
+		POLYGON_MODE_FILL = 0,
+		POLYGON_MODE_LINE = 1,
+		POLYGON_MODE_POINT = 2,
+		POLYGON_MODE_FILL_RECTANGLE_NV = 1000153000,
+		POLYGON_MODE_MAX_ENUM = 0x7FFFFFFF
+	};
+
+	enum PrimitiveTopology {
+		PRIMITIVE_TOPOLOGY_POINT_LIST = 0,
+		PRIMITIVE_TOPOLOGY_LINE_LIST = 1,
+		PRIMITIVE_TOPOLOGY_LINE_STRIP = 2,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_LIST = 3,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP = 4,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_FAN = 5,
+		PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY = 6,
+		PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY = 7,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY = 8,
+		PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY = 9,
+		PRIMITIVE_TOPOLOGY_PATCH_LIST = 10,
+		PRIMITIVE_TOPOLOGY_MAX_ENUM = 0x7FFFFFFF
+	};
+
+	
 	union VulkanSpecializationType
 	{
 		int i;
@@ -69,8 +125,8 @@ namespace chaos
 		VkDeviceMemory memory = nullptr;
 		size_t capacity = 0;
 		size_t offset = 0;
-		mutable AccessFlag access_flag;
-		mutable PipelineStageFlag stage_flag;
+		mutable int access_flag;
+		mutable int stage_flag;
 		void* mapped_data = nullptr;
 		int ref_cnt = 0;
 	};
