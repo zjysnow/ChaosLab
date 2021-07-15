@@ -19,10 +19,16 @@ namespace chaos
 	{
 		pipeline = new GraphicsPipeline(vkdev);
 		command = new GraphicsCommand(vkdev);
+
+		allocator = new VulkanLocalAllocator(vkdev);
+		staging_allocator = new VulkanStagingAllocator(vkdev);
 	}
 
 	Painter::~Painter() 
 	{
+		delete allocator;
+		delete staging_allocator;
+
 		delete command;
 		delete pipeline;
 	}

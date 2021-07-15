@@ -26,7 +26,7 @@ namespace chaos
 		// VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR
 		VkDescriptorSetLayoutCreateInfo layout_info{};
 		layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layout_info.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR;
+		layout_info.flags = layout_flags; //VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR;
 		layout_info.bindingCount = (uint32)binding_count;
 		layout_info.pBindings = bingdings.data();
 
@@ -163,7 +163,10 @@ namespace chaos
 		*new_size = (uchar*)dp - (uchar*)new_code;
 	}
 
-	ComputePipeline::ComputePipeline(const VulkanDevice* vkdev) : Pipeline(vkdev) {}
+	ComputePipeline::ComputePipeline(const VulkanDevice* vkdev) : Pipeline(vkdev) 
+	{
+		layout_flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR;
+	}
 	ComputePipeline::~ComputePipeline()
 	{
 		if (descriptor_update_template) vkdev->DestroyDescriptorUpdateTemplate(descriptor_update_template);
@@ -280,6 +283,7 @@ namespace chaos
 
 	GraphicsPipeline::GraphicsPipeline(const VulkanDevice* vkdev) : Pipeline(vkdev)
 	{
+		layout_flags = 0;
 	}
 	GraphicsPipeline::~GraphicsPipeline()
 	{
@@ -289,7 +293,7 @@ namespace chaos
 		vkDestroyRenderPass(vkdev->GetDevice(), render_pass, nullptr);
 	}
 
-	void GraphicsPipeline::CreateRenderPass(VkFormat format)
+	void GraphicsPipeline::CreateRenderPass(const VkFormat& format)
 	{
 		VkAttachmentDescription color_attachment{};
 		color_attachment.format = format;

@@ -1,7 +1,9 @@
 #include "highgui/window.hpp"
+#include "highgui/painter.hpp"
 
 #include "core/gpu.hpp"
 #include "core/pipeline.hpp"
+#include "core/command.hpp"
 #include "highgui/window.hpp"
 #include "highgui/painter.hpp"
 
@@ -97,7 +99,7 @@ namespace chaos
 			while (not should_close)
 			{
 				PollEvents();
-				//painter->command->Present(swap_chain, present_queue_family_index, std::bind(&Painter::UpdateUniformBuffer, painter, std::placeholders::_1));
+				painter->command->Present(swap_chain, present_queue_family_index, std::bind(&Painter::UpdateUniformBuffer, painter, std::placeholders::_1));
 			}
 			vkDeviceWaitIdle(vkdev->GetDevice());
 		}

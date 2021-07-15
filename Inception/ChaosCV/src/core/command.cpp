@@ -453,12 +453,12 @@ namespace chaos
 			submit_info.commandBufferCount = 1;
 			submit_info.pCommandBuffers = &command_buffers[0];
 
-			VkQueue transfer_queue = vkdev->AcquireQueue(vkdev->info.transfer_queue_family_index);
+			VkQueue transfer_queue = vkdev->AcquireQueue(vkdev->info.graphics_queue_family_index);
 
 			vkQueueSubmit(transfer_queue, 1, &submit_info, VK_NULL_HANDLE);
 			vkQueueWaitIdle(transfer_queue);
 
-			vkdev->ReclaimQueue(vkdev->info.transfer_queue_family_index, transfer_queue);
+			vkdev->ReclaimQueue(vkdev->info.graphics_queue_family_index, transfer_queue);
 		}
 	}
 

@@ -22,6 +22,8 @@ namespace chaos
 		void CreateDescriptorSetLayout(const size_t& binding_count, const VkShaderStageFlagBits* flags, const VkDescriptorType* types);
 		void CreatePipelineLayout(size_t push_constant_count = 0);
 		VkShaderModule CompileShaderModule(const uint32* spv_data, size_t spv_data_size);
+
+		int layout_flags;
 	};
 
 	class CHAOS_API ComputePipeline : public Pipeline
@@ -54,7 +56,7 @@ namespace chaos
 		void Create(const uint32* vert_data, size_t vert_size, const uint32* frag_data, size_t frag_size,
 			VkExtent2D extent, VkFormat format, VkPolygonMode polygon_mode, VkFrontFace front_face, VkPrimitiveTopology topoloty, VkCullModeFlagBits cull_mode);
 
-		void CreateRenderPass(VkFormat format);
+		void CreateRenderPass(const VkFormat& format);
 
 		VkRenderPass render_pass;
 
