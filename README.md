@@ -3,7 +3,7 @@
 # ChaosLab
 ChaosCV and Pattern Recognition
 
-项目由Visual Studio SLN管理
+椤圭洰鐢盫isual Studio SLN绠＄悊
 
 ## ChaosCV
-Shared Project
+Shared Items Project
