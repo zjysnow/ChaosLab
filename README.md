@@ -1,3 +1,4 @@
+[![windows|ubuntu|macos](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml/badge.svg)](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml)
 
 
 # ChaosLab
