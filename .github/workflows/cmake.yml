@@ -28,11 +28,12 @@ jobs:
       uses: seanmiddleditch/gha-setup-ninja@v3
       
     - name: Configure with CMake
-      run: cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-      #shell: bash
-      #run: |
-      #  mkdir build
-      #  cd build
+      #run: cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      shell: bash
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       #  if [ '${{runner.os}}' == 'Windows' ]; then
       #    cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       #  else
