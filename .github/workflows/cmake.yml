@@ -1,4 +1,5 @@
-name: windows|ubuntu|macos
+#name: windows|ubuntu|macos
+name: windows
 
 on:
   push:
@@ -12,11 +13,12 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.image }}
-    strategy:
-      matrix:
-        image: [ 'windows-latest', 'ubuntu-latest', 'macos-latest' ]
-      fail-fast: false
+    runs-on: windows-latest
+    #runs-on: ${{ matrix.image }}
+    #strategy:
+    #  matrix:
+    #    image: [ 'windows-latest', 'ubuntu-latest', 'macos-latest' ]
+    #  fail-fast: false
 
     steps:
     - name: Clone repository
@@ -26,15 +28,17 @@ jobs:
       uses: seanmiddleditch/gha-setup-ninja@v3
       
     - name: Configure with CMake
+      #run: cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       shell: bash
       run: |
         mkdir build
         cd build
-        if [ '${{runner.os}}' == 'Windows' ]; then
-          cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        else
-          cmake -G Ninja .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-        fi
+        cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      #  if [ '${{runner.os}}' == 'Windows' ]; then
+      #    cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      #  else
+      #    cmake -G Ninja .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      #  fi
  
     - name: Build
       # Build your program with the given configuration
