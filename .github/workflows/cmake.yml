@@ -1,4 +1,5 @@
-name: windows|ubuntu|macos
+#name: windows|ubuntu|macos
+name: windows
 
 on:
   push:
