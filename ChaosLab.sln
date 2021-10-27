@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChaosCV.windows", "Inception\Platforms\ChaosCV.windows\ChaosCV.windows.vcxproj", "{27186D04-168D-4472-A8B9-0F96D7D6BEA0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{617F38A2-1484-4FB6-9B43-B457E1ED210C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Inception\ChaosCV\ChaosCV.vcxitems*{1e69e157-5b27-43ce-b805-d1da30af215b}*SharedItemsImports = 9

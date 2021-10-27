@@ -1,4 +1,5 @@
-[![Action Status]](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml/badge.svg)](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml)
+![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)
+[![windows](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml/badge.svg)](https://github.com/zjysnow/ChaosLab/actions/workflows/cmake.yml)
 [![Build Status](https://dev.azure.com/zjysnow/ChaosLab/_apis/build/status/ChaosLab?branchName=main)](https://dev.azure.com/zjysnow/ChaosLab/_build/latest?definitionId=32&branchName=main)
 
 ![QQ](https://img.shields.io/badge/QQ-980428900-grenn?logo=tencentqq)
