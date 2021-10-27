@@ -1,0 +1,43 @@
+name: windows|ubuntu|macos
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ${{ matrix.image }}
+    strategy:
+      matrix:
+        image: [ 'windows-latest', 'ubuntu-latest', 'macos-latest' ]
+      fail-fast: false
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+      
+    - name: Configure with CMake
+      shell: bash
+      run: |
+        mkdir build
+        cd build
+        if [ '${{runner.os}}' == 'Windows' ]; then
+          cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        else
+          cmake -G Ninja .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        fi
+ 
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      
