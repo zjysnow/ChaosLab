@@ -14,8 +14,10 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />

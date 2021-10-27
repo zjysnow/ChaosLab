@@ -19,21 +19,33 @@ Global
 		Inception\ChaosCV\ChaosCV.vcxitems*{27186d04-168d-4472-a8b9-0f96d7d6bea0}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Debug|ARM.ActiveCfg = Debug|Win32
+		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Debug|ARM64.ActiveCfg = Debug|Win32
 		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Debug|x64.ActiveCfg = Debug|x64
 		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Debug|x64.Build.0 = Debug|x64
 		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Debug|x86.ActiveCfg = Debug|Win32
+		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Release|ARM.ActiveCfg = Release|Win32
+		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Release|ARM64.ActiveCfg = Release|Win32
 		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Release|x64.ActiveCfg = Release|x64
 		{D36DB0E6-FCBA-4510-BC38-7AAB702A4FA1}.Release|x86.ActiveCfg = Release|Win32
+		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|ARM.ActiveCfg = Debug|Win32
+		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|ARM64.ActiveCfg = Debug|Win32
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|x64.ActiveCfg = Debug|x64
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|x64.Build.0 = Debug|x64
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|x86.ActiveCfg = Debug|Win32
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Debug|x86.Build.0 = Debug|Win32
+		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Release|ARM.ActiveCfg = Release|Win32
+		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Release|ARM64.ActiveCfg = Release|Win32
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Release|x64.ActiveCfg = Release|x64
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Release|x64.Build.0 = Release|x64
 		{27186D04-168D-4472-A8B9-0F96D7D6BEA0}.Release|x86.ActiveCfg = Release|Win32
