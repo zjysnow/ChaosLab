@@ -4,8 +4,16 @@ name: windows|ubuntu
 on:
   push:
     branches: [ main ]
+    paths:
+    - '.github/workflows/cmake.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
   pull_request:
     branches: [ main ]
+    paths:
+    - '.github/workflows/cmake.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
