@@ -3,7 +3,7 @@
 TEST(Array, Create)
 {
     constexpr size_t size = 13;
-    Array<float> arr{size};
+    Array<float> arr = Array<float>(size);
     EXPECT_TRUE(arr.data() != nullptr);
     EXPECT_EQ(arr.size(), size);
 }

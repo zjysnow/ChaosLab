@@ -17,7 +17,7 @@ namespace chaos
 	{
 	public:
 		Array() = default;
-		Array(size_t new_size) { Create(new_size); }
+		explicit Array(size_t new_size) { Create(new_size); }
 		Array(size_t new_size, Type val) { Create(new_size, &val); }
 
 		Array(const std::initializer_list<Type>& list)
