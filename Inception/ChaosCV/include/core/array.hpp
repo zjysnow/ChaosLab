@@ -66,12 +66,23 @@ namespace chaos
 			return *this;
 		}
 
-		const Type& operator[](int idx) const noexcept { return data_[idx]; }
-		Type& operator[](int idx) noexcept { return data_[idx]; }
+		const Type& operator[](size_t idx) const noexcept { return data_[idx]; }
+		Type& operator[](size_t idx) noexcept { return data_[idx]; }
 
 		size_t size() const noexcept { return size_; }
 		const Type* data() const noexcept { return data_; }
 
+		void Resize(size_t new_size)
+		{
+			Array<Type> ori = std::move(*this);
+
+			size_ = new_size;
+			data_ = static_cast<Type*>(::operator new(size_ * sizeof(Type), std::align_val_t{ alignof(Type) }));
+			for (size_t i = 0; i < size_; i++)
+			{
+				std::construct_at(std::addressof(data_[i]), i < ori.size_ ? ori[i] : 0);
+			}
+		}
 	protected:
 		void Create(size_t new_size)
 		{
@@ -110,7 +121,6 @@ namespace chaos
 			}
 			data_ = nullptr;
 			size_ = 0;
-
 		}
 
 		Type* data_ = nullptr;

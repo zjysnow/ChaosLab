@@ -8,6 +8,19 @@ TEST(Array, Create)
     EXPECT_EQ(arr.size(), size);
 }
 
+TEST(Array, Resize)
+{
+    constexpr size_t size = 17;
+    Array<float> arr = Array<float>(size);
+    EXPECT_TRUE(arr.data() != nullptr);
+    EXPECT_EQ(arr.size(), size);
+
+    constexpr size_t new_size = 23;
+    arr.Resize(new_size);
+    EXPECT_TRUE(arr.data() != nullptr);
+    EXPECT_EQ(arr.size(), new_size);
+}
+
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
