@@ -6,4 +6,7 @@
   <ItemGroup>
     <ClInclude Include="testutil.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
 </Project>
