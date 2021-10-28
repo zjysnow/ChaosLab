@@ -7,10 +7,6 @@
 
 namespace chaos
 {
-	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
-	{
-		return stream << complex.re << (complex.im < 0 ? "" : "+") << complex.im << "i";
-	}
 	//static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
 	//{
 	//	return stream << std::format("{0:}{1:+}i", complex.re, complex.im);
@@ -25,4 +21,8 @@ namespace chaos
 	//		return std::formatter<std::string, CharT>::format(val, fc);
 	//	}
 	//};
+	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
+	{
+		return stream << complex.re << (complex.im < 0 ? "" : "+") << complex.im << "i";
+	}
 }

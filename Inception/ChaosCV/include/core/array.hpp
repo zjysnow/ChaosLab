@@ -9,18 +9,18 @@
 
 namespace chaos
 {
-
 	//template<class Type>
 	//concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
 
 	//template<Arithmetic Type>
-	template<class Type, std::enable_if_t<std::is_integral_v<Type> and std::is_floating_point_v<Type> and std::is_same_v<Complex, Type>, bool> = true>
+	template<class Type, std::enable_if_t<std::is_integral_v<Type> or std::is_floating_point_v<Type> or std::is_same_v<Complex, Type>, bool> = true>
 	class Array
 	{
 	public:
 		Array() = default;
 		Array(size_t new_size) { Create(new_size); }
 		Array(size_t new_size, Type val) { Create(new_size, &val); }
+
 		Array(const std::initializer_list<Type>& list)
 		{
 			Create(list.size(), list.begin(), 1);
