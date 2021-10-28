@@ -74,6 +74,12 @@ install(
   DESTINATION lib
 )
 
+
+if(CHAOSCV_TEST)
+    enable_testing()
+    add_subdirectory(Tests/GTests)
+endif()
+
 # Unit tests
 if(CHAOSCV_TEST)
   enable_testing()
