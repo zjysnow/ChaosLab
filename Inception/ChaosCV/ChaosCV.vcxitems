@@ -22,6 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
   </ItemGroup>
 </Project>

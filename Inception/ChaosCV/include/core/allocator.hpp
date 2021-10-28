@@ -10,8 +10,12 @@
 // Just for windows, reference to ncnn
 #ifdef _WIN32
 #define CHAOS_XADD(addr, delta) (int)_InterlockedExchangeAdd((long volatile*)addr, delta)
+#else // Linux gcc >= 4.7
+#if defined __ATOMIC_ACQ_REL && !defined __clang__
+#define CHAOS_XADD(addr, delta) (int)__atomic_fetch_add((unsigned*)(addr), (unsigned)(delta), __ATOMIC_ACQ_REL)
 #else
-#define CHAOS_XADD(addr, delta)
+#define CHAOS_XADD(addr, delta) (int)__sync_fetch_and_add((unsigned*)(addr), (unsigned)(delta))
+#endif
 #endif
 
 #ifdef _WIN32

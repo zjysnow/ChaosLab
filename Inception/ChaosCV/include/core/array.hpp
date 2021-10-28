@@ -9,11 +9,10 @@
 
 namespace chaos
 {
-	//template<class Type>
-	//concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
+	template<class Type>
+	using Arithmetic = std::enable_if_t<std::is_integral_v<Type> or std::is_floating_point_v<Type> or std::is_same_v<Complex, Type>, bool>;
 
-	//template<Arithmetic Type>
-	template<class Type, std::enable_if_t<std::is_integral_v<Type> or std::is_floating_point_v<Type> or std::is_same_v<Complex, Type>, bool> = true>
+	template<class Type, Arithmetic<Type> = true>
 	class Array
 	{
 	public:
@@ -54,12 +53,12 @@ namespace chaos
 		}
 
 		// Move Constructor
-		Array(Array&& arr)
+		Array(Array&& arr) noexcept
 		{
 			std::swap(data_, arr.data_);
 			std::swap(size_, arr.size_);
 		}
-		Array& operator=(Array&& arr)
+		Array& operator=(Array&& arr) noexcept
 		{
 			Release(); // clear this and steal from arr
 			std::swap(data_, arr.data_);
@@ -71,6 +70,7 @@ namespace chaos
 
 		size_t size() const noexcept { return size_; }
 		const Type* data() const noexcept { return data_; }
+
 	protected:
 		void Create(size_t new_size)
 		{
@@ -116,17 +116,31 @@ namespace chaos
 		size_t size_ = 0;
 	};
 
-	//template<Arithmetic Type>
 	template<class Type>
 	const Type* begin(const Array<Type>& arr)
 	{
 		return arr.data();
 	}
 
-	//template<Arithmetic Type>
 	template<class Type>
 	const Type* end(const Array<Type>& arr)
 	{
 		return arr.data() + arr.size();
 	}
+
+
+	class CHAOS_API Steps : public Array<int>
+	{
+	public:
+		//Steps();
+	};
+
+	class CHAOS_API Shape : public Array<int>
+	{
+	public:
+		Shape();
+		Shape(int d0);
+		Shape(int d1, int d0);
+		Shape(int d2, int d1, int d0);
+	};
 }

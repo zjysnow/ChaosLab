@@ -15,7 +15,7 @@ Shared Items Project
 3. highgui
 
 ## Build
-提供两种方式编译项目，使用Visual Studio能够保证完全的功能编译，CMake还在学习中，由于目前VS对C++20支持的最完整，因此暂时不提供兼容其他平台的版本
+提供两种方式编译项目
 
 ### Visual Studio
 直接使用Visual Studio 2019打开SLN文件编译即可，如果需要使用Sandbox项目，则需要自行创建；需要配置好WSL
