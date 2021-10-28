@@ -8,10 +8,11 @@
 
 namespace chaos
 {
-	template<class Type>
-	concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
+	//template<class Type>
+	//concept Arithmetic = std::integral<Type> or std::floating_point<Type> or std::same_as<Complex, Type>;
 
-	template<Arithmetic Type>
+	//template<Arithmetic Type>
+	template<class Type, std::enable_if_t<std::is_integral_v<Type> and std::is_floating_point_v<Type> and std::is_same_v<Complex, Type>, bool> = true>
 	class Array
 	{
 	public:
@@ -113,13 +114,15 @@ namespace chaos
 		size_t size_ = 0;
 	};
 
-	template<Arithmetic Type>
+	//template<Arithmetic Type>
+	template<class Type>
 	const Type* begin(const Array<Type>& arr)
 	{
 		return arr.data();
 	}
 
-	template<Arithmetic Type>
+	//template<Arithmetic Type>
+	template<class Type>
 	const Type* end(const Array<Type>& arr)
 	{
 		return arr.data() + arr.size();
