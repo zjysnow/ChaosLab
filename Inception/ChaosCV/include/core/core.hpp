@@ -1,6 +1,9 @@
 #pragma once
 
 #include "core/def.hpp"
+#include "core/types.hpp"
+#include "core/array.hpp"
+#include "core/io.hpp"
 
 #include <vector>
 #include <string>
