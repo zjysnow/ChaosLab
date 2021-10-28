@@ -1,5 +1,4 @@
 #include "core/array.hpp"
-#include "..\..\include\core\array.hpp"
 
 namespace chaos
 {
