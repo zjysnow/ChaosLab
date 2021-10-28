@@ -61,7 +61,7 @@ jobs:
         if [ '${{runner.os}}' == 'Windows' ]; then
           cmake -G "Visual Studio 16 2019" -A x64 .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         else
-          cmake -G Ninja .. -DCHAOS_EXPORT=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake -G Ninja .. -DCHAOS_EXPORT=ON -DGTest_DIR=${{github.workspace}}/googletest-install/lib/cmake/GTest -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         fi
  
     - name: Build
