@@ -2,6 +2,8 @@
 
 #include "core/def.hpp"
 
+#include <math.h>
+
 namespace chaos
 {
 	class CHAOS_API Complex
@@ -11,8 +13,8 @@ namespace chaos
 		constexpr Complex(float re, float im = 0) : re(re), im(im) {}
 
 		Complex conj() const noexcept { return Complex(re, -im); }
-		float abs() const noexcept { return std::sqrtf(re * re + im * im); }
-		float angle() const noexcept { return std::atanf(im / re); }
+		float abs() const noexcept { return std::sqrt(re * re + im * im); }
+		float angle() const noexcept { return std::atan(im / re); }
 
 		float re = 0.f; // real
 		float im = 0.f; // image
