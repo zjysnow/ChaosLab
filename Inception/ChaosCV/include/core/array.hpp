@@ -63,6 +63,7 @@ namespace chaos
 			Release(); // clear this and steal from arr
 			std::swap(data_, arr.data_);
 			std::swap(size_, arr.size_);
+			return *this;
 		}
 
 		const Type& operator[](int idx) const noexcept { return data_[idx]; }
