@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 
 # Disable inplace builds to prevent source tree corruption.
 if(" ${CMAKE_SOURCE_DIR}" STREQUAL " ${CMAKE_BINARY_DIR}")
@@ -75,16 +75,13 @@ install(
 )
 
 # Unit tests
-if(CHAOSCV_TEST)
-  enable_testing()
-  find_package(GTest REQUIRED)
-
-  macro(chaoscv_add_test name)
-    add_executable(test_${name} Tests/test_${name}.cpp)
-    target_link_libraries(test_${name} PRIVATE chaoscv GTest::gtest)
-    gtest_add_tests(TARGET test_${name})
-  endmacro()
-
-  chaoscv_add_test(mat)
-
-endif()
+#if(CHAOSCV_TEST)
+#  enable_testing()
+#  find_package(GTest REQUIRED)
+#  macro(chaoscv_add_test name)
+#    add_executable(test_${name} Tests/test_${name}.cpp)
+#    target_link_libraries(test_${name} PRIVATE chaoscv GTest::gtest)
+#    gtest_add_tests(TARGET test_${name})
+#  endmacro()
+#  chaoscv_add_test(mat)
+#endif()
