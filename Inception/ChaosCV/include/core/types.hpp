@@ -1,8 +1,6 @@
 #pragma once
 
 #include "core/def.hpp"
-#include <format>
-#include <ostream>
 
 namespace chaos
 {
