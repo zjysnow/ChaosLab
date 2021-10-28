@@ -5,12 +5,16 @@
 #include "core/allocator.hpp"
 
 #include <memory>
+#include <numeric>
 #include <type_traits>
 
 namespace chaos
 {
 	template<class Type>
 	using Arithmetic = std::enable_if_t<std::is_integral_v<Type> or std::is_floating_point_v<Type> or std::is_same_v<Complex, Type>, bool>;
+
+	template<class Type>
+	using Integral = std::enable_if_t<std::is_integral_v<Type>, bool>;
 
 	template<class Type, Arithmetic<Type> = true>
 	class Array
@@ -143,7 +147,23 @@ namespace chaos
 	class CHAOS_API Steps : public Array<int>
 	{
 	public:
-		//Steps();
+		Steps();
+		Steps(int s0);
+		Steps(int s0, int s1);
+		Steps(int s0, int s1, int s2);
+
+		Steps(const Array<int>& arr);
+
+		template<class Type, Integral<Type> = true>
+		Steps(const std::initializer_list<Type>& list)
+		{
+			size_ = list.size();
+			data_ = static_cast<int*>(::operator new(size_ * sizeof(int), std::align_val_t{ alignof(int) }));
+			for (size_t i = 0; const auto & data : list)
+			{
+				std::construct_at(std::addressof(data_[i++]), static_cast<int>(data));
+			}
+		}
 	};
 
 	class CHAOS_API Shape : public Array<int>
@@ -151,7 +171,31 @@ namespace chaos
 	public:
 		Shape();
 		Shape(int d0);
-		Shape(int d1, int d0);
-		Shape(int d2, int d1, int d0);
+		Shape(int d0, int d1);
+		Shape(int d0, int d1, int d2);
+
+		template<class Type, Integral<Type> = true>
+		Shape(const std::initializer_list<Type>& list)
+		{
+			size_ = list.size();
+			data_ = static_cast<int*>(::operator new(size_ * sizeof(int), std::align_val_t{ alignof(int) }));
+			for (size_t i = 0; const auto & data : list)
+			{
+				std::construct_at(std::addressof(data_[i++]), static_cast<int>(data));
+			}
+		}
+
+		int total() const noexcept;
+		Steps steps() const noexcept;
 	};
+
+	static inline bool operator==(const Shape& lhs, const Shape& rhs)
+	{
+		if (lhs.size() != rhs.size()) return false;
+		for (size_t i = 0; i < lhs.size(); i++)
+		{
+			if (lhs[i] != rhs[i]) return false;
+		}
+		return true;
+	}
 }
