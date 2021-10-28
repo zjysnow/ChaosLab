@@ -74,20 +74,8 @@ install(
   DESTINATION lib
 )
 
-
+# Unit tests
 if(CHAOSCV_TEST)
     enable_testing()
     add_subdirectory(Tests/GTests)
-endif()
-
-# Unit tests
-if(CHAOSCV_TEST)
-  enable_testing()
-  find_package(GTest REQUIRED)
-  macro(chaoscv_add_test name)
-    add_executable(test_${name} Tests/GTests/test_${name}.cpp)
-    target_link_libraries(test_${name} PRIVATE ChaosCV GTest::gtest)
-    gtest_add_tests(TARGET test_${name})
-  endmacro()
-  chaoscv_add_test(array)
 endif()
