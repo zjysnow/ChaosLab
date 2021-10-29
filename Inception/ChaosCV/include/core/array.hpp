@@ -4,6 +4,7 @@
 #include "core/types.hpp"
 #include "core/allocator.hpp"
 
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <type_traits>
@@ -31,43 +32,26 @@ namespace chaos
 
 		virtual ~Array() { Release(); }
 
-		// Copy Constructor
-		Array(const Array& arr)
+		// copy constructor
+		Array(const Array<Type>& arr)
 		{
+			std::cout << "copy constructor" << std::endl;
 			Create(arr.size_, arr.data_, 1);
 		}
-		Array& operator=(const Array& arr)
+		// copy assignment
+		Array<Type>& operator=(const Array<Type>& arr)
 		{
-			if (this != std::addressof(arr))
-			{
-				if (size_ == arr.size_)
-				{
-					for (size_t i = 0; i < size_; i++)
-					{
-						data_[i] = arr.data_[i];
-					}
-				}
-				else
-				{
-					Release();
-					Create(arr.size_, arr.data_, 1);
-				}
-			}
-			return *this;
+			// see rule of five https://en.cppreference.com/w/cpp/language/rule_of_three
+			return *this = Array<Type>(arr);
 		}
 
-		// Move Constructor
-		Array(Array&& arr) noexcept
+		// move constructor
+		Array(Array<Type>&& arr) noexcept : size_(std::exchange(arr.size_, 0)), data_(std::exchange(arr.data_, nullptr)) {}
+		// move assignment
+		Array<Type>& operator=(Array<Type>&& arr) noexcept
 		{
-			std::swap(data_, arr.data_);
 			std::swap(size_, arr.size_);
-		}
-		Array& operator=(Array&& arr) noexcept
-		{
-			//Release(); // clear this and steal from arr
-			Array moved = arr;
-			std::swap(data_, moved.data_);
-			std::swap(size_, moved.size_);
+			std::swap(data_, arr.data_);
 			return *this;
 		}
 
@@ -174,6 +158,7 @@ namespace chaos
 		Shape(int d0);
 		Shape(int d0, int d1);
 		Shape(int d0, int d1, int d2);
+		Shape(const Array<int>& arr);
 
 		template<class Type, Integral<Type> = true>
 		Shape(const std::initializer_list<Type>& list)
