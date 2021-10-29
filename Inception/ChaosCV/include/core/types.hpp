@@ -2,6 +2,7 @@
 
 #include "core/def.hpp"
 
+#include <iostream>
 #include <cmath>
 
 namespace chaos
@@ -14,7 +15,7 @@ namespace chaos
 
 		Complex conj() const noexcept { return Complex(re, -im); }
 		float abs() const noexcept { return sqrtf(re * re + im * im); }
-		float angle() const noexcept { return atanf(im / re); }
+		float angle() const noexcept { return atan2f(im, re); }
 
 		float re = 0.f; // real
 		float im = 0.f; // image
@@ -24,4 +25,9 @@ namespace chaos
 
 	static inline Complex operator+(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re + rhs.re, lhs.im + rhs.im); }
 	static inline Complex operator-(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re - rhs.re, lhs.im - rhs.im); }
+
+	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
+	{
+		return stream << complex.re << std::showpos << complex.im << "i" << std::noshowpos;
+	}
 }

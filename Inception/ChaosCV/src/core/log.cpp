@@ -1,9 +1,25 @@
 #include "core/log.hpp"
-#include "core/file.hpp"
 
-#include <chrono>
 #include <mutex>
+#include <chrono>
+#include <iomanip>
 #include <iostream>
+
+#ifdef _WIN32
+auto now = []() { return std::chrono::current_zone()->to_local(std::chrono::system_clock::now()); };
+#else
+auto now = []() {
+	time_t time_stamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	tm time;
+	localtime_r(&time_stamp, &time);
+	return time;
+};
+std::ostream& operator<<(std::ostream& stream, const tm& time)
+{
+	return stream << time.tm_year + 1990 << "-" << time.tm_mon + 1 << "-" << time.tm_mday 
+		<< " " << time.tm_hour << ":" << time.tm_min << ":" << time.tm_sec;
+}
+#endif
 
 namespace chaos
 {
@@ -11,9 +27,14 @@ namespace chaos
 
 	LogMessage::LogMessage(const char* file, int line, const LogSeverity& severity) : severity(severity)
 	{
-		File code = file;
-		auto now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
-		message_data << "[" << LogSeverityNames[severity] << " " << now << " " << code.name() << code.type() << ":" << line << "] ";
+		// remove the path
+		auto name = [file]() {
+			std::string fname = file;
+			for (auto& c : fname) if (c == '\\') c = '/'; // replace slash
+			size_t pos = fname.find_last_of('/') + 1;
+			return fname.substr(pos);
+		};
+		message_data << "[" << LogSeverityNames[severity] << " " << now() << " " << name() << ":" << line << "] ";
 	}
 
 	LogMessage::~LogMessage()

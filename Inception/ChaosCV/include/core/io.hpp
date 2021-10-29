@@ -21,8 +21,5 @@ namespace chaos
 	//		return std::formatter<std::string, CharT>::format(val, fc);
 	//	}
 	//};
-	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
-	{
-		return stream << complex.re << (complex.im < 0 ? "" : "+") << complex.im << "i";
-	}
+	
 }

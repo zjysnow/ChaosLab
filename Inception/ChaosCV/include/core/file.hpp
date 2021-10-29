@@ -3,6 +3,7 @@
 #include "core/def.hpp"
 
 #include <string>
+#include <iostream>
 
 namespace chaos
 {
@@ -39,4 +40,9 @@ namespace chaos
 		size_t ppos = 0; // last point pose
 		size_t spos = 0; // last slash pose
 	};
+
+	static inline std::ostream& operator<<(std::ostream& stream, const File& file)
+	{
+		return stream << file.data();
+	}
 }

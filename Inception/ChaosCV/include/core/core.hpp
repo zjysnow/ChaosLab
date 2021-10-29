@@ -2,10 +2,9 @@
 
 #include "core/def.hpp"
 #include "core/log.hpp"
+#include "core/file.hpp"
 #include "core/types.hpp"
 #include "core/array.hpp"
-#include "core/file.hpp"
-#include "core/io.hpp"
 
 #include <vector>
 #include <string>
