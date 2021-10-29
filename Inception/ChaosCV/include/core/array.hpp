@@ -35,7 +35,6 @@ namespace chaos
 		// copy constructor
 		Array(const Array<Type>& arr)
 		{
-			std::cout << "copy constructor" << std::endl;
 			Create(arr.size_, arr.data_, 1);
 		}
 		// copy assignment

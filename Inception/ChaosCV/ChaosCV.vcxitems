@@ -18,11 +18,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\array.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
   </ItemGroup>
 </Project>
