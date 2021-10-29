@@ -25,10 +25,10 @@ option(CHAOSCV_TEST "Build unit tests?" OFF)
 
 if( (CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
   add_compile_options(-Wextra -Wall -Wno-unused)
+  set(CMAKE_CXX_STANDARD 20)
 else()
   add_compile_options("/std:c++latest")
 endif()
-#set(CMAKE_CXX_STANDARD 20)
 
 add_definitions(-D CHAOS_EXPORT)
 
