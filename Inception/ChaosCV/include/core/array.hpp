@@ -64,9 +64,10 @@ namespace chaos
 		}
 		Array& operator=(Array&& arr) noexcept
 		{
-			Release(); // clear this and steal from arr
-			std::swap(data_, arr.data_);
-			std::swap(size_, arr.size_);
+			//Release(); // clear this and steal from arr
+			Array moved = arr;
+			std::swap(data_, moved.data_);
+			std::swap(size_, moved.size_);
 			return *this;
 		}
 
