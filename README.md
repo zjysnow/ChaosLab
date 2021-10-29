@@ -17,6 +17,8 @@ Shared Items Project
 ## Build
 提供两种方式编译项目
 
+由于要兼容Linux版本，部分代码被退回到C++17的版本
+
 ### Visual Studio
 直接使用Visual Studio 2019打开SLN文件编译即可，如果需要使用Sandbox项目，则需要自行创建；需要配置好WSL
 
