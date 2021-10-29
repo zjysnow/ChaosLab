@@ -16,6 +16,7 @@ auto now = []() {
 };
 std::ostream& operator<<(std::ostream& stream, const tm& time)
 {
+	// the result is different from windows
 	return stream << time.tm_year + 1990 << "-" << time.tm_mon + 1 << "-" << time.tm_mday 
 		<< " " << time.tm_hour << ":" << time.tm_min << ":" << time.tm_sec;
 }
