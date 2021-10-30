@@ -6,9 +6,9 @@
 #include <iostream>
 
 #ifdef _WIN32
-auto now = []() { return std::chrono::current_zone()->to_local(std::chrono::system_clock::now()); };
+auto time_now = []() { return std::chrono::current_zone()->to_local(std::chrono::system_clock::now()); };
 #else
-auto now = []() {
+auto time_now = []() {
 	time_t time_stamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	tm time;
 	localtime_r(&time_stamp, &time);
@@ -35,7 +35,7 @@ namespace chaos
 			size_t pos = fname.find_last_of('/') + 1;
 			return fname.substr(pos);
 		};
-		message_data << "[" << LogSeverityNames[severity] << " " << now() << " " << name() << ":" << line << "] ";
+		message_data << "[" << LogSeverityNames[severity] << " " << time_now() << " " << name() << ":" << line << "] ";
 	}
 
 	LogMessage::~LogMessage()
