@@ -19,7 +19,7 @@ namespace chaos
 		auto name_ = 0 == ppos ? file_ : file_.substr(0, ppos);
 		auto valid = std::regex_match(std::string(name_), std::regex("[^\\|\\\\/:\\*\\?\"<>]+"));
 
-		LOG_IF(ERROR, valid) << "file name can not contain |\\/:*?\"<>";
+		DCHECK(valid) << "file name can not contain |\\/:*?\"<>";
 	}
 	File::File(const std::string& buff) : buff(buff.data()) {}
 

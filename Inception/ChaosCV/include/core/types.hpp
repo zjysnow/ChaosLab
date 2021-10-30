@@ -25,6 +25,23 @@ namespace chaos
 
 	static inline Complex operator+(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re + rhs.re, lhs.im + rhs.im); }
 	static inline Complex operator-(const Complex& lhs, const Complex& rhs) { return Complex(lhs.re - rhs.re, lhs.im - rhs.im); }
+	static inline Complex operator*(const Complex& lhs, const Complex& rhs) 
+	{
+		// z1=a+bi£¬z2=c+di
+		// z1*z2 = (a+bi)(c+di) = (ac-bd)+(bc+ad)i
+		float re = lhs.re * rhs.re - lhs.im * rhs.im; // ac - bd
+		float im = lhs.im * rhs.re + lhs.re * rhs.im; // bc + ad
+		return Complex(re, im);
+	}
+	static inline Complex operator/(const Complex& lhs, const Complex& rhs) 
+	{
+		// z1=a+bi£¬z2=c+di
+		// z1/z2=z1*conj(z2)/z2*conj(z2)
+		float divisor = rhs.re * rhs.re + rhs.im * rhs.im;
+		float re = (lhs.re * rhs.re + lhs.im * rhs.im) / divisor; // ac + bd
+		float im = (lhs.im * rhs.re - lhs.re * rhs.im) / divisor; // bc - ad
+		return Complex(re, im); 
+	}
 
 	static inline std::ostream& operator<<(std::ostream& stream, const Complex& complex)
 	{

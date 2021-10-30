@@ -21,6 +21,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
   </ItemGroup>
   <ItemGroup>

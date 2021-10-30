@@ -5,6 +5,7 @@
 #include "core/file.hpp"
 #include "core/types.hpp"
 #include "core/array.hpp"
+#include "core/op.hpp"
 
 #include <vector>
 #include <string>

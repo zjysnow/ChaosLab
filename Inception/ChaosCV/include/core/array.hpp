@@ -116,15 +116,26 @@ namespace chaos
 	};
 
 	template<class Type>
-	const Type* begin(const Array<Type>& arr)
+	const Type* begin(const Array<Type>& arr) noexcept
 	{
 		return arr.data();
 	}
 
 	template<class Type>
-	const Type* end(const Array<Type>& arr)
+	const Type* end(const Array<Type>& arr) noexcept
 	{
 		return arr.data() + arr.size();
+	}
+
+	template<class Type>
+	static inline std::ostream& operator<<(std::ostream& stream, const Array<Type>& arr)
+	{
+		stream << "[" << arr[0];
+		for (int i = 1; i < arr.size(); i++)
+		{
+			stream << ", " << arr[i];
+		}
+		return stream << "]";
 	}
 
 

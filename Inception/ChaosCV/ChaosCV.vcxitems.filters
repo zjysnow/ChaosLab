@@ -33,6 +33,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
