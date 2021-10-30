@@ -104,9 +104,9 @@ namespace chaos
 		// lhs a = [x1, y1, z2]
 		// rhs b = [x2, y2, z2]
 		// a x b = [y1*z2-y2*z1, z1*x2-z2*x1, x1*y2-x2*y1]
-		result[0] = lhs[1] * rhs[2] - rhs[1] * lsh[2]; //y1 * z2 - y2 * z1;
-		result[1] = lhs[2] * rhs[0] - rhs[2] * lsh[0]; //z1 * x2 - z2 * x1;
-		result[2] = lhs[0] * rhs[1] - rhs[0] * lsh[1]; //x1 * y2 - x2 * y1;
+		result[0] = lhs[1] * rhs[2] - rhs[1] * lhs[2]; //y1 * z2 - y2 * z1;
+		result[1] = lhs[2] * rhs[0] - rhs[2] * lhs[0]; //z1 * x2 - z2 * x1;
+		result[2] = lhs[0] * rhs[1] - rhs[0] * lhs[1]; //x1 * y2 - x2 * y1;
 
 		return result;
 	}
