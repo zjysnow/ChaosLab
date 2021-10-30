@@ -41,9 +41,38 @@ TEST(Array, Dot)
     Array<float> arr1 = { 1,1,1,1,0 };
     Array<float> arr2 = { 1,1,1,1,8 };
 
-    float d = dot(arr1, arr2);
+    float d1 = dot(arr1, arr2);
 
-    EXPECT_FLOAT_EQ(d, 4.f);
+    EXPECT_FLOAT_EQ(d1, 4.f);
+}
+
+TEST(Array, Cross)
+{
+    Array<float> a = {1,2,3};
+    Array<float> b = {4,2,1};
+    Array<float> c = {3,5,6};
+
+    Array<float> r1 = cross(a, b);
+    Array<float> r2 = cross(-1.f * b, a);
+
+    for (int i = 0; i < 3; i++)
+    {
+        EXPECT_FLOAT_EQ(r1[i], r2[i]);
+    }
+
+    Array<float> r3 = cross(a, (b + c));
+    Array<float> r4 = cross(a, b) + cross(a, c);
+
+    for (int i = 0; i < 3; i++)
+    {
+        EXPECT_FLOAT_EQ(r3[i], r4[i]);
+    }
+
+    Array<float> r5 = cross(a, a);
+    for (int i = 0; i < 3; i++)
+    {
+        EXPECT_FLOAT_EQ(r5[i], 0.f);
+    }
 }
 
 int main(int argc, char* argv[])
