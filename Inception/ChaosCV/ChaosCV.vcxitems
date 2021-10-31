@@ -23,6 +23,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -30,5 +31,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
   </ItemGroup>
 </Project>

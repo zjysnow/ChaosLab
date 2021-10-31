@@ -39,6 +39,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
@@ -51,6 +54,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

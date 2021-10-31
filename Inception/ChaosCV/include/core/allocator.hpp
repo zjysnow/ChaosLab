@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/def.hpp"
+#include "core/buffer.hpp"
 
 #include <malloc.h>
 
@@ -76,4 +77,12 @@ namespace chaos
 	{
 		ALIGNED_FREE(data);
 	}
+
+	class Allocator
+	{
+	public:
+		virtual ~Allocator() = default;
+		virtual void* FastMalloc(size_t) = 0;
+		virtual void FastFree(void*) = 0;
+	};
 }

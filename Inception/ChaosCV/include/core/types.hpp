@@ -7,6 +7,8 @@
 
 namespace chaos
 {
+	using uchar = unsigned char;
+
 	class CHAOS_API Complex
 	{
 	public:
