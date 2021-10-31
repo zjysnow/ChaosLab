@@ -1,9 +1,11 @@
 #pragma once
 
 #include "core/def.hpp"
+#include "core/log.hpp"
 #include "core/types.hpp"
 #include "core/allocator.hpp"
 
+#include <vector>
 #include <iostream>
 #include <memory>
 #include <numeric>
@@ -30,6 +32,11 @@ namespace chaos
 			Create(list.size(), list.begin(), 1);
 		}
 
+		//Array(const std::vector<Type>& vec)
+		//{
+		//	Create(vec.size(), vec.data(), 1);
+		//}
+
 		virtual ~Array() { Release(); }
 
 		// copy constructor
@@ -54,12 +61,6 @@ namespace chaos
 			return *this;
 		}
 
-		const Type& operator[](size_t idx) const noexcept { return data_[idx]; }
-		Type& operator[](size_t idx) noexcept { return data_[idx]; }
-
-		size_t size() const noexcept { return size_; }
-		const Type* data() const noexcept { return data_; }
-
 		void Resize(size_t new_size)
 		{
 			Array<Type> ori = std::move(*this);
@@ -70,6 +71,19 @@ namespace chaos
 			{
 				std::construct_at(std::addressof(data_[i]), i < ori.size_ ? ori[i] : 0);
 			}
+		}
+
+		size_t size() const noexcept { return size_; }
+		Type* data() const noexcept { return data_; }
+
+		const Type& operator[](size_t idx) const noexcept { return data_[idx]; }
+		Type& operator[](size_t idx) noexcept { return data_[idx]; }
+
+		operator std::vector<Type>() const noexcept
+		{
+			std::vector<Type> vec(size_);
+			memcpy(vec.data(), data_, size_ * sizeof(Type));
+			return vec;
 		}
 	protected:
 		void Create(size_t new_size)
@@ -115,6 +129,25 @@ namespace chaos
 		size_t size_ = 0;
 	};
 
+	// same with tensorflow ranges
+	template<class Type, std::enable_if_t<not std::is_same_v<Complex, Type>, bool> = true>
+	Array<Type> Range(const Type& start, const Type& limit, const Type& delta = static_cast<Type>(1))
+	{
+		CHECK_NE(delta, 0) << "requires delta != 0";
+		if (delta > 0) CHECK_LT(start, limit) << "requires start <= limit when delta > 0";
+		if (delta < 0) CHECK_GT(start, limit) << "requires start >= limit when delta < 0";
+
+		//[start, limit)
+		long double n = static_cast<long double>(limit - start) / delta;
+		size_t size = (n == static_cast<size_t>(n) ? n - 1 : n) + 1;
+		Array<Type> ranges(size);
+		for (int i = 0; i < size; i++)
+		{
+			ranges[i] = start + i * delta;
+		}
+		return ranges;
+	}
+
 	template<class Type>
 	const Type* begin(const Array<Type>& arr) noexcept
 	{
@@ -125,6 +158,17 @@ namespace chaos
 	const Type* end(const Array<Type>& arr) noexcept
 	{
 		return arr.data() + arr.size();
+	}
+
+	template<class Type>
+	static inline bool operator==(const Array<Type>& lhs, const Array<Type>& rhs)
+	{
+		if (lhs.size() != rhs.size()) return false;
+		for (size_t i = 0; i < lhs.size(); i++)
+		{
+			if (lhs[i] != rhs[i]) return false;
+		}
+		return true;
 	}
 
 	template<class Type>
@@ -169,6 +213,7 @@ namespace chaos
 		Shape(int d0, int d1);
 		Shape(int d0, int d1, int d2);
 		Shape(const Array<int>& arr);
+		//Shape(const std::vector<int>& vec);
 
 		template<class Type, Integral<Type> = true>
 		Shape(const std::initializer_list<Type>& list)
@@ -185,13 +230,6 @@ namespace chaos
 		Steps steps() const noexcept;
 	};
 
-	static inline bool operator==(const Shape& lhs, const Shape& rhs)
-	{
-		if (lhs.size() != rhs.size()) return false;
-		for (size_t i = 0; i < lhs.size(); i++)
-		{
-			if (lhs[i] != rhs[i]) return false;
-		}
-		return true;
-	}
+	CHAOS_API Shape Squeeze(const Shape& shape, const Array<int>& axis = Array<int>());
+	CHAOS_API Shape ExpandDims(const Shape& shape, const Array<int>& axis);
 }
