@@ -93,7 +93,7 @@ namespace chaos
 			return ((Type*)data)[offset];
 		}
 
-		size_t total() const noexcept { return shape[0] * steps[0]; }
+		size_t total() const noexcept { return static_cast<size_t>(shape[0]) * steps[0]; }
 		bool empty() const noexcept { return shape.size() == 0 || data == nullptr; }
 
 		float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
