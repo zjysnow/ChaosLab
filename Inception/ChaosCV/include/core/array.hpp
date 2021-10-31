@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/def.hpp"
+#include "core/log.hpp"
 #include "core/types.hpp"
 #include "core/allocator.hpp"
 
@@ -128,6 +129,7 @@ namespace chaos
 		size_t size_ = 0;
 	};
 
+	// same with tensorflow ranges
 	template<class Type, std::enable_if_t<not std::is_same_v<Complex, Type>, bool> = true>
 	Array<Type> Range(const Type& start, const Type& limit, const Type& delta = static_cast<Type>(1))
 	{

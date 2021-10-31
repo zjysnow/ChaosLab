@@ -36,9 +36,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\buffer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
       <Filter>include</Filter>
     </ClInclude>

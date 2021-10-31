@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/def.hpp"
-#include "core/buffer.hpp"
 
 #include <malloc.h>
 

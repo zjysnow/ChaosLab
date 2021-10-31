@@ -1,9 +1,9 @@
 #pragma once
 
 #include "core/def.hpp"
+#include "core/log.hpp"
 #include "core/types.hpp"
 #include "core/array.hpp"
-#include "core/buffer.hpp"
 #include "core/allocator.hpp"
 
 #include <cstring>
@@ -40,15 +40,6 @@ namespace chaos
 		return val * static_cast<Type>(packing);
 	}
 
-	// Tensor how ?
-	// When Tensor is a scalar dims = 0 <- shape.size() = 1 (definition is 0)
-	// When Tensor is a vector dims = 1 <- shape.size() = 1
-	// When Tensor is a matrix dims = 2 <- shape.size() = 2
-	// When Tensor is a cube   dims = 3 <- shape.size() = 3
-	// When Tensor is a N-D    dims = N <- shape.size() = N
-	// So the question is that how can I create a Tensor with shape = Shape()
-	// 1. Tensor without scalar
-	// 2. ????
 	class CHAOS_API Tensor
 	{
 	public:
@@ -64,7 +55,7 @@ namespace chaos
 		}
 		// if constexpr (std::same_as<>Complex, Type)
 		//template<>
-		Tensor(const Array<Complex>& arr, Allocator* allocator)
+		Tensor(const Array<Complex>& arr, Allocator* allocator = nullptr)
 		{
 			Create(Shape(static_cast<int>(arr.size())), Steps(1), Depth::D4, Packing::C2HW2, allocator);
 			if (data) memcpy(data, arr.data(), arr.size() * 8); // C6387
@@ -82,6 +73,9 @@ namespace chaos
 		/// <summary> ref_cnt-- </summary>
 		void Release();
 
+		void CopyTo(Tensor& tensor) const;
+		Tensor Clone(Allocator* allocator = nullptr) const;
+
 		/// <summary> ref_cnt++ </summary>
 		void AddRef() noexcept { if (ref_cnt) CHAOS_XADD(ref_cnt, 1); }
 
@@ -98,6 +92,9 @@ namespace chaos
 			}
 			return ((Type*)data)[offset];
 		}
+
+		size_t total() const noexcept { return shape[0] * steps[0]; }
+		bool empty() const noexcept { return shape.size() == 0 || data == nullptr; }
 
 		float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
 

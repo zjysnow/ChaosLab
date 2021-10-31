@@ -98,4 +98,42 @@ namespace chaos
 		ref_cnt = nullptr;
 		allocator = nullptr;
 	}
+
+	void Tensor::CopyTo(Tensor& tensor) const
+	{
+		if (this == &tensor) return;
+		DCHECK(not tensor.empty());
+		DCHECK_EQ(shape, tensor.shape) << "expect " << shape << " but got " << tensor.shape;
+		if (steps == tensor.steps)
+		{
+			memcpy(tensor.data, data, total() * depth * packing);
+		}
+		else
+		{
+			size_t dims = shape.size();
+			size_t esize = 1 * depth * packing;
+			int rsize = shape[dims - 1];
+			for (size_t i = 0; i < shape.total(); i += rsize)
+			{
+				size_t dofst = 0;
+				size_t sofst = 0;
+				size_t idx = i;
+				for (size_t d = 0; d < dims; d++)
+				{
+					size_t k = idx % shape[dims - d - 1];
+					dofst += k * tensor.steps[dims - d - 1];
+					sofst += k * steps[dims - d - 1];
+					idx /= shape[dims - d - 1];
+				}
+				memcpy((uchar*)tensor.data + dofst * esize, (const uchar*)data + sofst * esize, rsize * esize);
+			}
+		}
+	}
+
+	Tensor Tensor::Clone(Allocator* allocator) const
+	{
+		Tensor tensor = Tensor(shape, depth, packing, allocator);
+		CopyTo(tensor);
+		return tensor;
+	}
 }
