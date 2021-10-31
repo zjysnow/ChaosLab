@@ -6,6 +6,9 @@
 #include "core/buffer.hpp"
 #include "core/allocator.hpp"
 
+#include <cstring>
+#include <memory>
+
 namespace chaos
 {
 	enum class Depth
@@ -60,7 +63,7 @@ namespace chaos
 			if (data) memcpy(data, arr.data(), arr.size() * sizeof(Type)); // C6387
 		}
 		// if constexpr (std::same_as<>Complex, Type)
-		template<>
+		//template<>
 		Tensor(const Array<Complex>& arr, Allocator* allocator)
 		{
 			Create(Shape(static_cast<int>(arr.size())), Steps(1), Depth::D4, Packing::C2HW2, allocator);
