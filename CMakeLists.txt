@@ -22,6 +22,7 @@ endif()
 project(ChaosCV)
 
 option(CHAOSCV_TEST "Build unit tests?" OFF)
+option(CHAOSCV_COVERAGE "" OFF)
 
 if( (CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
   add_compile_options(-Wextra -Wall -Wno-unused)
@@ -60,6 +61,15 @@ target_include_directories(
   ${PROJECT_NAME}_static
   PUBLIC ${CMAKE_SOURCE_DIR}/Inception/ChaosCV/include
 )
+
+if(CHAOSCV_COVERAGE)
+    target_compile_options(${PROJECT_NAME} PUBLIC -coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -coverage -lgcov)
+
+    target_compile_options(${PROJECT_NAME}_static PUBLIC -coverage -fprofile-arcs -ftest-coverage)
+    target_link_libraries(${PROJECT_NAME}_static PUBLIC -coverage -lgcov)
+endif()
+
 
 # Add install files
 set_target_properties(
