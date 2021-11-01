@@ -26,7 +26,7 @@ jobs:
     - name: lcov
       run: sudo apt-get install lcov
     - name: configure
-      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOSCV_COVERAGE=ON -CHAOSCV_TEST=ON ..
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOSCV_COVERAGE=ON -DCHAOSCV_TEST=ON ..
     - name: build
       run: cmake --build build
     - name: test
