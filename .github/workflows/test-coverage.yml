@@ -1,0 +1,44 @@
+name: test-coverage
+on:
+  push:
+    branches: [main]
+    paths:
+    - '.github/workflows/test-coverage.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
+    - 'Tests/GTests/*'
+  pull_request:
+    branches: [main]
+    paths:
+    - '.github/workflows/test-coverage.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
+    - 'Tests/GTests/*'
+    
+jobs:
+  linux-gcc:
+    runs-on: ubuntu-latest
+    steps:
+    - name: cancel-previous-runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: lcov
+      run: sudo apt-get install lcov
+    - name: configure
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOSCV_COVERAGE=ON -CHAOSCV_TEST=ON ..
+    - name: build
+      run: cmake --build build
+    - name: test
+      run: cd build && ctest --output-on-failure
+    - name: lcov-collect
+      run: |
+        cd build
+        lcov -d ./ -c -o lcov.info
+        lcov -r lcov.info '*/ChaosCV/*' -o lcov.info
+        lcov --list lcov.info
+    - name: codecov
+      uses: codecov/codecov-action@v2.1.0
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: build/lcov.info
