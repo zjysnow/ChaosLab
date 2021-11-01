@@ -49,7 +49,7 @@ jobs:
     - name: build
       run: |
         mkdir build && cd build
-        cmake -DCHAOS_BUILD_TESTS=ON ..
+        cmake -DCHAOS_BUILD_TESTS=ON -DGTest_DIR=${{github.workspace}}/gtest/lib/cmake/GTest ..
         cmake --build .
     - name: test
       run: cd build && ctest --output-on-failure
