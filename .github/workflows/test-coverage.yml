@@ -24,10 +24,18 @@ jobs:
       with:
         access_token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@v2
+    - name: install google test
+      run: |
+        git clone https://github.com/google/googletest --depth 1
+        cd googletest
+        mkdir build && cd build
+        cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX='${{github.workspace}}/gtest' ..
+        cmake --build . --config ${{env.BUILD_TYPE}}
+        cmake --install . --config ${{env.BUILD_TYPE}}
     - name: lcov
       run: sudo apt-get install lcov
     - name: configure
-      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOS_COVERAGE=ON -DCHAOS_BUILD_TEST=ON ..
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOS_COVERAGE=ON -DCHAOS_BUILD_TEST=ON -DGTest_DIR=${{github.workspace}}/gtest/lib/cmake/GTest ..
     - name: build
       run: cmake --build build
     - name: test
