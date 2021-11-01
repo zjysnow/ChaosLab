@@ -5,14 +5,14 @@ on:
   push:
     branches: [ main ]
     paths:
-    - '.github/workflows/cmake.yml'
+    - '.github/workflows/ubuntu.gcc.yml'
     - 'CMakeLists.txt'
     - 'Inception/ChaosCV/**'
     - 'Tests/GTests/*'
   pull_request:
     branches: [ main ]
     paths:
-    - '.github/workflows/cmake.yml'
+    - '.github/workflows/ubuntu.gcc.yml'
     - 'CMakeLists.txt'
     - 'Inception/ChaosCV/**'
     - 'Tests/GTests/*'
