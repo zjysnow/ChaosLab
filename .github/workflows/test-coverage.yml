@@ -23,23 +23,11 @@ jobs:
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Clone repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
     - name: lcov
       run: sudo apt-get install lcov
-    - name: Setup Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
-    - name: Install googletest
-      shell: bash
-      run: |
-        git clone https://github.com/google/googletest --depth 1
-        cd googletest
-        mkdir build && cd build
-        cmake .. -DCMAKE_BUILD_TYPE=env.BUILDTYPE−DCMAKEINSTALLPREFIX=′{{github.workspace}}'/googletest-install -G Ninja
-        cmake --build . --config ${{env.BUILD_TYPE}} -j 2
-        cmake --install . --config ${{env.BUILD_TYPE}}
     - name: configure
-      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOSCV_COVERAGE=ON -DCHAOSCV_TEST=ON ..
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOS_COVERAGE=ON -DCHAOS_BUILD_TEST=ON ..
     - name: build
       run: cmake --build build
     - name: test
