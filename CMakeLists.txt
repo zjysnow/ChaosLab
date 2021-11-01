@@ -17,6 +17,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE release CACHE STRING "Choose the type of build" FORCE)
 endif()
 
+message("cmake_module_path: " ${CMAKE_MODULE_PATH})
+
 set(CMAKE_CXX_STANDARD 20)
 
 project(ChaosCV)
