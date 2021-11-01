@@ -41,7 +41,7 @@ jobs:
     - name: install google test
       run: |
         git clone https://github.com/google/googletest --depth 1
-        cd gooletest
+        cd googletest
         mkdir build && cd build
         cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX='${{github.workspace}}/gtest' ..
         cmake --build . --config ${{env.BUILD_TYPE}}
