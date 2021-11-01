@@ -14,7 +14,12 @@ on:
     - 'CMakeLists.txt'
     - 'Inception/ChaosCV/**'
     - 'Tests/GTests/*'
-    
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+
 jobs:
   linux-gcc:
     runs-on: ubuntu-latest
@@ -35,7 +40,7 @@ jobs:
     - name: lcov
       run: sudo apt-get install lcov
     - name: configure
-      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=debug -DCHAOS_COVERAGE=ON -DCHAOS_BUILD_TEST=ON -DGTest_DIR=${{github.workspace}}/gtest/lib/cmake/GTest ..
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCHAOS_COVERAGE=ON -DCHAOS_BUILD_TEST=ON -DGTest_DIR=${{github.workspace}}/gtest/lib/cmake/GTest ..
     - name: build
       run: cmake --build build
     - name: test
