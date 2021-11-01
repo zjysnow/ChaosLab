@@ -1,0 +1,41 @@
+name: test-coverage
+on:
+  push:
+    branches: [main]
+    paths:
+    - '.github/workflows/test-coverage.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
+    - 'Tests/GTests/**'
+  pull_request:
+    branches: [main]
+    paths:
+    - '.github/workflows/test-coverage.yml'
+    - 'CMakeLists.txt'
+    - 'Inception/ChaosCV/**'
+    - 'Tests/GTests/**'
+jobs:
+  linux-gcc:
+    runs-on: ubuntu-latest
+    steps:
+    - name: lcov
+      run: sudo apt install lcov
+    - name: configure
+      run: mkdir build && cd build && cmake -DCHAOSCV_TEST=ON ..
+    - name: build
+      run: cmake --build build -j 2
+    - name: test
+      run: |
+        cd build && ctest --output-on-failure -j 2
+    - name: lcov-colect
+      run: |
+        cd build
+        lcov -d ./Inception/ChaosCV/src/core -c -o lcov.info
+        lcov -r lcov.info '*/build/*' -o lcov.info
+        lcov --list lcov.info
+    - name: codecov
+      uses: codecov/codecov-action@v2.1.0
+      with:
+        token: ${{ ecrets.CODECOV_TOKEN }}
+        file: build/lcov.info
+      
