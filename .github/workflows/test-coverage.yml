@@ -27,19 +27,15 @@ jobs:
       uses: actions/checkout@v2
     - name: lcov
       run: sudo apt-get install lcov
+    - name: Setup Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
     - name: Install googletest
       shell: bash
       run: |
         git clone https://github.com/google/googletest --depth 1
         cd googletest
         mkdir build && cd build
-        if [ '${{runner.os}}' == 'Windows' ]; then
-          echo "Yes, this is on Windows"
-          cmake .. -DCMAKE_BUILD_TYPE=env.BUILDTYPE−DCMAKEINSTALLPREFIX=′{{github.workspace}}'/googletest-install -Dgtest_force_shared_crt=ON -G "Visual Studio 16 2019" -A x64
-        else
-          echo "Ohh, this is not on Windows"
-          cmake .. -DCMAKE_BUILD_TYPE=env.BUILDTYPE−DCMAKEINSTALLPREFIX=′{{github.workspace}}'/googletest-install -G Ninja
-        fi
+        cmake .. -DCMAKE_BUILD_TYPE=env.BUILDTYPE−DCMAKEINSTALLPREFIX=′{{github.workspace}}'/googletest-install -G Ninja
         cmake --build . --config ${{env.BUILD_TYPE}} -j 2
         cmake --install . --config ${{env.BUILD_TYPE}}
     - name: configure
