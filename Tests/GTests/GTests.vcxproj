@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="test_array.cpp" />
+    <ClCompile Include="test_tensor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="testutil.hpp" />

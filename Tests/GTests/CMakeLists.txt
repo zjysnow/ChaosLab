@@ -14,3 +14,4 @@ macro(chaoscv_add_test class)
 endmacro()
 
 chaoscv_add_test(Array)
+chaoscv_add_test(Tensor)

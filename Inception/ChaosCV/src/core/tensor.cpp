@@ -110,6 +110,7 @@ namespace chaos
 		}
 		else
 		{
+			// 'row' is always contiguous
 			size_t dims = shape.size();
 			size_t esize = 1 * depth * packing;
 			int rsize = shape[dims - 1];
