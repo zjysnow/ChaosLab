@@ -49,7 +49,7 @@ jobs:
       run: |
         cd build
         lcov -d . -c -o lcov.info
-        lcov -r lcov.info '*/ChaosCV/**' -o lcov.info
+        lcov -r lcov.info '*/src/**' -o lcov.info
         lcov -r lcov.info '*/build/*' -o lcov.info
         lcov -r lcov.info '/usr/*' -o lcov.info
         lcov --list lcov.info
