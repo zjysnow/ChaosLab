@@ -90,6 +90,37 @@ TEST(Array, Ranges)
     }
 }
 
+TEST(Array, ChangeDims)
+{
+    Shape shape1 = { 1,5,2,1,3,1,1,7 };
+
+    Shape expected1 = { 5,2,3,7 };
+    Shape sq1 = Squeeze(shape1);
+    for (int i = 0; i < 4; i++)
+    {
+        EXPECT_EQ(expected1[i], sq1[i]);
+    }
+
+    Shape expected2 = { 5,2,3,1,1,7 };
+    Shape sq2 = Squeeze(shape1, { 0,3 });
+    for (int i = 0; i < 6; i++)
+    {
+        EXPECT_EQ(expected2[i], sq2[i]);
+    }
+
+
+    Shape shape2 = {1,1,1,1,1,1,1};
+    EXPECT_EQ(Shape(1), Squeeze(shape2));
+
+    Shape exp1 = ExpandDims(sq1, {0,1,4});
+    Shape expected3 = { 1,1,5,2,1,3,7 };
+    CHECK_EQ(exp1.size(), 7);
+    for (int i = 0; i < 7; i++)
+    {
+        EXPECT_EQ(expected3[i], exp1[i]);
+    }
+}
+
 
 
 int main(int argc, char* argv[])
