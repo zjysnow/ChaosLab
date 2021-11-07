@@ -3,7 +3,6 @@
 #include "core/def.hpp"
 #include "core/log.hpp"
 #include "core/types.hpp"
-#include "core/allocator.hpp"
 
 #include <vector>
 #include <iostream>
@@ -27,15 +26,12 @@ namespace chaos
 		explicit Array(size_t new_size) { Create(new_size); }
 		Array(size_t new_size, Type val) { Create(new_size, &val); }
 
+		Array(size_t new_size, Type* data, size_t inc = 0) { Create(new_size, data, inc); }
+
 		Array(const std::initializer_list<Type>& list)
 		{
 			Create(list.size(), list.begin(), 1);
 		}
-
-		//Array(const std::vector<Type>& vec)
-		//{
-		//	Create(vec.size(), vec.data(), 1);
-		//}
 
 		virtual ~Array() { Release(); }
 
@@ -67,7 +63,7 @@ namespace chaos
 
 			size_ = new_size;
 			data_ = static_cast<Type*>(::operator new(size_ * sizeof(Type), std::align_val_t{ alignof(Type) }));
-			for (size_t i = 0; i < size_; i++)
+			for (int i = 0; i < size_; i++)
 			{
 				std::construct_at(std::addressof(data_[i]), i < ori.size_ ? ori[i] : 0);
 			}
@@ -76,8 +72,23 @@ namespace chaos
 		size_t size() const noexcept { return size_; }
 		Type* data() const noexcept { return data_; }
 
-		const Type& operator[](size_t idx) const noexcept { return data_[idx]; }
-		Type& operator[](size_t idx) noexcept { return data_[idx]; }
+		// return arr[a:b]
+		// for example, Array<float> arr = {1,2,3,4,5,6,7};
+		// then arr.ranges(-5, -1) means [3,4,5,6,7];
+		// if out of range, will return random value
+		Array<Type> ranges(int a, int b, size_t inc = 1) const
+		{
+			DCHECK_NE(inc, 0) << "requires delta != 0";
+			DCHECK_LE(a, b) << "requires a < b";
+
+			size_t new_size = (1LL + b - a) / inc;
+			return Array<Type>(new_size, data_ + (a + size_) % size_, inc);
+		}
+
+		Type& operator[](int idx) const noexcept
+		{ 
+			return data_[(idx + size_) % size_];
+		}
 
 		operator std::vector<Type>() const noexcept
 		{
@@ -85,6 +96,8 @@ namespace chaos
 			memcpy(vec.data(), data_, size_ * sizeof(Type));
 			return vec;
 		}
+
+		//friend class Shape;
 	protected:
 		void Create(size_t new_size)
 		{
@@ -133,13 +146,13 @@ namespace chaos
 	template<class Type, std::enable_if_t<not std::is_same_v<Complex, Type>, bool> = true>
 	Array<Type> Range(const Type& start, const Type& limit, const Type& delta = static_cast<Type>(1))
 	{
-		CHECK_NE(delta, 0) << "requires delta != 0";
-		if (delta > 0) CHECK_LT(start, limit) << "requires start <= limit when delta > 0";
-		if (delta < 0) CHECK_GT(start, limit) << "requires start >= limit when delta < 0";
+		DCHECK_NE(delta, 0) << "requires delta != 0";
+		if (delta > 0) DCHECK_LT(start, limit) << "requires start < limit when delta > 0";
+		if (delta < 0) DCHECK_GT(start, limit) << "requires start > limit when delta < 0";
 
 		//[start, limit)
 		long double n = static_cast<long double>(limit - start) / delta;
-		size_t size = (n == static_cast<size_t>(n) ? n - 1 : n) + 1;
+		size_t size = (n == static_cast<size_t>(n) ? n : n + 1);
 		Array<Type> ranges(size);
 		for (int i = 0; i < size; i++)
 		{
@@ -164,7 +177,7 @@ namespace chaos
 	static inline bool operator==(const Array<Type>& lhs, const Array<Type>& rhs)
 	{
 		if (lhs.size() != rhs.size()) return false;
-		for (size_t i = 0; i < lhs.size(); i++)
+		for (int i = 0; i < lhs.size(); i++)
 		{
 			if (lhs[i] != rhs[i]) return false;
 		}
@@ -191,7 +204,7 @@ namespace chaos
 		Steps(int s0, int s1);
 		Steps(int s0, int s1, int s2);
 
-		Steps(const Array<int>& arr);
+		Steps(Array<int>&& arr) noexcept;
 
 		template<class Type, Integral<Type> = true>
 		Steps(const std::initializer_list<Type>& list)
@@ -203,17 +216,21 @@ namespace chaos
 				std::construct_at(std::addressof(data_[i++]), static_cast<int>(data));
 			}
 		}
+
+
 	};
 
 	class CHAOS_API Shape : public Array<int>
 	{
 	public:
+		
+
 		Shape();
 		Shape(int d0);
 		Shape(int d0, int d1);
 		Shape(int d0, int d1, int d2);
-		Shape(const Array<int>& arr);
-		//Shape(const std::vector<int>& vec);
+
+		Shape(Array<int>&& arr) noexcept;
 
 		template<class Type, Integral<Type> = true>
 		Shape(const std::initializer_list<Type>& list)

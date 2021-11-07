@@ -76,28 +76,47 @@ namespace chaos
 		void CopyTo(Tensor& tensor) const;
 		Tensor Clone(Allocator* allocator = nullptr) const;
 
+		// the new shape should be the subsapce of the Tensor shape
+		// example:
+		// shape = [3,4,5,6]
+		// new_shape can be [5,1] for the `at`-th col data
+		// or be [5,6] for the `at`-th channel data
+		// means that new_shape should broadcast to the Tensor shape
+		// this wouldn't copy any data from the source Tensor
+		Tensor Cut(const Shape& new_shape, int at) const;
+
 		/// <summary> ref_cnt++ </summary>
 		void AddRef() noexcept { if (ref_cnt) CHAOS_XADD(ref_cnt, 1); }
 
-		template<class Type = float, Arithmetic<Type> = true, class...Index>
+		template<class Type = float, class...Index, Arithmetic<Type> = true>
 		Type& At(Index&&...idx) const
 		{
-			Array<int> index = { static_cast<int>(idx)... };
+			Array<unsigned int> index = { static_cast<unsigned int>(idx)... };
 			DCHECK_EQ(shape.size(), index.size()) << "dims expect " << shape.size() << " but got " << index.size();
 			size_t offset = 0;
 			for (size_t i = 0; i < index.size(); i++)
 			{
-				DCHECK_LT(index[i], shape[i]) << "out of range at " << i << "th dim";
+				//DCHECK_GE(index[i], 0) << "expect index[" << i << "] >= 0, but got " << index[i];
+				DCHECK_LT(index[i], shape[i]) << "expect index[" << i << "] < " << shape[i] << " but got " << index[i];
 				offset += steps[i] * index[i];
 			}
 			return ((Type*)data)[offset];
 		}
 
 		bool empty() const noexcept { return shape.size() == 0 || data == nullptr; }
-		bool contiguous() const noexcept { return empty() ? false : (shape.total() == shape[0] * steps[0]); }
+		bool contiguous() const noexcept { return empty() ? true : (shape.total() == shape[0] * steps[0]); }
 		size_t total() const noexcept { return empty() ? 0 : static_cast<size_t>(shape[0]) * steps[0]; }
+		
+		Tensor row(int at) const;
+		Tensor col(int at) const;
+		Tensor channel(int at) const;
 
 		float& operator[](size_t idx) const noexcept { return ((float*)data)[idx]; }
+
+		static Tensor randn(const Shape& shape, float mu = 0.f, float sigma = 1.f, Allocator* allocator = nullptr);
+		static Tensor randu(const Shape& shape, float min = 0.f, float max = 1.f, Allocator* allocator = nullptr);
+		static Tensor zeros(const Shape& shape, Allocator* allocator = nullptr);
+		static Tensor eye(int h, int w, Allocator* allocator = nullptr);
 
 		void* data = nullptr;
 		Allocator* allocator = nullptr;

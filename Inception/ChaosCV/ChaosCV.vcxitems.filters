@@ -7,54 +7,60 @@
     <Filter Include="src">
       <UniqueIdentifier>{8699f5dc-018c-4a4c-933e-6a1cd4800f54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\core">
+      <UniqueIdentifier>{3127ed43-2415-4552-8ae7-10e94b504741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{217741c5-8195-434e-8d43-9ffeeddec890}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\allocator.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\array.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\core.hpp">
+      <Filter>include\core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\def.hpp">
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\file.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\io.hpp">
+      <Filter>include\core</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\core\log.hpp">
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
-      <Filter>include</Filter>
+      <Filter>include\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp">
-      <Filter>src</Filter>
+      <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\core.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

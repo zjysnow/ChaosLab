@@ -7,31 +7,22 @@ namespace chaos
 	Steps::Steps(int s0) : Array<int>(1) { data_[0] = s0; }
 	Steps::Steps(int s0, int s1) : Array<int>(2) { data_[0] = s0; data_[1] = s1; }
 	Steps::Steps(int s0, int s1, int s2) : Array<int>(3) { data_[0] = s0; data_[1] = s1; data_[2] = s2; }
-	Steps::Steps(const Array<int>& arr)
-	{
-		Create(arr.size(), arr.data(), 1);
-	}
-	
+	Steps::Steps(Array<int>&& arr) noexcept : Array<int>(arr) {}
 
 	Shape::Shape() : Array<int>(0) {}
 	Shape::Shape(int d0) : Array<int>(1) { data_[0] = d0; }
 	Shape::Shape(int d0, int d1) : Array<int>(2) { data_[0] = d0; data_[1] = d1; }
 	Shape::Shape(int d0, int d1, int d2) : Array<int>(3) { data_[0] = d0; data_[1] = d1; data_[2] = d2; }
-	Shape::Shape(const Array<int>& arr)
-	{
-		Create(arr.size(), arr.data(), 1);
-	}
-	//Shape::Shape(const std::vector<int>& vec)
-	//{
-	//	Create(vec.size(), vec.data(), 1);
-	//}
+	Shape::Shape(Array<int>&& arr) noexcept : Array<int>(arr) {}
+
 	int Shape::total() const noexcept { return std::accumulate(data_, data_ + size_, 1, std::multiplies<int>()); }
 	Steps Shape::steps() const noexcept
 	{
 		Steps steps = Array<int>(size_, 1);
-		for (size_t i = size_ - 1, j = size_ - 2; i > 0; i--, j--)
+		for (int i = 1, j = 2; j <= size_; i++, j++)
 		{
-			steps[j] = steps[i] * data_[i];
+			// steps[-j] steps[-i] * shape[-i];
+			steps[-j] = steps[-i] * operator[](-i);
 		}
 		return steps;
 	}
@@ -39,10 +30,11 @@ namespace chaos
 	Shape Squeeze(const Shape& shape, const Array<int>& axis)
 	{
 		size_t dims = shape.size();
+
 		Array<bool> retain(dims, true);
 		if (axis.size() == 0)
 		{
-			for (size_t i = 0; i < shape.size(); i++)
+			for (int i = 0; i < shape.size(); i++)
 			{
 				if (shape[i] == 1)
 				{
@@ -53,6 +45,7 @@ namespace chaos
 		}
 		else
 		{
+			DCHECK_LE(axis.size(), dims);
 			for (const auto& i : axis)
 			{
 				if (shape[i] == 1)
@@ -67,12 +60,19 @@ namespace chaos
 			}
 		}
 
-		Shape squeezed = Array<int>(dims);
-		for (size_t i = 0, j = 0; i < shape.size(); i++)
+		if (dims == 0)
 		{
-			if (retain[i]) squeezed[j++] = shape[i];
+			return Shape(1);
 		}
-		return squeezed;
+		else
+		{
+			Shape squeezed = Array<int>(dims);
+			for (int i = 0, j = 0; i < shape.size(); i++)
+			{
+				if (retain[i]) squeezed[j++] = shape[i];
+			}
+			return squeezed;
+		}
 	}
 
 	Shape ExpandDims(const Shape& shape, const Array<int>& axis)
@@ -85,7 +85,7 @@ namespace chaos
 			expanded[i] = 1;
 		}
 
-		for (size_t i = 0, j = 0; i < dims; i++)
+		for (int i = 0, j = 0; i < dims; i++)
 		{
 			if (expanded[i] == 0) expanded[i] = shape[j++];
 		}

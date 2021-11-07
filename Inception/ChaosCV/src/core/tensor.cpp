@@ -1,5 +1,7 @@
 #include "core/tensor.hpp"
 
+#include <random>
+
 namespace chaos
 {
 	Tensor::Tensor(const Shape& shape, const Depth& depth, const Packing& packing, Allocator* allocator)
@@ -102,31 +104,28 @@ namespace chaos
 	void Tensor::CopyTo(Tensor& tensor) const
 	{
 		if (this == &tensor) return;
-		DCHECK(not tensor.empty());
-		DCHECK_EQ(shape, tensor.shape) << "expect " << shape << " but got " << tensor.shape;
+		DCHECK_EQ(shape, tensor.shape) << "expect shape=" << shape << " but got " << tensor.shape;
 		if (steps == tensor.steps)
 		{
 			memcpy(tensor.data, data, total() * depth * packing);
 		}
 		else
 		{
-			// 'row' is always contiguous
 			size_t dims = shape.size();
 			size_t esize = 1 * depth * packing;
-			int rsize = shape[dims - 1];
-			for (size_t i = 0; i < shape.total(); i += rsize)
+			for (size_t i = 0; i < shape.total(); i++)
 			{
-				size_t dofst = 0;
-				size_t sofst = 0;
+				size_t dofst = 0; // dst offset
+				size_t sofst = 0; // src offset
 				size_t idx = i;
-				for (size_t d = 0; d < dims; d++)
+				for (int d = 1; d <= dims; d++)
 				{
-					size_t k = idx % shape[dims - d - 1];
-					dofst += k * tensor.steps[dims - d - 1];
-					sofst += k * steps[dims - d - 1];
-					idx /= shape[dims - d - 1];
+					size_t k = idx % shape[-d];
+					dofst += k * tensor.steps[-d];
+					sofst += k * steps[-d];
+					idx /= shape[-d];
 				}
-				memcpy((uchar*)tensor.data + dofst * esize, (const uchar*)data + sofst * esize, rsize * esize);
+				memcpy((uchar*)tensor.data + dofst * esize, (const uchar*)data + sofst * esize, esize);
 			}
 		}
 	}
@@ -136,5 +135,98 @@ namespace chaos
 		Tensor tensor = Tensor(shape, depth, packing, allocator);
 		CopyTo(tensor);
 		return tensor;
+	}
+
+	Tensor Tensor::Cut(const Shape& new_shape, int at) const
+	{
+		size_t dims = shape.size();
+
+		DCHECK_EQ(new_shape.size(), dims);
+
+		// to check if out-of-range
+		int range = shape.total() / new_shape.total();
+		DCHECK_LT(at, range) << "expect at < " << range << " but got " << at;
+
+		Shape other = shape;
+		for (int i = 0; i < dims; i++)
+		{
+			if (shape[i] == new_shape[i]) other[i] = 1;
+		}
+
+		size_t offset = 0;
+		for (int d = 1; d <= dims; d++)
+		{
+			size_t k = at % other[-d];
+			offset += k * steps[-d];
+			at /= other[-d];
+		}
+
+		Shape sub_shape = Squeeze(new_shape);
+		// to squeeze the steps
+		Steps sub_steps = Array<int>(sub_shape.size());
+		for (int i = 0, j = 0; i < dims; i++)
+		{
+			if (new_shape[i] != 1) sub_steps[j++] = steps[i];
+		}
+		return Tensor(sub_shape, depth, packing, (uchar*)data + offset * depth * packing, sub_steps);
+	}
+
+	
+	Tensor Tensor::row(int at) const
+	{
+		Shape sub = Array<int>(shape.size(), 1);
+		sub[-1] = shape[-1];
+		return Cut(sub, at);
+	}
+	Tensor Tensor::col(int at) const
+	{
+		Shape sub = Array<int>(shape.size(), 1);
+		sub[-2] = shape[-2];
+		return Cut(sub, at);
+	}
+	Tensor Tensor::channel(int at) const
+	{
+		Shape sub = Array<int>(shape.size(), 1);
+		sub[-1] = shape[-1];
+		sub[-2] = shape[-2];
+		return Cut(sub, at);
+	}
+
+	static std::default_random_engine engine;
+	Tensor Tensor::randn(const Shape& shape, float mu, float sigma, Allocator* allocator)
+	{
+		std::normal_distribution<float> normal(mu, sigma);
+		Tensor r = Tensor(shape, Depth::D4, Packing::CHW, allocator);
+		for (size_t i = 0; i < shape.total(); i++)
+		{
+			r[i] = normal(engine);
+		}
+		return r;
+	}
+	Tensor Tensor::randu(const Shape& shape, float min, float max, Allocator* allocator)
+	{
+		std::uniform_real_distribution<float> uniform(min, max);
+		Tensor r = Tensor(shape, Depth::D4, Packing::CHW, allocator);
+		for (size_t i = 0; i < shape.total(); i++)
+		{
+			r[i] = uniform(engine);
+		}
+		return r;
+	}
+	Tensor Tensor::zeros(const Shape& shape, Allocator* allocator)
+	{
+		Tensor z = Tensor(shape, Depth::D4, Packing::CHW, allocator);
+		memset(z.data, 0, z.total() * sizeof(float));
+		return z;
+	}
+	Tensor Tensor::eye(int h, int w, Allocator* allocator)
+	{
+		Tensor e = Tensor(Shape(h, w), Depth::D4, Packing::CHW, allocator);
+		memset(e.data, 0, sizeof(float) * h * w);
+		for (size_t i = 0; i < std::min(h, w); i++)
+		{
+			e[i + i * w] = 1;
+		}
+		return e;
 	}
 }
