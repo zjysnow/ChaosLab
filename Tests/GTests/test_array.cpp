@@ -75,6 +75,23 @@ TEST(Array, Cross)
     }
 }
 
+TEST(Array, Ranges)
+{
+    Array<float> a = { 3,1,23,5,23,232,2,5,74,3 };
+    Array<float> b = { 23,5,23,232,2 };
+
+    Array<float> r1 = a.ranges(-8, -4);
+    Array<float> r2 = a.ranges(2, 6);
+
+    for (int i = 0; i < b.size(); i++)
+    {
+        EXPECT_FLOAT_EQ(r1[i], b[i]);
+        EXPECT_FLOAT_EQ(r2[i], b[i]);
+    }
+}
+
+
+
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);

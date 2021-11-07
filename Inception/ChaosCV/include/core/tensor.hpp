@@ -98,7 +98,7 @@ namespace chaos
 			{
 				//DCHECK_GE(index[i], 0) << "expect index[" << i << "] >= 0, but got " << index[i];
 				DCHECK_LT(index[i], shape[i]) << "expect index[" << i << "] < " << shape[i] << " but got " << index[i];
-				offset += steps[i] * index[i];
+				offset += static_cast<size_t>(steps[i]) * index[i];
 			}
 			return ((Type*)data)[offset];
 		}

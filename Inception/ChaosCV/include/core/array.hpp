@@ -81,9 +81,10 @@ namespace chaos
 		{
 			DCHECK_NE(inc, 0) << "requires delta != 0";
 			DCHECK_LE(a, b) << "requires a < b";
-
 			size_t new_size = (1LL + b - a) / inc;
-			return Array<Type>(new_size, data_ + (a + size_) % size_, inc);
+			size_t offset = (a + size_) % size_;
+			DCHECK_LT(new_size, size_ - offset + 1) << "the range is too large";
+			return Array<Type>(new_size, data_ + offset, inc);
 		}
 
 		Type& operator[](int idx) const noexcept

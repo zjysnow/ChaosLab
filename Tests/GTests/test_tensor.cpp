@@ -14,6 +14,9 @@ TEST(Tensor, Create)
     {
         EXPECT_EQ(data[i], arr[i]);
     }
+
+    Tensor tensor3 = tensor1;
+    EXPECT_EQ(tensor1.data, tensor3.data);
 }
 
 TEST(Tensor, CopyTo)
@@ -24,7 +27,7 @@ TEST(Tensor, CopyTo)
     EXPECT_EQ(t1.shape, t2.shape);
     for (int i = 0; i < 9; i++)
     {
-        EXPECT_EQ(t2[i], arr1[i]);
+        EXPECT_FLOAT_EQ(t2[i], arr1[i]);
     }
 
     Array<float> arr2 = { 1,2,3,0,4,5,6,0,7,8,9,0 };
@@ -33,7 +36,36 @@ TEST(Tensor, CopyTo)
     EXPECT_EQ(t4.shape, t3.shape);
     for (int i = 0; i < 9; i++)
     {
-        EXPECT_EQ(t4[i], arr1[i]);
+        EXPECT_FLOAT_EQ(t4[i], arr1[i]);
+    }
+}
+
+TEST(Tensor, Cut)
+{
+    Tensor rand = Tensor::randn(Shape(3, 4, 5));
+
+    Tensor row1 = rand.Cut({1,1,5}, 1).Clone();
+    EXPECT_EQ(row1.shape, Shape(5));
+    for (int i = 0; i < 5; i++)
+    {
+        EXPECT_FLOAT_EQ(rand.At(0,1,i), row1.At(i));
+    }
+
+    Tensor col1 = rand.Cut({1,4,1}, 1).Clone();
+    EXPECT_EQ(col1.shape, Shape(4));
+    for (int i = 0; i < 4; i++)
+    {
+        EXPECT_FLOAT_EQ(rand.At(0,i,1), col1.At(i));
+    }
+
+    Tensor ch1 = rand.Cut({ 1,4,5 }, 1);
+    EXPECT_EQ(ch1.shape, Shape(4, 5));
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            EXPECT_FLOAT_EQ(rand.At(1, i, j), ch1.At(i, j));
+        }
     }
 }
 
