@@ -24,21 +24,23 @@ TEST(Tensor, Create)
 
 TEST(Tensor, CopyTo)
 {
-    Tensor t1 = Tensor::randu(Shape{ 4,2,6,1 });
+    Array<float> arr1 = { 1,2,3,4,5,6,7,8,9 };
+    Tensor t1 = arr1;
     Tensor t2 = t1.Clone();
     EXPECT_EQ(t1.shape, t2.shape);
     for (int i = 0; i < t1.shape.total(); i++)
     {
-        EXPECT_FLOAT_EQ(t2[i], t1[i]);
+        EXPECT_FLOAT_EQ(t2[i], arr1[i]);
     }
 
+    
     Array<float> arr2 = { 1,2,3,0,4,5,6,0,7,8,9,0 };
     Tensor t3 = Tensor(Shape(3, 3), Depth::D4, Packing::CHW, arr2.data(), Steps(4, 1));
     Tensor t4 = t3.Clone();
     EXPECT_EQ(t4.shape, t3.shape);
     for (int i = 0; i < 9; i++)
     {
-        EXPECT_FLOAT_EQ(t4[i], t3.At(i));
+        EXPECT_FLOAT_EQ(t4[i], arr1[i]);
     }
 }
 
