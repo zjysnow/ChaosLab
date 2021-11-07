@@ -3,6 +3,7 @@
 #include "core/def.hpp"
 #include "core/log.hpp"
 #include "core/types.hpp"
+#include "core/allocator.hpp"
 
 #include <vector>
 #include <iostream>
