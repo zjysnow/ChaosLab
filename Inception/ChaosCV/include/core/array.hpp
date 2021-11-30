@@ -73,13 +73,13 @@ namespace chaos
 		size_t size() const noexcept { return size_; }
 		Type* data() const noexcept { return data_; }
 
-		// return arr[a:b]
+		// return arr[a:b] or arr[a:inc:b]
 		// for example, Array<float> arr = {1,2,3,4,5,6,7};
 		// then arr.ranges(-5, -1) means [3,4,5,6,7];
 		// if out of range, will return random value
 		Array<Type> ranges(int a, int b, size_t inc = 1) const
 		{
-			DCHECK_NE(inc, 0) << "requires delta != 0";
+			DCHECK_NE(inc, 0) << "requires inc != 0";
 			DCHECK_LE(a, b) << "requires a < b";
 			size_t new_size = (1LL + b - a) / inc;
 			size_t offset = (a + size_) % size_;
@@ -218,8 +218,6 @@ namespace chaos
 				std::construct_at(std::addressof(data_[i++]), static_cast<int>(data));
 			}
 		}
-
-
 	};
 
 	class CHAOS_API Shape : public Array<int>

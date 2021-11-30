@@ -53,7 +53,7 @@ namespace chaos
 			Create(Shape(static_cast<int>(arr.size())), Steps(1), static_cast<Depth>(sizeof(Type)), Packing::CHW, allocator);
 			if (data) memcpy(data, arr.data(), arr.size() * sizeof(Type)); // C6387
 		}
-		// if constexpr (std::same_as<>Complex, Type)
+		// if constexpr (std::same_as<Complex, Type>)
 		//template<>
 		Tensor(const Array<Complex>& arr, Allocator* allocator = nullptr)
 		{

@@ -105,4 +105,9 @@ namespace chaos
 		return stream << std::endl << "<Tensor " << tensor.shape << ">";
 	}
 }
+#else
+namespace chaos
+{
+
+}
 #endif
