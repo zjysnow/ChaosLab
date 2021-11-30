@@ -27,8 +27,9 @@ namespace chaos
 	Array<Type> BinaryOp(const Array<Type>& lhs, const Array<Type>& rhs)
 	{
 		Op op;
-		DCHECK_EQ(lhs.size(), rhs.size());
 		size_t size = lhs.size();
+		DCHECK_EQ(size, rhs.size());
+		
 		Array<Type> arr = Array<Type>(size);
 		for (size_t i = 0; i < size; i++)
 		{
@@ -52,7 +53,7 @@ namespace chaos
 	Array<Type> BinaryOp(const Type& lhs, const Array<Type>& rhs)
 	{
 		Op op;
-		size_t size = lhs.size();
+		size_t size = rhs.size();
 		Array<Type> arr = Array<Type>(size);
 		for (size_t i = 0; i < size; i++)
 		{
