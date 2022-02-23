@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{617F38A2
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTests", "Tests\GTests\GTests.vcxproj", "{8AA7291D-8ED6-4C8B-9941-3598DA1E8FD5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{BE00D8BF-DAAC-4EEE-96DA-31BABF7E79A7}"
+	ProjectSection(SolutionItems) = preProject
+		CMakeLists.txt = CMakeLists.txt
+		Inception\ChaosCV\CMakeLists.txt = Inception\ChaosCV\CMakeLists.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Inception\ChaosCV\ChaosCV.vcxitems*{1e69e157-5b27-43ce-b805-d1da30af215b}*SharedItemsImports = 9

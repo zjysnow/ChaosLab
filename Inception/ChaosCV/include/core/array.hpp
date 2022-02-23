@@ -223,8 +223,6 @@ namespace chaos
 	class CHAOS_API Shape : public Array<int>
 	{
 	public:
-		
-
 		Shape();
 		Shape(int d0);
 		Shape(int d0, int d1);

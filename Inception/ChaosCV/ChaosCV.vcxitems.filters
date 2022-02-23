@@ -13,6 +13,15 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{217741c5-8195-434e-8d43-9ffeeddec890}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\dnn">
+      <UniqueIdentifier>{bffbfcb3-170c-48e1-960d-08a325a1fbdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dnn">
+      <UniqueIdentifier>{3e4414bc-5592-40be-93ec-6d3e740972ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\dnn\layers">
+      <UniqueIdentifier>{83da4b3b-c944-4277-8692-74952922c74d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp">
@@ -45,6 +54,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp">
       <Filter>include\core</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp">
+      <Filter>include\dnn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp">
@@ -61,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp">
+      <Filter>src\dnn</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

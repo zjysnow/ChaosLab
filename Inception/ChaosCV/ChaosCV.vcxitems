@@ -24,6 +24,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\op.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\tensor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)include\core\types.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\layer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)include\dnn\option.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\array.cpp" />
@@ -31,5 +33,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\log.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\core\tensor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\dnn\layer.cpp" />
   </ItemGroup>
 </Project>
